@@ -1,60 +1,55 @@
 source('ana/shared.R')
 
-# participant exclusion----
-getSessionOneSampleSize <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+# Details----
+# Every sample has (x,z) coordinate from Unity output.
+# First sample will have distance from origin as sqrt(x^2 + z^2) - called absolute vector
+# Path length is total distance (given x and z trajectories) traveled between movement onset and offset.
+# One may think that simply calculating absolute vector from endpoint will measure this, but trajectories
+# may curve or go in different directions. So we need to account for every sample.But we simply can't
+# add absolute vectors across samples (this will include lengths accounted for by previous sample). So,
+# every new sample's absolute vector will be calculated using the previous sample as its origin. Then all
+# these values are added to come up with a total path length.
+# Repeat this process for all trials within one participant. Then show mean measures across participants for every trial.
+# Unity sample output is in units of meters. So we have to convert this to centimeters on screen.
+
+# Screen dimensions (WxH): 52.7 cm X 29.6 cm
+# Tablet dimensions (WXH): 31.1 cm X 21.6 cm
+# Horizontal (x) dimension ratio: 31.1/ 52.7 = 0.59
+# Vertical (z) dimension ratio: 21.6/ 29.6 = 0.73
+
+# Horizontal dimension:
+# 1m distance in Unity = 62 pixels
+# Screen has 36 pixels/ cm
+# 62/ 36 = 1.72 cm on screen
+# 1.72 cm on screen (*0.59) = 1.01 cm on tablet
+
+# Vertical dimension:
+# 1m distance in Unity = 57 pixels
+# 57/ 36 = 1.58 cm on screen
+# 1.58 cm on screen (*0.73) = 1.15 cm on tablet
+
+# Unlist samples in array----
+
+convertCellToNumVector <- function(v) {
   
-  # exlude participants due to experiment problems
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
+  # # remove opening bracket:
+  # v <- gsub('"', replacement='', x=v)
+  # # remove closing bracket:
+  # v <- gsub('"', replacement='', x=v)
   
-  condition <- c()
-  day <- c()
-  N <- c()
+  # split by underscores:
+  v <- strsplit(v, '_')
+  # convert to numeric:
+  v <- lapply(v, FUN=as.numeric)
+  # make vector:
+  v <- as.vector(unlist(v))
   
-  for(group in groups){
-    pp_group <- unique(list.files(sprintf('data/%s', group)))
-    pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
-    
-    condition <- c(condition, group)
-    day <- c(day, session)
-    N <- c(N, length(pp_group))
-  }
-  data_sample <- data.frame(condition, day, N)
-  return(data_sample)
+  return(v)
+  
 }
 
-getSessionTwoSampleSize <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
-  
-  # exlude participants due to experiment problems
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  
-  condition <- c()
-  day <- c()
-  N <- c()
-  
-  for(group in groups){
-    pp_group <- unique(list.files(sprintf('data/%s', group)))
-    pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
-    
-    noS2 <- c()
-    for(pp in pp_group){
-      pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
-      if(length(pp_session) < 2){
-        noS2 <- c(noS2, pp)
-      }
-    }
-    
-    pp_group <- pp_group[which(!pp_group %in% noS2)]
-    
-    condition <- c(condition, group)
-    day <- c(day, session)
-    N <- c(N, length(pp_group))
-  }
-  data_sample <- data.frame(condition, day, N)
-  return(data_sample)
-}
-
-#Lap times ----
-getParticipantLap <- function(group, id, session) {
+# Path Length----
+getParticipantTrajectory <- function(group, id, session) {
   
   filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
   df <- read.csv(filepath, stringsAsFactors = F)
@@ -65,7 +60,7 @@ getParticipantLap <- function(group, id, session) {
   session <- c()
   group <- c()
   track_orientation <- c()
-  laptime <- c()
+  path_length <- c()
   
   for (trial in c(1:dim(df)[1])) {
     trial_num <- df$trial_num[trial]
@@ -73,24 +68,46 @@ getParticipantLap <- function(group, id, session) {
     session_num <- df$session_num[trial]
     group_cond <- df$experiment[trial]
     orientation <- df$Track_orientation[trial]
-    time <- df$lap_time[trial]
+    
+    #calculate path length for trial
+    x_m <- convertCellToNumVector(df$cursor_path_x[trial])
+    z_m <- convertCellToNumVector(df$cursor_path_z[trial])
+    #convert meters to screen cm
+    x <- (x_m * 62)/ 36
+    z <- (z_m * 62)/ 36
+    
+    
+    ndat <- data.frame()
+    for (idx in c(2:length(x))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x[idx] - x[idx-1]
+      sampz <- z[idx] - z[idx-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat)) == 0){
+        ndat <- absvec
+      } else {
+        ndat <- rbind(ndat, absvec)
+      }
+      
+    }
+    pathlength <- sum(ndat[1:length(ndat)])
     
     trialno <- c(trialno, trial_num)
     participant <- c(participant, pp)
     session <- c(session, session_num)
     group <- c(group, group_cond)
     track_orientation <- c(track_orientation, orientation)
-    laptime <- c(laptime, time)    
-     
+    path_length <- c(path_length, pathlength)    
+    
   }
   
-  ppdata <- data.frame(trialno, participant, session, group, track_orientation, laptime)
+  ppdata <- data.frame(trialno, participant, session, group, track_orientation, path_length)
   return(ppdata)
   
 }
 
 #Session 1----
-getGroupLap <- function(group, session){
+getGroupPL <- function(group, session){
   
   # exlude participants due to experiment problems
   pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
@@ -99,27 +116,27 @@ getGroupLap <- function(group, session){
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantLap(group = group, id = pp, session = session)
+    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
     trial <- ppdat$trialno
-    time <- ppdat$laptime
-    ppdat <- data.frame(trial, time)
-    names(ppdat)[names(ppdat) == 'time'] <- pp
+    pathlength <- ppdat$path_length
+    ppdat <- data.frame(trial, pathlength)
+    names(ppdat)[names(ppdat) == 'pathlength'] <- pp
     
     if (prod(dim(dataoutput)) == 0){
       dataoutput <- ppdat
     } else {
-      dataoutput <- cbind(dataoutput, time)
-      names(dataoutput)[names(dataoutput) == 'time'] <- pp
+      dataoutput <- cbind(dataoutput, pathlength)
+      names(dataoutput)[names(dataoutput) == 'pathlength'] <- pp
     }
     
   }
   return(dataoutput)
 }
 
-getGroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, type = 'b'){
+getGroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, type = 'b'){
   
   for(group in groups){
-    data <- getGroupLap(group = group, session = session)
+    data <- getGroupPL(group = group, session = session)
     trialno <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -127,13 +144,13 @@ getGroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
     
     
     for (t in trialno){
-      laptime <- data1[t, ]
+      pathlength <- data1[t, ]
       
       if (type == "t"){
-        laptime <- laptime[!is.na(laptime)]
-        citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+        pathlength <- pathlength[!is.na(pathlength)]
+        citrial <- getConfidenceInterval(data = pathlength, variance = var(pathlength), method = type)
       } else if(type == "b"){
-        citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+        citrial <- getConfidenceInterval(data = pathlength, variance = var(pathlength), method = type)
       }
       
       if (prod(dim(confidence)) == 0){
@@ -142,33 +159,33 @@ getGroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
         confidence <- rbind(confidence, citrial)
       }
     }
-    write.csv(confidence, file=sprintf('data/LapTimeCI_%s_S%03d.csv', group, session), row.names = F) 
+    write.csv(confidence, file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
   }
   
 }
 
-plotLapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, target='inline') {
+plotPathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig1_LapTimes.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig3_PathLength.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
   meanGroupReaches <- list() #empty list so that it plots the means last
   
   #NA to create empty plot
-  plot(NA, NA, xlim = c(0,301), ylim = c(0, 23), 
-       xlab = "Trial", ylab = "Lap time (s)", frame.plot = FALSE, #frame.plot takes away borders
-       main = sprintf("Lap time across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  plot(NA, NA, xlim = c(0,301), ylim = c(45, 71), 
+       xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 15, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
-  axis(2, at = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22), las=2) #tick marks for y axis
+  axis(2, at = c(45, 50, 55, 60, 65, 70), las=2) #tick marks for y axis
   
   for(group in groups){
     #read in files created by CI function
-    groupconfidence <- read.csv(file=sprintf('data/LapTimeCI_%s_S%03d.csv', group, session))
+    groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -194,7 +211,7 @@ plotLapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 
   }
   
   #add legend
-  legend(200,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  legend(200,68,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
          col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -207,7 +224,7 @@ plotLapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 
 
 #Session 2----
 
-getS2GroupLap <- function(group, session = 2){
+getS2GroupPL <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
   pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
@@ -225,27 +242,27 @@ getS2GroupLap <- function(group, session = 2){
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantLap(group = group, id = pp, session = session)
+    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
     trial <- ppdat$trialno
-    time <- ppdat$laptime
-    ppdat <- data.frame(trial, time)
-    names(ppdat)[names(ppdat) == 'time'] <- pp
+    pathlength <- ppdat$path_length
+    ppdat <- data.frame(trial,pathlength)
+    names(ppdat)[names(ppdat) == 'pathlength'] <- pp
     
     if (prod(dim(dataoutput)) == 0){
       dataoutput <- ppdat
     } else {
-      dataoutput <- cbind(dataoutput, time)
-      names(dataoutput)[names(dataoutput) == 'time'] <- pp
+      dataoutput <- cbind(dataoutput, pathlength)
+      names(dataoutput)[names(dataoutput) == 'pathlength'] <- pp
     }
     
   }
   return(dataoutput)
 }
 
-getS2GroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, type = 'b'){
+getS2GroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, type = 'b'){
   
   for(group in groups){
-    data <- getS2GroupLap(group = group, session = session)
+    data <- getS2GroupPL(group = group, session = session)
     trialno <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -253,13 +270,13 @@ getS2GroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_9
     
     
     for (t in trialno){
-      laptime <- data1[t, ]
+      pathlength <- data1[t, ]
       
       if (type == "t"){
-        laptime <- laptime[!is.na(laptime)]
-        citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+        pathlength <- pathlength[!is.na(pathlength)]
+        citrial <- getConfidenceInterval(data = pathlength, variance = var(pathlength), method = type)
       } else if(type == "b"){
-        citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+        citrial <- getConfidenceInterval(data = pathlength, variance = var(pathlength), method = type)
       }
       
       if (prod(dim(confidence)) == 0){
@@ -268,33 +285,33 @@ getS2GroupLapCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_9
         confidence <- rbind(confidence, citrial)
       }
     }
-    write.csv(confidence, file=sprintf('data/LapTimeCI_%s_S%03d.csv', group, session), row.names = F) 
+    write.csv(confidence, file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
   }
   
 }
 
-plotS2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, target='inline') {
+plotS2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig1A_LapTimes_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig3A_PathLength_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
   meanGroupReaches <- list() #empty list so that it plots the means last
   
   #NA to create empty plot
-  plot(NA, NA, xlim = c(0,121), ylim = c(0, 23), 
-       xlab = "Trial", ylab = "Lap time (s)", frame.plot = FALSE, #frame.plot takes away borders
-       main = sprintf("Lap time across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  plot(NA, NA, xlim = c(0,121), ylim = c(45, 71), 
+       xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
-  axis(2, at = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22), las=2) #tick marks for y axis
+  axis(2, at = c(45, 50, 55, 60, 65, 70), las=2) #tick marks for y axis
   
   for(group in groups){
     #read in files created by CI function
-    groupconfidence <- read.csv(file=sprintf('data/LapTimeCI_%s_S%03d.csv', group, session))
+    groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -320,7 +337,7 @@ plotS2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
   }
   
   #add legend
-  legend(80,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  legend(80,68,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
          col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -333,11 +350,11 @@ plotS2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
 
 #plotting sessions together----
 
-plotAcrossSessionLapTime <- function(target='inline'){
+plotAcrossSessionPathLength <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig1B_LapTimes_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig3B_PathLength_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -348,19 +365,21 @@ plotAcrossSessionLapTime <- function(target='inline'){
   
   # # # # # # # # # #
   # panel A: Session 1
-  plotLapTime()
+  plotPathLength()
   mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
   # panel B: Session 2
-  plotS2LapTime()
+  plotS2PathLength()
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
-
+  
   #close everything if you saved plot as svg
   if (target=='svg') {
     dev.off()
   }
   
 }
+
+
 
