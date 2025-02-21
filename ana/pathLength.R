@@ -348,6 +348,78 @@ plotS2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_
   
 }
 
+# CHECK: plot individual data----
+plotIndividualS2PL <- function(group, session = 2){
+  
+  # exlude participants due to experiment problems/ attrition
+  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
+  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
+  
+  noS2 <- c()
+  for(pp in pp_group){
+    pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
+    if(length(pp_session) < 2){
+      noS2 <- c(noS2, pp)
+    }
+  }
+  pp_group <- pp_group[which(!pp_group %in% noS2)]
+  
+  dataoutput <- data.frame()
+  for(pp in pp_group){
+    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
+    trial <- ppdat$trialno
+    pathlength <- ppdat$path_length
+    ppdat <- data.frame(trial,pathlength)
+    names(ppdat)[names(ppdat) == 'pathlength'] <- pp
+    
+    if (prod(dim(dataoutput)) == 0){
+      dataoutput <- ppdat
+    } else {
+      dataoutput <- cbind(dataoutput, pathlength)
+      names(dataoutput)[names(dataoutput) == 'pathlength'] <- pp
+    }
+    
+  }
+  plot(NA, NA, xlim = c(0,121), ylim = c(45, 71), 
+       xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
+  axis(2, at = c(45, 50, 55, 60, 65, 70), las=2) #tick marks for y axis
+  
+  for(pp in c(2:dim(dataoutput)[2])){
+    lines(dataoutput[pp], col = 'grey')
+  }
+  
+}
+
+plotParticipantTrajectory <- function(group, id, session=2) {
+  
+  filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
+  df <- read.csv(filepath, stringsAsFactors = F)
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mfrow=c(3,5))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  # layout(matrix(c(1,2,3,4,5,
+  #                 6,7,8,9,10,
+  #                 11,12,13,14,15), 6, 5, byrow = TRUE), widths=c(3,3,3,3,3), heights=c(1,1,1,1,1,1))
+  
+  for (trial in c(61:90)) {
+    #calculate path length for trial
+    x_m <- convertCellToNumVector(df$cursor_path_x[trial])
+    z_m <- convertCellToNumVector(df$cursor_path_z[trial])
+    #convert meters to screen cm
+    x <- (x_m * 62)/ 36
+    z <- (z_m * 62)/ 36
+    
+    plot(x,z)
+  }
+  
+}
+
 #plotting sessions together----
 
 plotAcrossSessionPathLength <- function(target='inline'){
