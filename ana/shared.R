@@ -65,3 +65,34 @@ getColourScheme <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_9
   }
   return(colourscheme)
 }
+
+getAllTrackSession1ColourScheme <- function(){
+  #create a list containing the colourscheme per group
+  
+  colourscheme <- list('S'='#e51636ff', #vivid/york red
+                        'T'='#e516362f')
+  
+  return(colourscheme)
+}
+
+getAllTrackSession2ColourScheme <- function(blocks = c(1,2,3,4)){
+  
+  for(block in blocks){
+    if(block == 1 | block == 4){
+      #create a list containing the colourscheme per group
+      colourscheme <- list('S'='#e51636ff', #vivid/york red
+                           'T'='#e516362f')
+    } else if (block == 2){
+      colourscheme <- list('S'='#ff8200ff', # pure orange
+                           'T'='#ff82002f') 
+    } else if (block == 3){
+      colourscheme <- list('S'='#005de4ff', #pure blue
+                           'T'='#005de42f') 
+    }
+  }
+  return(colourscheme)
+}
+
+
+
+
