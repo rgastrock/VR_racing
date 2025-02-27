@@ -93,6 +93,13 @@ getAllTrackSession2ColourScheme <- function(blocks = c(1,2,3,4)){
   return(colourscheme)
 }
 
-
+getAllTrackSessionEndColourScheme <- function(){
+  #create a list containing the colourscheme per group
+  
+  colourscheme <- list('S'='#c400c4ff', #strong magenta
+                       'T'='#c400c42f')
+  
+  return(colourscheme)
+}
 
 
