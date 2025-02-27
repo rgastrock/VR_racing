@@ -152,6 +152,107 @@ plotAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90',
   
 }
 
+# Session 1: Combine track orientations----
+
+getAllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+  
+  alldata <- data.frame()
+  
+  for(group in groups){
+    data <- getGroupAccuracy(group = group, session = session)
+    trial <- data$trial
+    data1 <- as.matrix(data[,2:(dim(data)[2])])
+    
+    if (prod(dim(alldata)) == 0){
+      alldata <- data1
+    } else {
+      alldata <- cbind(alldata, data1)
+    }
+  }
+  ndat <- data.frame(trial, alldata)
+  return(ndat)
+}
+
+getAllTrackGroupAccuracyCI <- function(session = 1, type = 'b'){
+  
+  data <- getAllTrackGroupAccuracy(session = session)
+  trialno <- data$trial
+  data1 <- as.matrix(data[,2:(dim(data)[2])])
+  
+  confidence <- data.frame()
+  
+  
+  for (t in trialno){
+    laptime <- data1[t, ]
+    
+    if (type == "t"){
+      laptime <- laptime[!is.na(laptime)]
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    } else if(type == "b"){
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+  }
+  write.csv(confidence, file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session), row.names = F) 
+  
+}
+
+plotAllTrackAccuracy <- function(session = 1, target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig6_PercentOnTrack_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  plot(NA, NA, xlim = c(0,301), ylim = c(80, 101), 
+       xlab = "Trial", ylab = "Percent on track (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Accuracy across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(1, 15, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
+  axis(2, at = c(80, 85, 90, 95, 100), las=2) #tick marks for y axis
+  
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session))
+  
+  colourscheme <- getAllTrackSession1ColourScheme()
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  col <- colourscheme[['T']]
+  
+  #upper and lower bounds create a polygon
+  #polygon creates it from low left to low right, then up right to up left -> use rev
+  #x is just trial nnumber, y depends on values of bounds
+  polygon(x = c(c(1:300), rev(c(1:300))), y = c(lower, rev(upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(mid,col=col,lty=1, lwd=2)
+  
+  
+  #add legend
+  # legend(200,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  #        col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+
 #Session 2----
 
 getS2GroupAccuracy <- function(group, session = 2){
@@ -278,6 +379,151 @@ plotS2Accuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90
   
 }
 
+# Session 2: Combine track orientations----
+
+getS2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+  
+  alldata <- data.frame()
+  
+  for(group in groups){
+    data <- getS2GroupAccuracy(group = group, session = session)
+    trial <- data$trial
+    data1 <- as.matrix(data[,2:(dim(data)[2])])
+    
+    if (prod(dim(alldata)) == 0){
+      alldata <- data1
+    } else {
+      alldata <- cbind(alldata, data1)
+    }
+  }
+  ndat <- data.frame(trial, alldata)
+  return(ndat)
+}
+
+getS2AllTrackGroupAccuracyCI <- function(session = 2, type = 'b'){
+  
+  data <- getS2AllTrackGroupAccuracy(session = session)
+  trialno <- data$trial
+  data1 <- as.matrix(data[,2:(dim(data)[2])])
+  
+  confidence <- data.frame()
+  
+  
+  for (t in trialno){
+    laptime <- data1[t, ]
+    
+    if (type == "t"){
+      laptime <- laptime[!is.na(laptime)]
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    } else if(type == "b"){
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+  }
+  write.csv(confidence, file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session), row.names = F) 
+  
+}
+
+plotS2AllTrackAccuracy <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig6A_PercentOnTrack_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  plot(NA, NA, xlim = c(0,121), ylim = c(80, 101), 
+       xlab = "Trial", ylab = "Percent on track (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Accuracy across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
+  axis(2, at = c(80, 85, 90, 95, 100), las=2) #tick marks for y axis
+  
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session))
+  
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  for(block in blocks){
+    if(block == 1){
+      b1Trials <- c(1:30)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 2){
+      b1Trials <- c(31:60)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 3){
+      b1Trials <- c(61:90)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 4){
+      b1Trials <- c(91:120)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    }
+  }
+  
+  #add legend
+  colb1 <- getAllTrackSession2ColourScheme(blocks=1)
+  colb2 <- getAllTrackSession2ColourScheme(blocks=2)
+  colb3 <- getAllTrackSession2ColourScheme(blocks=3)
+  colb4 <- getAllTrackSession2ColourScheme(blocks=4)
+  legend(70,90,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+         col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+         lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+
 #plotting sessions together----
 
 plotAcrossSessionAccuracy <- function(target='inline'){
@@ -301,6 +547,226 @@ plotAcrossSessionAccuracy <- function(target='inline'){
   # # # # # # # # # #
   # panel B: Session 2
   plotS2Accuracy()
+  mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotAllTrackAcrossSessionAccuracy <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig6B_PercentOnTrack_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2), 1, 2, byrow = TRUE), widths=c(3,3), heights=c(1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotAllTrackAccuracy()
+  mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2AllTrackAccuracy()
+  mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+# Remove 1st trial: All tracks----
+
+plotS1FirstLastAccuracy <- function(session = 1, target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig7_PercentOnTrack_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  plot(NA, NA, xlim = c(1,61), ylim = c(85, 101), 
+       xlab = "Trial", ylab = "Percent on track (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Accuracy across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(v = c(30), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
+  axis(2, at = c(85, 90, 95, 100), las=2) #tick marks for y axis
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session))
+  
+  colourscheme <- getAllTrackSession1ColourScheme()
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  b1lower <- lower[2:30]
+  b2lower <- lower[272:300]
+  
+  upper <- groupconfidence[,3]
+  b1upper <- upper[2:30]
+  b2upper <- upper[272:300]
+  
+  mid <- groupconfidence[,2]
+  b1mid <- mid[2:30]
+  b2mid <- mid[272:300]
+  
+  col <- colourscheme[['T']]
+  
+  #first block
+  polygon(x = c(c(2:30), rev(c(2:30))), y = c(b1lower, rev(b1upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(x=c(2:30),y=b1mid,col=col,lty=1, lwd=2)
+  
+  col <- colourscheme[['T']]
+  #last block
+  polygon(x = c(c(32:60), rev(c(32:60))), y = c(b2lower, rev(b2upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(x=c(32:60),y=b2mid,col=col,lty=1, lwd=2)
+  
+  
+  #add legend
+  # legend(200,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  #        col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotS2FirstLastAccuracy <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig7A_PercentOnTrack_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  plot(NA, NA, xlim = c(0,121), ylim = c(85, 101), 
+       xlab = "Trial", ylab = "Percent on track (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = sprintf("Accuracy across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(2, 32, 62, 92, 120)) #tick marks for x axis
+  axis(2, at = c(85, 90, 95, 100), las=2) #tick marks for y axis
+  
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session))
+  
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  for(block in blocks){
+    if(block == 1){
+      b1Trials <- c(2:30)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 2){
+      b1Trials <- c(32:60)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 3){
+      b1Trials <- c(62:90)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 4){
+      b1Trials <- c(92:120)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    }
+  }
+  
+  #add legend
+  colb1 <- getAllTrackSession2ColourScheme(blocks=1)
+  colb2 <- getAllTrackSession2ColourScheme(blocks=2)
+  colb3 <- getAllTrackSession2ColourScheme(blocks=3)
+  colb4 <- getAllTrackSession2ColourScheme(blocks=4)
+  legend(70,90,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+         col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+         lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotFirstLastAllTrackAcrossSessionAccuracy <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig7B_PercentOnTrack_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2), 1, 2, byrow = TRUE), widths=c(3,3), heights=c(1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1FirstLastAccuracy()
+  mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2FirstLastAccuracy()
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
