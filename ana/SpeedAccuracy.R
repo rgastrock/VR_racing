@@ -8,7 +8,7 @@ source('ana/percentOnTrack.R')
 #plotting data this way is noisy, so we can bin and take averages per bin - say 5 bins (every 6 trials)
 #repeat for session 2 then plot
 
-#Session 1-----
+#Session 1 (bin by MT)-----
 getAverageMTandAccuracy <- function(){
   #start with movement time
   mtdat <- getAllTrackGroupLap()
@@ -102,7 +102,7 @@ getBinnedSpeedAccCI <- function(block, type= 'b'){
   return(s1b1)
 }
 
-#Session 2-----
+#Session 2 (bin by MT)-----
 getS2AverageMTandAccuracy <- function(){
   #start with movement time
   mtdat <- getS2AllTrackGroupLap()
@@ -235,7 +235,7 @@ getS2BinnedSpeedAccCI <- function(block, type = 'b'){
   return(s1b1)
 }
 
-#Plot Speed-Accuracy tradeoffs----
+#Plot Speed-Accuracy tradeoffs (bin by MT)----
 
 plotSpeedAccuracyTradeoffs <- function(target='inline') {
   
@@ -348,8 +348,136 @@ plotSpeedAccuracyTradeoffs <- function(target='inline') {
   
 }
 
+#Session 1-----
+getLapTimeandAccuracy <- function(){
+  #start with movement time
+  mtdat <- getAllTrackGroupLap()
+  
+  #get the first and last block of 30 trials, remove first trial of every block
+  b1trials <- c(2:30)
+  b2trials <- c(272:300)
+  mtb1 <- mtdat[b1trials,]
+  mtb2 <- mtdat[b2trials,]
+  
+  #block 1 lap times, day 1
+  blockdefs <- list('b1' = c(2:6), 'b2' = c(7:12), 'b3' = c(13:18), 'b4' = c(19:24), 'b5' = c(25:30))
+  
+  mtb1_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- mtb1[which(mtb1$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(mtb1_trialave)) == 0){
+      mtb1_trialave <- trialave
+    } else {
+      mtb1_trialave <- rbind(mtb1_trialave, trialave)
+    }
+  }
+  mtb1_trialave <- as.data.frame(mtb1_trialave)
+  
+  
+  #block last lap times, day 1
+  blockdefs <- list('b1' = c(272:276), 'b2' = c(277:282), 'b3' = c(283:288), 'b4' = c(289:294), 'b5' = c(295:300))
+  
+  mtb2_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- mtb2[which(mtb2$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(mtb2_trialave)) == 0){
+      mtb2_trialave <- trialave
+    } else {
+      mtb2_trialave <- rbind(mtb2_trialave, trialave)
+    }
+  }
+  mtb2_trialave <- as.data.frame(mtb2_trialave)
+  
+  #then we add accuracy to the data frame
+  accdat <- getAllTrackGroupAccuracy()
+  accb1 <- accdat[b1trials,]
+  accb2 <- accdat[b2trials,]
+  
+  #block 1 lap times, day 1
+  blockdefs <- list('b1' = c(2:6), 'b2' = c(7:12), 'b3' = c(13:18), 'b4' = c(19:24), 'b5' = c(25:30))
+  
+  accb1_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- accb1[which(accb1$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(accb1_trialave)) == 0){
+      accb1_trialave <- trialave
+    } else {
+      accb1_trialave <- rbind(accb1_trialave, trialave)
+    }
+  }
+  accb1_trialave <- as.data.frame(accb1_trialave)
+  
+  #block last lap times, day 1
+  blockdefs <- list('b1' = c(272:276), 'b2' = c(277:282), 'b3' = c(283:288), 'b4' = c(289:294), 'b5' = c(295:300))
+  
+  accb2_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- accb2[which(accb2$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(accb2_trialave)) == 0){
+      accb2_trialave <- trialave
+    } else {
+      accb2_trialave <- rbind(accb2_trialave, trialave)
+    }
+  }
+  accb2_trialave <- as.data.frame(accb2_trialave)
+  
+  outdat <- list('mtb1'=mtb1_trialave, 'mtb2'=mtb2_trialave, 'accb1'=accb1_trialave, 'accb2'=accb2_trialave)
+  
+  return(outdat)
+  
+}
 
-
+getLapTimeandAccuracyCI <- function(type = 'b'){
+  
+  data <- getLapTimeandAccuracy()
+  
+  for(subdat in c(1:length(data))){
+    confidence <- data.frame()
+    blocksubdat <- data[[subdat]]
+    for(t in c(1:nrow(data[[subdat]]))){
+      block <- as.numeric(blocksubdat[t, ])
+      if (type == "t"){
+        block <- block[!is.na(block)]
+        citrial <- getConfidenceInterval(data = block, variance = var(block), method = type)
+      } else if(type == "b"){
+        citrial <- getConfidenceInterval(data = block, variance = var(block), method = type)
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      
+    }
+    if(subdat == 1){
+      write.csv(confidence, file='data/SAFCI_LapTime_FirstBlock_S001.csv', row.names = F) 
+    } else if (subdat == 2){
+      write.csv(confidence, file='data/SAFCI_LapTime_LastBlock_S001.csv', row.names = F) 
+    } else if (subdat == 3){
+      write.csv(confidence, file='data/SAFCI_Accuracy_FirstBlock_S001.csv', row.names = F) 
+    } else if (subdat == 4){
+      write.csv(confidence, file='data/SAFCI_Accuracy_LastBlock_S001.csv', row.names = F) 
+    }
+    
+  }
+}
 
 
 
