@@ -479,15 +479,244 @@ getLapTimeandAccuracyCI <- function(type = 'b'){
   }
 }
 
+#Session 2----
+getS2LapTimeandAccuracy <- function(){
+  #start with movement time
+  mtdat <- getS2AllTrackGroupLap()
+  
+  #get the first and last block of 30 trials, remove first trial of every block
+  # b1trials <- c(2:30)
+  # b2trials <- c(272:300)
+  # mtb1 <- mtdat[b1trials,]
+  # mtb2 <- mtdat[b2trials,]
+  
+  #block lap times, day 2
+  blockdefs <- list('b1' = c(2:6), 'b2' = c(25:30), 
+                    'b3' = c(32:36), 'b4' = c(55:60), 
+                    'b5' = c(62:66), 'b6' = c(85:90), 
+                    'b7' = c(92:96), 'b8' = c(115:120))
+  
+  mtb1_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- mtdat[which(mtdat$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(mtb1_trialave)) == 0){
+      mtb1_trialave <- trialave
+    } else {
+      mtb1_trialave <- rbind(mtb1_trialave, trialave)
+    }
+  }
+  mtb1_trialave <- as.data.frame(mtb1_trialave)
+  
+  
+  
+  #then we add accuracy to the data frame
+  accdat <- getS2AllTrackGroupAccuracy()
+  
+  #block accuracy, day 2
+  blockdefs <- list('b1' = c(2:6), 'b2' = c(25:30), 
+                    'b3' = c(32:36), 'b4' = c(55:60), 
+                    'b5' = c(62:66), 'b6' = c(85:90), 
+                    'b7' = c(92:96), 'b8' = c(115:120))
+  
+  accb1_trialave <- data.frame()
+  for(block in c(1:length(blockdefs))){
+    trials <- blockdefs[[block]]
+    ndat <- accdat[which(accdat$trial %in% trials),]
+    ndat <- ndat[,2:ncol(ndat)]
+    trialave <- as.numeric(colMeans(ndat)) #mean across trials per participant
+    
+    if (prod(dim(accb1_trialave)) == 0){
+      accb1_trialave <- trialave
+    } else {
+      accb1_trialave <- rbind(accb1_trialave, trialave)
+    }
+  }
+  accb1_trialave <- as.data.frame(accb1_trialave)
+  
+  outdat <- list('mtS2'=mtb1_trialave, 'accS2'=accb1_trialave)
+  
+  return(outdat)
+  
+}
 
+getS2LapTimeandAccuracyCI <- function(type = 'b'){
+  
+  data <- getS2LapTimeandAccuracy()
+  
+  for(subdat in c(1:length(data))){
+    confidence <- data.frame()
+    blocksubdat <- data[[subdat]]
+    for(t in c(1:nrow(data[[subdat]]))){
+      block <- as.numeric(blocksubdat[t, ])
+      if (type == "t"){
+        block <- block[!is.na(block)]
+        citrial <- getConfidenceInterval(data = block, variance = var(block), method = type)
+      } else if(type == "b"){
+        citrial <- getConfidenceInterval(data = block, variance = var(block), method = type)
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      
+    }
+    if(subdat == 1){
+      write.csv(confidence, file='data/SAFCI_LapTime_AllBlocks_S002.csv', row.names = F) 
+    } else if (subdat == 2){
+      write.csv(confidence, file='data/SAFCI_Accuracy_AllBlocks_S002.csv', row.names = F)
+      
+    }
+  }
+}
 
+#Plot Speed-Accuracy tradeoffs (bin by trials/blocks)----
 
+plotSAF <- function(target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig11_SAFbyTrial_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  plot(NA, NA, xlim = c(2,9), ylim = c(90, 101), 
+       xlab = "Lap time (s)", ylab = "Accuracy (% on track)", frame.plot = FALSE, #frame.plot takes away borders
+       main = 'Speed-accuracy tradeoffs', xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5)) #tick marks for x axis
+  axis(2, at = c(90, 92, 93, 94, 95, 96, 97, 98, 99, 100), las=2) #tick marks for y axis
+  
+  
+  #read in files created by CI function
+  s1b1_laptime <- read.csv(file='data/SAFCI_LapTime_FirstBlock_S001.csv')
+  s1b1_accuracy <- read.csv(file='data/SAFCI_Accuracy_FirstBlock_S001.csv')
+  
+  s1b2_laptime <- read.csv(file='data/SAFCI_LapTime_LastBlock_S001.csv')
+  s1b2_accuracy <- read.csv(file='data/SAFCI_Accuracy_LastBlock_S001.csv')
+  
+  s2ball_laptime <- read.csv(file='data/SAFCI_LapTime_AllBlocks_S002.csv')
+  s2ball_accuracy <- read.csv(file='data/SAFCI_Accuracy_AllBlocks_S002.csv')
+  
+  
+  #session 1, first block
+  for(i in c(1:nrow(s1b1_laptime))){
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=1)
+    subdat_laptime <- s1b1_laptime[i,]
+    subdat_accuracy <- s1b1_accuracy[i,]
+    col <- colourscheme[[i]][['S']]
+    points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
+    col <- colourscheme[[i]][['T']]
+    #accuracy CI
+    lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
+    #laptime CI
+    lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
+  }
+  
+  #session 1, last block
+  colourscheme <- getAllTrackSession1ColourScheme(blocks = 6)
+  i <- nrow(s1b2_laptime)
+  subdat_laptime <- s1b2_laptime[i,]
+  subdat_accuracy <- s1b2_accuracy[i,]
+  col <- colourscheme[[6]][['S']]
+  points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
+  col <- colourscheme[[6]][['T']]
+  #accuracy CI
+  lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
+  #laptime CI
+  lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
+  
+  
+  #session 2
+  for(i in c(1:nrow(s2ball_laptime))){
+    colourscheme <- getSAFS2ColourScheme(blocks=i)
+    subdat_laptime <- s2ball_laptime[i,]
+    subdat_accuracy <- s2ball_accuracy[i,]
+    col <- colourscheme[[i]][['S']]
+    points(subdat_laptime$X50., subdat_accuracy$X50.,pch=15,cex=1.5,col=col)
+    col <- colourscheme[[i]][['T']]
+    #accuracy CI
+    lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
+    #laptime CI
+    lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
+  }
+  
+  
+  
+  
+  #add legend
+  colourscheme <- getAllTrackSession1ColourScheme()
+  legend(6.5,98,
+         legend=c('day 1: trial sets 1-5', 'day 1: last trial set'),
+         col=c(colourscheme[[1]][['S']],colourscheme[[6]][['S']]),
+         bty='n',cex=1,pch = 16)
+  
+  
+  colourscheme <- getSAFS2ColourScheme()
+  legend(6.5,96,
+         legend=c('day 2, block 1: first trial set', 'day 2, block 1: last trial set',
+                  'day 2, block 2: first trial set', 'day 2, block 2: last trial set',
+                  'day 2, block 3: first trial set', 'day 2, block 3: last trial set',
+                  'day 2, block 4: first trial set', 'day 2, block 4: last trial set'),
+         col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']],
+               colourscheme[[3]][['S']],colourscheme[[4]][['S']],
+               colourscheme[[5]][['S']],colourscheme[[6]][['S']],
+               colourscheme[[7]][['S']],colourscheme[[8]][['S']]),
+         bty='n',cex=1,pch = 15, ncol=1)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
 
-
-
-
-
-
+#plot trial 2 and trial 300 for day 1 (individual data)----
+plotIndividualLapTimeandAccuracy <- function(target='inline'){
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/Fig12_SAFDay1_firstvslasttrial_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  #start with movement time
+  mtdat <- getAllTrackGroupLap()
+  
+  #get trials 2 and 300
+  trial2mt <- as.numeric(mtdat[2,c(2:ncol(mtdat))])
+  trial300mt <- as.numeric(mtdat[300,c(2:ncol(mtdat))])
+  
+  #then we add accuracy
+  accdat <- getAllTrackGroupAccuracy()
+  
+  trial2acc <- as.numeric(accdat[2,c(2:ncol(accdat))])
+  trial300acc <- as.numeric(accdat[300,c(2:ncol(accdat))])
+  
+  plot(NA, NA, xlim = c(2,14), ylim = c(70, 101), 
+       xlab = "Lap time (s)", ylab = "Accuracy (% on track)", frame.plot = FALSE, #frame.plot takes away borders
+       main = 'Speed-accuracy tradeoffs', xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(2, 4, 6, 8, 10, 12, 14)) #tick marks for x axis
+  axis(2, at = c(70, 75, 80, 85, 90, 92, 93, 94, 95, 96, 97, 98, 99, 100), las=2) #tick marks for y axis
+  points(trial2mt, trial2acc, col = 'red', pch=16)
+  points(trial300mt, trial300acc, col='blue', pch=16)
+  
+  legend(10,80,
+         legend=c('day 1: trial 2', 'day 1: trial 300'),
+         col=c('red','blue'),
+         bty='n',cex=1,pch = 16)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
 
 
 
