@@ -286,14 +286,14 @@ plotAllTrackPL <- function(session = 1, target='inline') {
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(1, 15, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
+  axis(1, at = c(1, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
   axis(2, at = c(45, 50, 55, 60), las=2) #tick marks for y axis
   
   
   #read in files created by CI function
   groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
   
-  colourscheme <- getAllTrackSession1ColourScheme()
+  colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
   upper <- groupconfidence[,3]
@@ -513,7 +513,7 @@ plotS2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') 
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
+  axis(1, at = c(1, 30, 60, 90, 120)) #tick marks for x axis
   axis(2, at = c(45, 50, 55, 60), las=2) #tick marks for y axis
   
   

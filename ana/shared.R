@@ -115,11 +115,11 @@ getAllTrackSession2ColourScheme <- function(blocks = c(1,2,3,4)){
   return(colourscheme)
 }
 
-getAllTrackSessionEndColourScheme <- function(){
+getAllTrackDayOneColourScheme <- function(){
   #create a list containing the colourscheme per group
   
-  colourscheme <- list('S'='#c400c4ff', #strong magenta
-                       'T'='#c400c42f')
+  colourscheme <- list('S'='#e51636ff', #vivid/ york red
+                       'T'='#e516362f')
   
   return(colourscheme)
 }

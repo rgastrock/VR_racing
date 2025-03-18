@@ -265,18 +265,18 @@ plotAllTrackLapTime <- function(session = 1, target='inline') {
   
   # create plot
   #NA to create empty plot
-  plot(NA, NA, xlim = c(0,301), ylim = c(0, 15), 
+  plot(NA, NA, xlim = c(0,301), ylim = c(0, 13), 
        xlab = "Trial", ylab = "Lap time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Lap time across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(1, 15, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
-  axis(2, at = c(0, 2, 4, 6, 8, 10, 12, 14), las=2) #tick marks for y axis
+  axis(1, at = c(1, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10, 12), las=2) #tick marks for y axis
   
   
   #read in files created by CI function
   groupconfidence <- read.csv(file=sprintf('data/LapTimeCI_AllTrack_S%03d.csv', session))
   
-  colourscheme <- getAllTrackSession1ColourScheme()
+  colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
   upper <- groupconfidence[,3]
@@ -492,12 +492,12 @@ plotS2AllTrackLapTime <- function(session = 2, blocks = c(1,2,3,4), target='inli
   
   # create plot
   #NA to create empty plot
-  plot(NA, NA, xlim = c(0,121), ylim = c(0, 7), 
+  plot(NA, NA, xlim = c(0,121), ylim = c(0, 13), 
        xlab = "Trial", ylab = "Lap time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Lap time across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
-  axis(2, at = c(0, 2, 4, 6), las=2) #tick marks for y axis
+  axis(1, at = c(1, 30, 60, 90, 120)) #tick marks for x axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10, 12), las=2) #tick marks for y axis
   
   
   #read in files created by CI function
@@ -565,7 +565,7 @@ plotS2AllTrackLapTime <- function(session = 2, blocks = c(1,2,3,4), target='inli
   colb2 <- getAllTrackSession2ColourScheme(blocks=2)
   colb3 <- getAllTrackSession2ColourScheme(blocks=3)
   colb4 <- getAllTrackSession2ColourScheme(blocks=4)
-  legend(70,2,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+  legend(70,12,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
          col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   

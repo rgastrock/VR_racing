@@ -618,6 +618,7 @@ plotSAF <- function(target='inline') {
     lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
     #laptime CI
     lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
+    #text(subdat_laptime$X50., subdat_accuracy$X50.)
   }
   
   #session 1, last block
