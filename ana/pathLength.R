@@ -106,6 +106,172 @@ getParticipantTrajectory <- function(group, id, session) {
   
 }
 
+getParticipantInOutPL <- function(group, id, session) {
+  
+  filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
+  df <- read.csv(filepath, stringsAsFactors = F)
+  
+  #setup relevant vectors
+  trialno <- c()
+  participant <- c()
+  session <- c()
+  group <- c()
+  track_orientation <- c()
+  path_length_in <- c()
+  path_length_out <- c()
+  
+  for (trial in c(1:dim(df)[1])) {
+    #print(trial)
+    trial_num <- df$trial_num[trial]
+    pp <- df$ppid[trial]
+    session_num <- df$session_num[trial]
+    group_cond <- df$experiment[trial]
+    orientation <- df$Track_orientation[trial]
+    
+    #unpack data into its own cell
+    x_m <- convertCellToNumVector(df$cursor_path_x[trial])
+    z_m <- convertCellToNumVector(df$cursor_path_z[trial])
+    t_m <- convertCellToNumVector(df$cursor_pathTime[trial])
+    in_m <- convertCellToNumVector(df$Enter_track_Time[trial])
+    out_m <- convertCellToNumVector(df$Exit_track_time[trial])
+    
+    #convert meters to screen cm for x and z positions
+    x <- (x_m * 62)/ 36
+    z <- (z_m * 62)/ 36
+    trackloc <- 'in'
+    idx <- c(1:length(x))
+    
+    trialdat <- data.frame(idx, x, z, t_m, trackloc)
+    
+    #match timepts they go out of track
+    if(length(out_m) == 0){
+      #get total path length
+      
+      ndat_all <- data.frame()
+      for (samp in c(2:nrow(trialdat))){ #start with second sample, since first will calculate a difference from origin
+        sampx <- trialdat$x[samp] - trialdat$x[samp-1]
+        sampz <- trialdat$z[samp] - trialdat$z[samp-1]
+        absvec <- sqrt(((sampx)^2)+((sampz)^2))
+        
+        if (prod(dim(ndat_all)) == 0){
+          ndat_all <- absvec
+        } else {
+          ndat_all <- rbind(ndat_all, absvec)
+        }
+        
+      }
+      PL_all<- sum(ndat_all[1:length(ndat_all)])
+      PL_in <- PL_all
+      PL_out <- 0
+      
+    } else{
+      ndat_trackloc <- data.frame()
+      for(trackloc in c(1:length(out_m))){
+        
+        timepts <- c(out_m[trackloc], in_m[trackloc])
+        if(is.na(timepts[2])){
+          timepts[2] <- trialdat$t_m[length(trialdat$t_m)]
+        }
+        timepts <- as.data.frame(matrix(data=timepts, ncol=2, byrow=T))
+        if (prod(dim(ndat_trackloc)) == 0){
+          ndat_trackloc <- timepts
+        } else {
+          ndat_trackloc <- rbind(ndat_trackloc, timepts)
+        }
+      }
+      
+      #assign in or out labels for each timept
+      for(n in c(1:nrow(ndat_trackloc))){
+        
+        limits <- c(ndat_trackloc[n,])
+        time_idx <- trialdat[which(trialdat$t_m == limits[1]):which(trialdat$t_m == limits[2]),]
+        time_idx$trackloc <- 'out'
+        trialdat[which(trialdat$t_m == limits[1]):which(trialdat$t_m == limits[2]),] <- time_idx
+      }
+      
+      #get path length for out
+      ndat_out <- data.frame()
+      subdat <- trialdat[which(trialdat$trackloc == 'out'),]
+      out_idx <- subdat$idx
+      breaks <- c(1,which(diff(out_idx) != 1))
+      
+      for(i in c(1:length(breaks))){
+        if(i == 1 && i == length(breaks)){
+          start_idx <- breaks[i]
+          end_idx <- length(out_idx)
+        } else if (i == 1) {
+          start_idx <- breaks[i]
+          end_idx <- breaks[i+1]
+        } else if (i == length(breaks)) {
+          start_idx <- breaks[i] + 1
+          end_idx <- length(out_idx)
+        } else {
+          start_idx <- breaks[i] + 1
+          end_idx <- breaks[i+1]
+        }
+        
+        
+        newdf<- subdat[start_idx:end_idx,]
+        if(nrow(newdf) == 1){
+          absvec <- 0 #since it is just a single sample
+          if (prod(dim(ndat_out)) == 0){
+            ndat_out <- absvec
+          } else {
+            ndat_out <- rbind(ndat_out, absvec)
+          }
+        } else {
+          for(samp in c(2:nrow(newdf))){ #start with second sample, since first will calculate a difference from origin
+            sampx <- newdf$x[samp] - newdf$x[samp-1]
+            sampz <- newdf$z[samp] - newdf$z[samp-1]
+            absvec <- sqrt(((sampx)^2)+((sampz)^2))
+            
+            if (prod(dim(ndat_out)) == 0){
+              ndat_out <- absvec
+            } else {
+              ndat_out <- rbind(ndat_out, absvec)
+            }
+          }
+        }
+        
+      }
+      
+      PL_out <- sum(ndat_out[1:length(ndat_out)])
+      
+      #get total path length
+      
+      ndat_all <- data.frame()
+      for (samp in c(2:nrow(trialdat))){ #start with second sample, since first will calculate a difference from origin
+        sampx <- trialdat$x[samp] - trialdat$x[samp-1]
+        sampz <- trialdat$z[samp] - trialdat$z[samp-1]
+        absvec <- sqrt(((sampx)^2)+((sampz)^2))
+        
+        if (prod(dim(ndat_all)) == 0){
+          ndat_all <- absvec
+        } else {
+          ndat_all <- rbind(ndat_all, absvec)
+        }
+        
+      }
+      PL_all<- sum(ndat_all[1:length(ndat_all)])
+      PL_in <- PL_all - PL_out #get in track path length
+      
+    }
+    
+    trialno <- c(trialno, trial_num)
+    participant <- c(participant, pp)
+    session <- c(session, session_num)
+    group <- c(group, group_cond)
+    track_orientation <- c(track_orientation, orientation)
+    path_length_in <- c(path_length_in, PL_in)    
+    path_length_out <- c(path_length_out, PL_out) 
+    
+  }
+  
+  ppdata <- data.frame(trialno, participant, session, group, track_orientation, path_length_in, path_length_out)
+  return(ppdata)
+  
+}
+
 #Session 1----
 getGroupPL <- function(group, session){
   
@@ -318,6 +484,69 @@ plotAllTrackPL <- function(session = 1, target='inline') {
   #close everything if you saved plot as svg
   if (target=='svg') {
     dev.off()
+  }
+  
+}
+
+# Session 1: PL IN vs OUT----
+
+getGroupInOutPL <- function(group, session, trackloc){
+  
+  # exlude participants due to experiment problems
+  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
+  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
+  
+  dataoutput <- data.frame()
+  for(pp in pp_group){
+    ppdat <- getParticipantInOutPL(group = group, id = pp, session = session)
+    trial <- ppdat$trialno
+    
+    if(trackloc == 'in'){
+      pathlength_in <- ppdat$path_length_in
+      ppdat_in <- data.frame(trial, pathlength_in)
+      names(ppdat_in)[names(ppdat_in) == 'pathlength_in'] <- pp
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat_in
+      } else {
+        dataoutput <- cbind(dataoutput, pathlength_in)
+        names(dataoutput)[names(dataoutput) == 'pathlength_in'] <- pp
+      }
+    } else if (trackloc == 'out'){
+      pathlength_out <- ppdat$path_length_out
+      ppdat_out <- data.frame(trial, pathlength_out)
+      names(ppdat_out)[names(ppdat_out) == 'pathlength_out'] <- pp
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat_out
+      } else {
+        dataoutput <- cbind(dataoutput, pathlength_out)
+        names(dataoutput)[names(dataoutput) == 'pathlength_out'] <- pp
+      }
+    }
+  }
+  return(dataoutput)
+}
+
+getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, trackloc = 'in'){
+  
+  alldata <- data.frame()
+  
+  for(group in groups){
+    data <- getGroupInOutPL(group = group, session = session, trackloc = trackloc)
+    trial <- data$trial
+    data1 <- as.matrix(data[,2:(dim(data)[2])])
+    
+    if (prod(dim(alldata)) == 0){
+      alldata <- data1
+    } else {
+      alldata <- cbind(alldata, data1)
+    }
+  }
+  ndat <- data.frame(trial, alldata)
+  if(trackloc == 'in'){
+    write.csv(ndat, file=sprintf('data/PathLength_IN_AllTrack_S%03d.csv', session), row.names = F) 
+  } else if (trackloc == 'out'){
+    write.csv(ndat, file=sprintf('data/PathLength_OUT_AllTrack_S%03d.csv', session), row.names = F) 
   }
   
 }
