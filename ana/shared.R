@@ -134,27 +134,27 @@ getSAFS2ColourScheme <- function(blocks = c(1,2,3,4,5,6,7,8)){
                          'T'='#e516362f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[2]] <- list('S'=alpha('#e51636ff', 0.6), #vivid/york red
+    colourscheme[[2]] <- list('S'=alpha('#e51636ff', 0.5), #vivid/york red
                          'T'='#e516362f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[3]] <- list('S'=alpha('#ff8200ff', 0.5), #orange
+    colourscheme[[3]] <- list('S'=alpha('#ff8200ff', 1), #orange
                          'T'='#ff82002f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[4]] <- list('S'=alpha('#ff8200ff', 0.85), #orange
+    colourscheme[[4]] <- list('S'=alpha('#ff8200ff', 1), #orange
                          'T'='#ff82002f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[5]] <- list('S'=alpha('#005de4ff', 0.5), #blue
+    colourscheme[[5]] <- list('S'=alpha('#005de4ff', 1), #blue
                          'T'='#005de42f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[6]] <- list('S'=alpha('#005de4ff', 0.85), #blue
+    colourscheme[[6]] <- list('S'=alpha('#005de4ff', 1), #blue
                          'T'='#005de42f')
     
     #create a list containing the colourscheme per group
-    colourscheme[[7]] <- list('S'=alpha('#e51636ff', 0.85), #vivid/york red
+    colourscheme[[7]] <- list('S'=alpha('#e51636ff', 1), #vivid/york red
                          'T'='#e516362f')
     
     #create a list containing the colourscheme per group

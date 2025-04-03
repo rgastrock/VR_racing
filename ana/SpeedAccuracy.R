@@ -582,17 +582,17 @@ plotSAF <- function(target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig11_SAFbyTrial_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig11_SAFbyTrial_AllTrack.svg', width=7, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
   #NA to create empty plot
-  plot(NA, NA, xlim = c(2,9), ylim = c(90, 101), 
+  plot(NA, NA, xlim = c(2,6.6), ylim = c(90, 101), 
        xlab = "Lap time (s)", ylab = "Accuracy (% on track)", frame.plot = FALSE, #frame.plot takes away borders
-       main = 'Speed-accuracy tradeoffs', xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+       main = 'Speed-accuracy across training', xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5)) #tick marks for x axis
-  axis(2, at = c(90, 92, 93, 94, 95, 96, 97, 98, 99, 100), las=2) #tick marks for y axis
+  axis(2, at = c(90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), las=2) #tick marks for y axis
   
   
   #read in files created by CI function
@@ -613,6 +613,7 @@ plotSAF <- function(target='inline') {
     subdat_accuracy <- s1b1_accuracy[i,]
     col <- colourscheme[[i]][['S']]
     points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
+    text(subdat_laptime$X50., subdat_accuracy$X50.,labels=i,cex=0.6,col='white')
     col <- colourscheme[[i]][['T']]
     #accuracy CI
     lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
@@ -628,6 +629,7 @@ plotSAF <- function(target='inline') {
   subdat_accuracy <- s1b2_accuracy[i,]
   col <- colourscheme[[6]][['S']]
   points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
+  text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
   col <- colourscheme[[6]][['T']]
   #accuracy CI
   lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
@@ -642,6 +644,12 @@ plotSAF <- function(target='inline') {
     subdat_accuracy <- s2ball_accuracy[i,]
     col <- colourscheme[[i]][['S']]
     points(subdat_laptime$X50., subdat_accuracy$X50.,pch=15,cex=1.5,col=col)
+    if(i %% 2 == 1){
+      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
+    } else if(i %% 2 == 0){
+      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=2,cex=0.6,col='white')
+    }
+    
     col <- colourscheme[[i]][['T']]
     #accuracy CI
     lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
@@ -654,23 +662,23 @@ plotSAF <- function(target='inline') {
   
   #add legend
   colourscheme <- getAllTrackSession1ColourScheme()
-  legend(6.5,98,
-         legend=c('day 1: trial sets 1-5', 'day 1: last trial set'),
+  legend(2.5,101.5,
+         legend=c('1st block', 'last block'),
          col=c(colourscheme[[1]][['S']],colourscheme[[6]][['S']]),
-         bty='n',cex=1,pch = 16)
+         bty='n',cex=1,pch = 16, title='day 1')
   
   
   colourscheme <- getSAFS2ColourScheme()
-  legend(6.5,96,
-         legend=c('day 2, block 1: first trial set', 'day 2, block 1: last trial set',
-                  'day 2, block 2: first trial set', 'day 2, block 2: last trial set',
-                  'day 2, block 3: first trial set', 'day 2, block 3: last trial set',
-                  'day 2, block 4: first trial set', 'day 2, block 4: last trial set'),
-         col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']],
-               colourscheme[[3]][['S']],colourscheme[[4]][['S']],
-               colourscheme[[5]][['S']],colourscheme[[6]][['S']],
-               colourscheme[[7]][['S']],colourscheme[[8]][['S']]),
-         bty='n',cex=1,pch = 15, ncol=1)
+  legend(4.15,101.5,
+         legend=c('1st block',
+                  '2nd block',
+                  '3rd block',
+                  'last block'),
+         col=c(colourscheme[[1]][['S']],
+               colourscheme[[3]][['S']],
+               colourscheme[[5]][['S']],
+               colourscheme[[7]][['S']]),
+         bty='n',cex=1,pch = 15, ncol=2, title = 'day 2')
   
   #close everything if you saved plot as svg
   if (target=='svg') {

@@ -184,9 +184,14 @@ getParticipantInOutPL <- function(group, id, session) {
       for(n in c(1:nrow(ndat_trackloc))){
         
         limits <- c(ndat_trackloc[n,])
-        time_idx <- trialdat[which(trialdat$t_m == limits[1]):which(trialdat$t_m == limits[2]),]
+        #can raise warnings:
+        #In at least one participant, many samples have the same time recorded (T-RACING_270, pp 47)
+        #line below will raise warnings, since time indexed will have mutliple values
+        #but it always chooses the first sample, which is what is correct
+        #add [1] to remove warnings
+        time_idx <- trialdat[which(trialdat$t_m == limits[1])[1]:which(trialdat$t_m == limits[2])[1],]
         time_idx$trackloc <- 'out'
-        trialdat[which(trialdat$t_m == limits[1]):which(trialdat$t_m == limits[2]),] <- time_idx
+        trialdat[which(trialdat$t_m == limits[1])[1]:which(trialdat$t_m == limits[2])[1],] <- time_idx
       }
       
       #get path length for out
@@ -213,7 +218,7 @@ getParticipantInOutPL <- function(group, id, session) {
         
         newdf<- subdat[start_idx:end_idx,]
         if(nrow(newdf) == 1){
-          absvec <- 0 #since it is just a single sample
+          absvec <- NA #since it is just a single sample
           if (prod(dim(ndat_out)) == 0){
             ndat_out <- absvec
           } else {
@@ -527,7 +532,7 @@ getGroupInOutPL <- function(group, session, trackloc){
   return(dataoutput)
 }
 
-getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, trackloc = 'in'){
+getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, trackloc = 'out'){
   
   alldata <- data.frame()
   
@@ -544,13 +549,102 @@ getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-
   }
   ndat <- data.frame(trial, alldata)
   if(trackloc == 'in'){
-    write.csv(ndat, file=sprintf('data/PathLength_IN_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
   } else if (trackloc == 'out'){
-    write.csv(ndat, file=sprintf('data/PathLength_OUT_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
   }
   
 }
 
+getAllTrackGroupInOutPLCI <- function(session = 1, type = 'b', trackloc = 'out'){
+  
+  #data <- getAllTrackGroupInOutPL(session = session, trackloc = trackloc)
+  data <- read.csv(file=sprintf('data/PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
+  trialno <- data$trial
+  data1 <- as.matrix(data[,2:(dim(data)[2])])
+  
+  confidence <- data.frame()
+  
+  
+  for (t in trialno){
+    laptime <- data1[t, ]
+    
+    if (type == "t"){
+      laptime <- laptime[!is.na(laptime)]
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    } else if(type == "b"){
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+  }
+  write.csv(confidence, file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
+  
+}
+
+plotAllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file=sprintf('doc/fig/Fig13_PathLength_%s_AllTrack.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  if(trackloc == 'out'){
+    plot(NA, NA, xlim = c(0,301), ylim = c(0, 12), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(1, at = c(1, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
+    axis(2, at = c(1, 2,4,6,8,10,12), las=2) #tick marks for y axis
+  } else if(trackloc == 'in'){
+    plot(NA, NA, xlim = c(0,301), ylim = c(40, 71), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(1, at = c(1, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
+    axis(2, at = c(40, 45, 50, 55, 60), las=2) #tick marks for y axis
+  }
+ 
+  
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  
+  colourscheme <- getAllTrackDayOneColourScheme()
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  col <- colourscheme[['T']]
+  
+  #upper and lower bounds create a polygon
+  #polygon creates it from low left to low right, then up right to up left -> use rev
+  #x is just trial nnumber, y depends on values of bounds
+  polygon(x = c(c(1:300), rev(c(1:300))), y = c(lower, rev(upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(mid,col=col,lty=1, lwd=2)
+  
+  
+  #add legend
+  # legend(200,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  #        col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
 
 #Session 2----
 
@@ -822,6 +916,219 @@ plotS2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') 
   
 }
 
+#Session 2: PL IN vs OUT----
+
+getS2GroupInOutPL <- function(group, session = 2, trackloc){
+  
+  # exlude participants due to experiment problems/ attrition
+  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
+  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
+  
+  noS2 <- c()
+  for(pp in pp_group){
+    pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
+    if(length(pp_session) < 2){
+      noS2 <- c(noS2, pp)
+    }
+  }
+  pp_group <- pp_group[which(!pp_group %in% noS2)]
+  
+  dataoutput <- data.frame()
+  for(pp in pp_group){
+    ppdat <- getParticipantInOutPL(group = group, id = pp, session = session)
+    trial <- ppdat$trialno
+    
+    if(trackloc == 'in'){
+      pathlength_in <- ppdat$path_length_in
+      ppdat_in <- data.frame(trial, pathlength_in)
+      names(ppdat_in)[names(ppdat_in) == 'pathlength_in'] <- pp
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat_in
+      } else {
+        dataoutput <- cbind(dataoutput, pathlength_in)
+        names(dataoutput)[names(dataoutput) == 'pathlength_in'] <- pp
+      }
+    } else if (trackloc == 'out'){
+      pathlength_out <- ppdat$path_length_out
+      ppdat_out <- data.frame(trial, pathlength_out)
+      names(ppdat_out)[names(ppdat_out) == 'pathlength_out'] <- pp
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat_out
+      } else {
+        dataoutput <- cbind(dataoutput, pathlength_out)
+        names(dataoutput)[names(dataoutput) == 'pathlength_out'] <- pp
+      }
+    }
+    
+  }
+  return(dataoutput)
+}
+
+getS2AllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, trackloc = 'out'){
+  
+  alldata <- data.frame()
+  
+  for(group in groups){
+    data <- getS2GroupInOutPL(group = group, session = session, trackloc = trackloc)
+    trial <- data$trial
+    data1 <- as.matrix(data[,2:(dim(data)[2])])
+    
+    if (prod(dim(alldata)) == 0){
+      alldata <- data1
+    } else {
+      alldata <- cbind(alldata, data1)
+    }
+  }
+  ndat <- data.frame(trial, alldata)
+  if(trackloc == 'in'){
+    write.csv(ndat, file=sprintf('data/PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
+  } else if (trackloc == 'out'){
+    write.csv(ndat, file=sprintf('data/PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
+  }
+  
+}
+
+getS2AllTrackGroupInOutPLCI <- function(session = 2, type = 'b', trackloc = 'out'){
+  
+  #data <- getAllTrackGroupInOutPL(session = session, trackloc = trackloc)
+  data <- read.csv(file=sprintf('data/PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
+  trialno <- data$trial
+  data1 <- as.matrix(data[,2:(dim(data)[2])])
+  
+  confidence <- data.frame()
+  
+  
+  for (t in trialno){
+    laptime <- data1[t, ]
+    
+    if (type == "t"){
+      laptime <- laptime[!is.na(laptime)]
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    } else if(type == "b"){
+      citrial <- getConfidenceInterval(data = laptime, variance = var(laptime), method = type)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+  }
+  write.csv(confidence, file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
+  
+}
+
+plotS2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2,3,4), trackloc = 'out') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file=sprintf('doc/fig/Fig14_PathLength_%s_AllTrack_S2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  if(trackloc == 'out'){
+    plot(NA, NA, xlim = c(0,121), ylim = c(0, 12), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    abline(v = c(30, 60, 90), col = 8, lty = 2)
+    axis(1, at = c(1, 30, 60, 90, 120)) #tick marks for x axis
+    axis(2, at = c(1, 2,4,6,8,10,12), las=2) #tick marks for y axis
+  } else if(trackloc == 'in'){
+    plot(NA, NA, xlim = c(0,121), ylim = c(40, 71), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    abline(v = c(30, 60, 90), col = 8, lty = 2)
+    axis(1, at = c(1, 30, 60, 90, 120)) #tick marks for x axis
+    axis(2, at = c(40, 45, 50, 55, 60), las=2) #tick marks for y axis
+  }
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  for(block in blocks){
+    if(block == 1){
+      b1Trials <- c(1:30)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 2){
+      b1Trials <- c(31:60)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 3){
+      b1Trials <- c(61:90)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 4){
+      b1Trials <- c(91:120)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    }
+  }
+  
+  #add legend
+  colb1 <- getAllTrackSession2ColourScheme(blocks=1)
+  colb2 <- getAllTrackSession2ColourScheme(blocks=2)
+  colb3 <- getAllTrackSession2ColourScheme(blocks=3)
+  colb4 <- getAllTrackSession2ColourScheme(blocks=4)
+  if(trackloc == 'out'){
+    legend(70,12,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+           col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+           lty=1,bty='n',cex=1,lwd=2)
+  } else {
+    legend(70,60,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+           col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+           lty=1,bty='n',cex=1,lwd=2)
+  }
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
 
 # CHECK: plot individual data----
 plotIndividualS2PL <- function(group, session = 2){
@@ -1023,6 +1330,78 @@ plotS1FirstLastPL <- function(session = 1, target='inline') {
   
 }
 
+plotS1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file=sprintf('doc/fig/Fig15_PathLength_%s_AllTrack_FirstLast.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  if(trackloc == 'in'){
+    plot(NA, NA, xlim = c(1,61), ylim = c(41, 51), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside trials: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    abline(v = c(30), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
+    axis(2, at = c(41, 43, 45, 47, 49, 51), las=2) #tick marks for y axis
+  } else if (trackloc == 'out'){
+    plot(NA, NA, xlim = c(1,61), ylim = c(0, 11), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside trials: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    abline(v = c(30), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
+    axis(2, at = c(0, 2, 4, 6, 8, 10), las=2) #tick marks for y axis
+  }
+  
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  
+  colourscheme <- getAllTrackDayOneColourScheme()
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  b1lower <- lower[2:30]
+  b2lower <- lower[272:300]
+  
+  upper <- groupconfidence[,3]
+  b1upper <- upper[2:30]
+  b2upper <- upper[272:300]
+  
+  mid <- groupconfidence[,2]
+  b1mid <- mid[2:30]
+  b2mid <- mid[272:300]
+  
+  col <- colourscheme[['T']]
+  
+  #first block
+  polygon(x = c(c(2:30), rev(c(2:30))), y = c(b1lower, rev(b1upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(x=c(2:30),y=b1mid,col=col,lty=1, lwd=2)
+  
+  col <- colourscheme[['T']]
+  #last block
+  polygon(x = c(c(32:60), rev(c(32:60))), y = c(b2lower, rev(b2upper)), border=NA, col=col)
+  # plot mean
+  col <- colourscheme[['S']]
+  lines(x=c(32:60),y=b2mid,col=col,lty=1, lwd=2)
+  
+  
+  #add legend
+  # legend(200,18,legend=c('track_0°', 'track_90°', 'track_180°', 'track_270°'),
+  #        col=c(colourscheme[['T-RACING_0']][['S']],colourscheme[['T-RACING_90']][['S']],colourscheme[['T-RACING_180']][['S']],colourscheme[['T-RACING_270']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
 plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
   
   
@@ -1117,6 +1496,116 @@ plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline')
   
 }
 
+plotS2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline', trackloc = 'out') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file=sprintf('doc/fig/Fig15_PathLength_%s_AllTrack_FirstLast_Session2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  #NA to create empty plot
+  if(trackloc == 'out'){
+    plot(NA, NA, xlim = c(0,121), ylim = c(0, 11), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    abline(v = c(30, 60, 90), col = 8, lty = 2)
+    axis(1, at = c(2, 30, 60, 90, 120)) #tick marks for x axis
+    axis(2, at = c(0,2,4,6,8,10), las=2) #tick marks for y axis
+  } else if(trackloc == 'in'){
+    plot(NA, NA, xlim = c(0,121), ylim = c(41, 51), 
+         xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    abline(v = c(30, 60, 90), col = 8, lty = 2)
+    axis(1, at = c(2, 30, 60, 90, 120)) #tick marks for x axis
+    axis(2, at = c(41, 43, 45, 47, 49, 51), las=2) #tick marks for y axis
+  }
+  
+  #read in files created by CI function
+  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  
+  #take only first, last and middle columns of file
+  lower <- groupconfidence[,1]
+  upper <- groupconfidence[,3]
+  mid <- groupconfidence[,2]
+  
+  for(block in blocks){
+    if(block == 1){
+      b1Trials <- c(2:30)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 2){
+      b1Trials <- c(32:60)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 3){
+      b1Trials <- c(62:90)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    } else if (block == 4){
+      b1Trials <- c(92:120)
+      lowCI <- lower[b1Trials]
+      upCI <- upper[b1Trials]
+      midCI <- mid[b1Trials]
+      
+      colourscheme <- getAllTrackSession2ColourScheme(blocks=block)
+      col <- colourscheme[['T']]
+      polygon(x = c(b1Trials, rev(b1Trials)), y = c(lowCI, rev(upCI)), border=NA, col=col)
+      # plot mean
+      col <- colourscheme[['S']]
+      lines(x = b1Trials,y = midCI,col=col,lty=1, lwd=2)
+    }
+  }
+  
+  #add legend
+  colb1 <- getAllTrackSession2ColourScheme(blocks=1)
+  colb2 <- getAllTrackSession2ColourScheme(blocks=2)
+  colb3 <- getAllTrackSession2ColourScheme(blocks=3)
+  colb4 <- getAllTrackSession2ColourScheme(blocks=4)
+  if(trackloc == 'out'){
+    legend(70,11,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+           col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+           lty=1,bty='n',cex=1,lwd=2)
+  } else {
+    legend(70,51,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+           col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
+           lty=1,bty='n',cex=1,lwd=2)
+  }
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
 plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
   #but we can save plot as svg file
@@ -1148,3 +1637,220 @@ plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
 }
 
+plotInOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc= 'out'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file=sprintf('doc/fig/Fig16_PathLength_%s_AllTrack_AllSessions.svg', trackloc), width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2), 1, 2, byrow = TRUE), widths=c(3,3), heights=c(1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1InOutFirstLastPL(trackloc = trackloc)
+  mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2InOutFirstLastPL(trackloc = trackloc)
+  mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+
+#CHECK: Path Length of track limits----
+getParticipantTrackLimitsPL <- function(group, id, session) {
+  
+  filepath <- sprintf('data/track_limits/%s/%s/S%03d/trial_results.csv', group, id, session)
+  df <- read.csv(filepath, stringsAsFactors = F)
+  
+  #setup relevant vectors
+  trialno <- c()
+  participant <- c()
+  session <- c()
+  group <- c()
+  track_orientation <- c()
+  path_length_in <- c()
+  path_length_out <- c()
+  
+  for (trial in c(1:dim(df)[1])) {
+    #print(trial)
+    trial_num <- df$trial_num[trial]
+    pp <- df$ppid[trial]
+    session_num <- df$session_num[trial]
+    group_cond <- df$experiment[trial]
+    orientation <- df$Track_orientation[trial]
+    
+    #unpack data into its own cell
+    x_inner <- convertCellToNumVector(df$inner.track.point_x[trial])
+    z_inner <- convertCellToNumVector(df$inner.track.point_z[trial])
+    x_centre <- convertCellToNumVector(df$centre.track.point_x[trial])
+    z_centre <- convertCellToNumVector(df$centre.track.point_z[trial])
+    x_outer <- convertCellToNumVector(df$outer.track.point_x[trial])
+    z_outer <- convertCellToNumVector(df$outer.track.point_z[trial])
+    
+    x_m <- convertCellToNumVector(df$cursor_path_x[trial])
+    z_m <- convertCellToNumVector(df$cursor_path_z[trial])
+    
+    #convert meters to screen cm for x and z positions
+    x_in <- (x_inner * 62)/ 36
+    z_in <- (z_inner * 62)/ 36
+    x_cen <- (x_centre * 62)/ 36
+    z_cen <- (z_centre * 62)/ 36
+    x_out <- (x_outer * 62)/ 36
+    z_out <- (z_outer * 62)/ 36
+    
+    x <- (x_m * 62)/ 36
+    z <- (z_m * 62)/ 36
+    
+    plot(NA, NA, xlim = c(-11,11), ylim = c(-11, 11), 
+         xlab = "", ylab = "", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("Trial %s trajectory", trial), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(1, at = c(-10, -5, 0, 5, 10)) #tick marks for x axis
+    axis(2, at = c(-10, -5, 0, 5, 10), las=2) #tick marks for y axis
+    
+    lines(x_in, z_in, col='red')
+    lines(x_cen, z_cen, col='green')
+    lines(x_out, z_out, col='red')
+    points(x,z, col='blue')
+    
+    # 0 degree track orientation - remove pit stop samples
+    points(x_cen[c(1:141, 183:344)],z_cen[c(1:141, 183:344)], col='orange')
+    points(x_in[c(1:141, 183:344)],z_in[c(1:141, 183:344)], col='orange')
+    points(x_out[c(1:141, 183:344)],z_out[c(1:141, 183:344)], col='orange')
+    
+    x_cen_1 <- x_cen[c(1:141)]
+    z_cen_1 <- z_cen[c(1:141)]
+    x_in_1 <- x_in[c(1:141)]
+    z_in_1 <- z_in[c(1:141)]
+    x_out_1 <- x_out[c(1:141)]
+    z_out_1 <- z_out[c(1:141)]
+    
+    x_cen_2 <- x_cen[c(183:344)]
+    z_cen_2 <- z_cen[c(183:344)]
+    x_in_2 <- x_in[c(183:344)]
+    z_in_2 <- z_in[c(183:344)]
+    x_out_2 <- x_out[c(183:344)]
+    z_out_2 <- z_out[c(183:344)]
+    
+    #Centre
+    ndat_1 <- data.frame()
+    for (samp in c(2:length(x_cen_1))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_cen_1[samp] - x_cen_1[samp-1]
+      sampz <- z_cen_1[samp] - z_cen_1[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_1)) == 0){
+        ndat_1 <- absvec
+      } else {
+        ndat_1 <- rbind(ndat_1, absvec)
+      }
+      
+    }
+    PL_1<- sum(ndat_1[1:length(ndat_1)])
+    
+    ndat_2 <- data.frame()
+    for (samp in c(2:length(x_cen_2))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_cen_2[samp] - x_cen_2[samp-1]
+      sampz <- z_cen_2[samp] - z_cen_2[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_2)) == 0){
+        ndat_2 <- absvec
+      } else {
+        ndat_2 <- rbind(ndat_2, absvec)
+      }
+      
+    }
+    PL_2<- sum(ndat_2[1:length(ndat_2)])
+    PL_centre <- PL_1 + PL_2
+    
+    #Inner
+    ndat_1 <- data.frame()
+    for (samp in c(2:length(x_in_1))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_in_1[samp] - x_in_1[samp-1]
+      sampz <- z_in_1[samp] - z_in_1[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_1)) == 0){
+        ndat_1 <- absvec
+      } else {
+        ndat_1 <- rbind(ndat_1, absvec)
+      }
+      
+    }
+    PL_1<- sum(ndat_1[1:length(ndat_1)])
+    
+    ndat_2 <- data.frame()
+    for (samp in c(2:length(x_in_2))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_in_2[samp] - x_in_2[samp-1]
+      sampz <- z_in_2[samp] - z_in_2[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_2)) == 0){
+        ndat_2 <- absvec
+      } else {
+        ndat_2 <- rbind(ndat_2, absvec)
+      }
+      
+    }
+    PL_2<- sum(ndat_2[1:length(ndat_2)])
+    PL_inner <- PL_1 + PL_2
+    
+    #Outer
+    ndat_1 <- data.frame()
+    for (samp in c(2:length(x_out_1))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_out_1[samp] - x_out_1[samp-1]
+      sampz <- z_out_1[samp] - z_out_1[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_1)) == 0){
+        ndat_1 <- absvec
+      } else {
+        ndat_1 <- rbind(ndat_1, absvec)
+      }
+      
+    }
+    PL_1<- sum(ndat_1[1:length(ndat_1)])
+    
+    ndat_2 <- data.frame()
+    for (samp in c(2:length(x_out_2))){ #start with second sample, since first will calculate a difference from origin
+      sampx <- x_out_2[samp] - x_out_2[samp-1]
+      sampz <- z_out_2[samp] - z_out_2[samp-1]
+      absvec <- sqrt(((sampx)^2)+((sampz)^2))
+      
+      if (prod(dim(ndat_2)) == 0){
+        ndat_2 <- absvec
+      } else {
+        ndat_2 <- rbind(ndat_2, absvec)
+      }
+      
+    }
+    PL_2<- sum(ndat_2[1:length(ndat_2)])
+    PL_outer <- PL_1 + PL_2
+    
+    cat('Path length centre:\n')
+    print(PL_centre)
+    cat('Path length inner:\n')
+    print(PL_inner)
+    cat('Path length outer:\n')
+    print(PL_outer)
+    
+  }
+}
+
+# PL centre = 49.68201
+# PL inner = 42.06827
+# PL outer = 57.29763
