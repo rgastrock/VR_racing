@@ -1281,14 +1281,14 @@ plotS1FirstLastPL <- function(session = 1, target='inline') {
   plot(NA, NA, xlim = c(1,61), ylim = c(45, 56), 
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
-  abline(v = c(30), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  abline(v = c(30), h = c(49.68), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
   axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
   
   #read in files created by CI function
   groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
   
-  colourscheme <- getAllTrackSession1ColourScheme()
+  colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
   b1lower <- lower[2:30]
@@ -1415,8 +1415,10 @@ plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline')
   plot(NA, NA, xlim = c(0,121), ylim = c(45, 56), 
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
-  abline(v = c(30, 60, 90), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
+  abline(v = c(30, 60, 90), h = c(49.68), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  #axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
+  #axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
+  axis(1, at = c(2, 32, 62, 92, 120)) #tick marks for x axis
   axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
   
   
@@ -1610,7 +1612,7 @@ plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig9B_PathLength_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig9B_PathLength_AllTrack_AllSessions.svg', width=12, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))

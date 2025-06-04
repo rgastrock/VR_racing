@@ -610,7 +610,7 @@ plotS1FirstLastAccuracy <- function(session = 1, target='inline') {
   #read in files created by CI function
   groupconfidence <- read.csv(file=sprintf('data/PercentOnTrackCI_AllTrack_S%03d.csv', session))
   
-  colourscheme <- getAllTrackSession1ColourScheme()
+  colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
   b1lower <- lower[2:30]
@@ -750,7 +750,7 @@ plotFirstLastAllTrackAcrossSessionAccuracy <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig7B_PercentOnTrack_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/Fig7B_PercentOnTrack_AllTrack_AllSessions.svg', width=12, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
