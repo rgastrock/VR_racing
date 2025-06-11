@@ -1,6 +1,6 @@
 source('ana/shared.R')
-source('ana/lapTime.R')
-source('ana/percentOnTrack.R')
+source('ana/Run2_lapTime.R')
+source('ana/Run2_percentOnTrack.R')
 
 #get all track orientations (group) data for MT and accuracy
 #per trial: have a mean MT and accuracy measure (mean across participants)
@@ -9,7 +9,7 @@ source('ana/percentOnTrack.R')
 #repeat for session 2 then plot
 
 # #Session 1 (bin by MT)-----
-# getAverageMTandAccuracy <- function(){
+# getR2AverageMTandAccuracy <- function(){
 #   #start with movement time
 #   mtdat <- getAllTrackGroupLap()
 #   
@@ -63,7 +63,7 @@ source('ana/percentOnTrack.R')
 #   
 # }
 # 
-# getBinnedSpeedAccCI <- function(block, type= 'b'){
+# getR2BinnedSpeedAccCI <- function(block, type= 'b'){
 #   
 #   if(block == 'first'){
 #     b1trials <- c(2:30)
@@ -103,7 +103,7 @@ source('ana/percentOnTrack.R')
 # }
 # 
 # #Session 2 (bin by MT)-----
-# getS2AverageMTandAccuracy <- function(){
+# getR2S2AverageMTandAccuracy <- function(){
 #   #start with movement time
 #   mtdat <- getS2AllTrackGroupLap()
 #   
@@ -192,7 +192,7 @@ source('ana/percentOnTrack.R')
 #   
 # }
 # 
-# getS2BinnedSpeedAccCI <- function(block, type = 'b'){
+# getR2S2BinnedSpeedAccCI <- function(block, type = 'b'){
 #   
 #   if(block == 1){
 #     b1trials <- c(2:30)
@@ -237,7 +237,7 @@ source('ana/percentOnTrack.R')
 # 
 # #Plot Speed-Accuracy tradeoffs (bin by MT)----
 # 
-# plotSpeedAccuracyTradeoffs <- function(target='inline') {
+# plotR2SpeedAccuracyTradeoffs <- function(target='inline') {
 #   
 #   
 #   #but we can save plot as svg file
@@ -349,9 +349,9 @@ source('ana/percentOnTrack.R')
 # }
 
 #Session 1-----
-getLapTimeandAccuracy <- function(){
+getR2LapTimeandAccuracy <- function(){
   #start with movement time
-  mtdat <- getAllTrackGroupLap()
+  mtdat <- getR2AllTrackGroupLap()
   
   #get the first and last block of 30 trials, remove first trial of every block
   b1trials <- c(2:30)
@@ -397,7 +397,7 @@ getLapTimeandAccuracy <- function(){
   mtb2_trialave <- as.data.frame(mtb2_trialave)
   
   #then we add accuracy to the data frame
-  accdat <- getAllTrackGroupAccuracy()
+  accdat <- getR2AllTrackGroupAccuracy()
   accb1 <- accdat[b1trials,]
   accb2 <- accdat[b2trials,]
   
@@ -443,9 +443,9 @@ getLapTimeandAccuracy <- function(){
   
 }
 
-getLapTimeandAccuracyCI <- function(type = 'b'){
+getR2LapTimeandAccuracyCI <- function(type = 'b'){
   
-  data <- getLapTimeandAccuracy()
+  data <- getR2LapTimeandAccuracy()
   
   for(subdat in c(1:length(data))){
     confidence <- data.frame()
@@ -467,22 +467,22 @@ getLapTimeandAccuracyCI <- function(type = 'b'){
       
     }
     if(subdat == 1){
-      write.csv(confidence, file='data/SAFCI_LapTime_FirstBlock_S001.csv', row.names = F) 
+      write.csv(confidence, file='data/Run2_SAFCI_LapTime_FirstBlock_S001.csv', row.names = F) 
     } else if (subdat == 2){
-      write.csv(confidence, file='data/SAFCI_LapTime_LastBlock_S001.csv', row.names = F) 
+      write.csv(confidence, file='data/Run2_SAFCI_LapTime_LastBlock_S001.csv', row.names = F) 
     } else if (subdat == 3){
-      write.csv(confidence, file='data/SAFCI_Accuracy_FirstBlock_S001.csv', row.names = F) 
+      write.csv(confidence, file='data/Run2_SAFCI_Accuracy_FirstBlock_S001.csv', row.names = F) 
     } else if (subdat == 4){
-      write.csv(confidence, file='data/SAFCI_Accuracy_LastBlock_S001.csv', row.names = F) 
+      write.csv(confidence, file='data/Run2_SAFCI_Accuracy_LastBlock_S001.csv', row.names = F) 
     }
     
   }
 }
 
 #Session 2----
-getS2LapTimeandAccuracy <- function(){
+getR2S2LapTimeandAccuracy <- function(){
   #start with movement time
-  mtdat <- getS2AllTrackGroupLap()
+  mtdat <- getR2S2AllTrackGroupLap()
   
   #get the first and last block of 30 trials, remove first trial of every block
   # b1trials <- c(2:30)
@@ -514,7 +514,7 @@ getS2LapTimeandAccuracy <- function(){
   
   
   #then we add accuracy to the data frame
-  accdat <- getS2AllTrackGroupAccuracy()
+  accdat <- getR2S2AllTrackGroupAccuracy()
   
   #block accuracy, day 2
   blockdefs <- list('b1' = c(2:6), 'b2' = c(25:30), 
@@ -543,9 +543,9 @@ getS2LapTimeandAccuracy <- function(){
   
 }
 
-getS2LapTimeandAccuracyCI <- function(type = 'b'){
+getR2S2LapTimeandAccuracyCI <- function(type = 'b'){
   
-  data <- getS2LapTimeandAccuracy()
+  data <- getR2S2LapTimeandAccuracy()
   
   for(subdat in c(1:length(data))){
     confidence <- data.frame()
@@ -567,9 +567,9 @@ getS2LapTimeandAccuracyCI <- function(type = 'b'){
       
     }
     if(subdat == 1){
-      write.csv(confidence, file='data/SAFCI_LapTime_AllBlocks_S002.csv', row.names = F) 
+      write.csv(confidence, file='data/Run2_SAFCI_LapTime_AllBlocks_S002.csv', row.names = F) 
     } else if (subdat == 2){
-      write.csv(confidence, file='data/SAFCI_Accuracy_AllBlocks_S002.csv', row.names = F)
+      write.csv(confidence, file='data/Run2_SAFCI_Accuracy_AllBlocks_S002.csv', row.names = F)
       
     }
   }
@@ -577,33 +577,33 @@ getS2LapTimeandAccuracyCI <- function(type = 'b'){
 
 #Plot Speed-Accuracy tradeoffs (bin by trials/blocks)----
 
-plotSAF <- function(target='inline') {
+plotR2SAF <- function(target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig11_SAFbyTrial_AllTrack.svg', width=7, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig11_SAFbyTrial_AllTrack.svg', width=7, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
   #NA to create empty plot
-  plot(NA, NA, xlim = c(2,6.6), ylim = c(90, 101), 
+  plot(NA, NA, xlim = c(2,9), ylim = c(90, 101), 
        xlab = "Lap time (s)", ylab = "Accuracy (% on track)", frame.plot = FALSE, #frame.plot takes away borders
        main = 'Speed-accuracy across training', xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  axis(1, at = c(2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5)) #tick marks for x axis
+  axis(1, at = c(2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 8.5)) #tick marks for x axis
   axis(2, at = c(90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), las=2) #tick marks for y axis
   
   
   #read in files created by CI function
-  s1b1_laptime <- read.csv(file='data/SAFCI_LapTime_FirstBlock_S001.csv')
-  s1b1_accuracy <- read.csv(file='data/SAFCI_Accuracy_FirstBlock_S001.csv')
+  s1b1_laptime <- read.csv(file='data/Run2_SAFCI_LapTime_FirstBlock_S001.csv')
+  s1b1_accuracy <- read.csv(file='data/Run2_SAFCI_Accuracy_FirstBlock_S001.csv')
   
-  s1b2_laptime <- read.csv(file='data/SAFCI_LapTime_LastBlock_S001.csv')
-  s1b2_accuracy <- read.csv(file='data/SAFCI_Accuracy_LastBlock_S001.csv')
+  s1b2_laptime <- read.csv(file='data/Run2_SAFCI_LapTime_LastBlock_S001.csv')
+  s1b2_accuracy <- read.csv(file='data/Run2_SAFCI_Accuracy_LastBlock_S001.csv')
   
-  s2ball_laptime <- read.csv(file='data/SAFCI_LapTime_AllBlocks_S002.csv')
-  s2ball_accuracy <- read.csv(file='data/SAFCI_Accuracy_AllBlocks_S002.csv')
+  s2ball_laptime <- read.csv(file='data/Run2_SAFCI_LapTime_AllBlocks_S002.csv')
+  s2ball_accuracy <- read.csv(file='data/Run2_SAFCI_Accuracy_AllBlocks_S002.csv')
   
   
   #session 1, first block
@@ -688,20 +688,20 @@ plotSAF <- function(target='inline') {
 }
 
 #plot trial 2 and trial 300 for day 1 (individual data)----
-plotIndividualLapTimeandAccuracy <- function(target='inline'){
+plotR2IndividualLapTimeandAccuracy <- function(target='inline'){
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig12_SAFDay1_firstvslasttrial_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig12_SAFDay1_firstvslasttrial_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   #start with movement time
-  mtdat <- getAllTrackGroupLap()
+  mtdat <- getR2AllTrackGroupLap()
   
   #get trials 2 and 300
   trial2mt <- as.numeric(mtdat[2,c(2:ncol(mtdat))])
   trial300mt <- as.numeric(mtdat[300,c(2:ncol(mtdat))])
   
   #then we add accuracy
-  accdat <- getAllTrackGroupAccuracy()
+  accdat <- getR2AllTrackGroupAccuracy()
   
   trial2acc <- as.numeric(accdat[2,c(2:ncol(accdat))])
   trial300acc <- as.numeric(accdat[300,c(2:ncol(accdat))])

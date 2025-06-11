@@ -164,3 +164,23 @@ getSAFS2ColourScheme <- function(blocks = c(1,2,3,4,5,6,7,8)){
   }
   return(colourscheme)
 }
+
+# Unlist samples in array----
+
+convertCellToNumVector <- function(v) {
+  
+  # # remove opening bracket:
+  # v <- gsub('"', replacement='', x=v)
+  # # remove closing bracket:
+  # v <- gsub('"', replacement='', x=v)
+  
+  # split by underscores:
+  v <- strsplit(v, '_')
+  # convert to numeric:
+  v <- lapply(v, FUN=as.numeric)
+  # make vector:
+  v <- as.vector(unlist(v))
+  
+  return(v)
+  
+}

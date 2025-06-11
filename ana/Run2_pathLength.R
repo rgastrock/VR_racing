@@ -30,9 +30,9 @@ source('ana/shared.R')
 
 
 # Path Length----
-getParticipantTrajectory <- function(group, id, session) {
+getR2ParticipantTrajectory <- function(group, id, session) {
   
-  filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
+  filepath <- sprintf('data/data_run2/%s/%s/S%03d/trial_results.csv', group, id, session)
   df <- read.csv(filepath, stringsAsFactors = F)
   
   #setup relevant vectors
@@ -87,9 +87,9 @@ getParticipantTrajectory <- function(group, id, session) {
   
 }
 
-getParticipantInOutPL <- function(group, id, session) {
+getR2ParticipantInOutPL <- function(group, id, session) {
   
-  filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
+  filepath <- sprintf('data/data_run2/%s/%s/S%03d/trial_results.csv', group, id, session)
   df <- read.csv(filepath, stringsAsFactors = F)
   
   #setup relevant vectors
@@ -259,16 +259,16 @@ getParticipantInOutPL <- function(group, id, session) {
 }
 
 #Session 1----
-getGroupPL <- function(group, session){
+getR2GroupPL <- function(group, session){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
+    ppdat <- getR2ParticipantTrajectory(group = group, id = pp, session = session)
     trial <- ppdat$trialno
     pathlength <- ppdat$path_length
     ppdat <- data.frame(trial, pathlength)
@@ -285,10 +285,10 @@ getGroupPL <- function(group, session){
   return(dataoutput)
 }
 
-getGroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, type = 'b'){
+getR2GroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, type = 'b'){
   
   for(group in groups){
-    data <- getGroupPL(group = group, session = session)
+    data <- getR2GroupPL(group = group, session = session)
     trialno <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -311,17 +311,17 @@ getGroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90',
         confidence <- rbind(confidence, citrial)
       }
     }
-    write.csv(confidence, file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
+    write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
   }
   
 }
 
-plotPathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, target='inline') {
+plotR2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_PathLength.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig3_PathLength.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -337,7 +337,7 @@ plotPathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90
   
   for(group in groups){
     #read in files created by CI function
-    groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session))
+    groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_S%03d.csv', group, session))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -376,12 +376,12 @@ plotPathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90
 
 # Session 1: Combine track orientations----
 
-getAllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+getR2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
   
   alldata <- data.frame()
   
   for(group in groups){
-    data <- getGroupPL(group = group, session = session)
+    data <- getR2GroupPL(group = group, session = session)
     trial <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -395,9 +395,9 @@ getAllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACIN
   return(ndat)
 }
 
-getAllTrackGroupPLCI <- function(session = 1, type = 'b'){
+getR2AllTrackGroupPLCI <- function(session = 1, type = 'b'){
   
-  data <- getAllTrackGroupPL(session = session)
+  data <- getR2AllTrackGroupPL(session = session)
   trialno <- data$trial
   data1 <- as.matrix(data[,2:(dim(data)[2])])
   
@@ -420,16 +420,16 @@ getAllTrackGroupPLCI <- function(session = 1, type = 'b'){
       confidence <- rbind(confidence, citrial)
     }
   }
-  write.csv(confidence, file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session), row.names = F) 
+  write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session), row.names = F) 
   
 }
 
-plotAllTrackPL <- function(session = 1, target='inline') {
+plotR2AllTrackPL <- function(session = 1, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig8_PathLength_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig8_PathLength_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -443,7 +443,7 @@ plotAllTrackPL <- function(session = 1, target='inline') {
   
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session))
   
   colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
@@ -476,16 +476,16 @@ plotAllTrackPL <- function(session = 1, target='inline') {
 
 # Session 1: PL IN vs OUT----
 
-getGroupInOutPL <- function(group, session, trackloc){
+getR2GroupInOutPL <- function(group, session, trackloc){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantInOutPL(group = group, id = pp, session = session)
+    ppdat <- getR2ParticipantInOutPL(group = group, id = pp, session = session)
     trial <- ppdat$trialno
     
     if(trackloc == 'in'){
@@ -513,12 +513,12 @@ getGroupInOutPL <- function(group, session, trackloc){
   return(dataoutput)
 }
 
-getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, trackloc = 'out'){
+getR2AllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, trackloc = 'out'){
   
   alldata <- data.frame()
   
   for(group in groups){
-    data <- getGroupInOutPL(group = group, session = session, trackloc = trackloc)
+    data <- getR2GroupInOutPL(group = group, session = session, trackloc = trackloc)
     trial <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -530,17 +530,17 @@ getAllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-
   }
   ndat <- data.frame(trial, alldata)
   if(trackloc == 'in'){
-    write.csv(ndat, file=sprintf('data/PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
   } else if (trackloc == 'out'){
-    write.csv(ndat, file=sprintf('data/PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
   }
   
 }
 
-getAllTrackGroupInOutPLCI <- function(session = 1, type = 'b', trackloc = 'out'){
+getR2AllTrackGroupInOutPLCI <- function(session = 1, type = 'b', trackloc = 'out'){
   
   #data <- getAllTrackGroupInOutPL(session = session, trackloc = trackloc)
-  data <- read.csv(file=sprintf('data/PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
+  data <- read.csv(file=sprintf('data/Run2_PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
   trialno <- data$trial
   data1 <- as.matrix(data[,2:(dim(data)[2])])
   
@@ -563,16 +563,16 @@ getAllTrackGroupInOutPLCI <- function(session = 1, type = 'b', trackloc = 'out')
       confidence <- rbind(confidence, citrial)
     }
   }
-  write.csv(confidence, file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
+  write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
   
 }
 
-plotAllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out') {
+plotR2AllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file=sprintf('doc/fig/Fig13_PathLength_%s_AllTrack.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file=sprintf('doc/fig_run2/Fig13_PathLength_%s_AllTrack.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -592,11 +592,11 @@ plotAllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out') 
     axis(1, at = c(1, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300)) #tick marks for x axis
     axis(2, at = c(40, 45, 50, 55, 60), las=2) #tick marks for y axis
   }
- 
+  
   
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
   
   colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
@@ -629,16 +629,16 @@ plotAllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out') 
 
 #Session 2----
 
-getS2GroupPL <- function(group, session = 2){
+getR2S2GroupPL <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
   noS2 <- c()
   for(pp in pp_group){
-    pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
+    pp_session <- unique(list.files(sprintf('data/data_run2/%s/%s', group, pp)))
     if(length(pp_session) < 2){
       noS2 <- c(noS2, pp)
     }
@@ -647,7 +647,7 @@ getS2GroupPL <- function(group, session = 2){
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
+    ppdat <- getR2ParticipantTrajectory(group = group, id = pp, session = session)
     trial <- ppdat$trialno
     pathlength <- ppdat$path_length
     ppdat <- data.frame(trial,pathlength)
@@ -664,10 +664,10 @@ getS2GroupPL <- function(group, session = 2){
   return(dataoutput)
 }
 
-getS2GroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, type = 'b'){
+getR2S2GroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, type = 'b'){
   
   for(group in groups){
-    data <- getS2GroupPL(group = group, session = session)
+    data <- getR2S2GroupPL(group = group, session = session)
     trialno <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -690,17 +690,17 @@ getS2GroupPLCI <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90
         confidence <- rbind(confidence, citrial)
       }
     }
-    write.csv(confidence, file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
+    write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_%s_S%03d.csv', group, session), row.names = F) 
   }
   
 }
 
-plotS2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, target='inline') {
+plotR2S2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3A_PathLength_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig3A_PathLength_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -716,7 +716,7 @@ plotS2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_
   
   for(group in groups){
     #read in files created by CI function
-    groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_S%03d.csv', group, session))
+    groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_S%03d.csv', group, session))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -755,12 +755,12 @@ plotS2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_
 
 # Session 2: Combine track orientations----
 
-getS2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+getR2S2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
   
   alldata <- data.frame()
   
   for(group in groups){
-    data <- getS2GroupPL(group = group, session = session)
+    data <- getR2S2GroupPL(group = group, session = session)
     trial <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -774,9 +774,9 @@ getS2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RAC
   return(ndat)
 }
 
-getS2AllTrackGroupPLCI <- function(session = 2, type = 'b'){
+getR2S2AllTrackGroupPLCI <- function(session = 2, type = 'b'){
   
-  data <- getS2AllTrackGroupPL(session = session)
+  data <- getR2S2AllTrackGroupPL(session = session)
   trialno <- data$trial
   data1 <- as.matrix(data[,2:(dim(data)[2])])
   
@@ -799,16 +799,16 @@ getS2AllTrackGroupPLCI <- function(session = 2, type = 'b'){
       confidence <- rbind(confidence, citrial)
     }
   }
-  write.csv(confidence, file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session), row.names = F) 
+  write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session), row.names = F) 
   
 }
 
-plotS2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
+plotR2S2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig8A_PathLength_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig8A_PathLength_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -822,7 +822,7 @@ plotS2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') 
   
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session))
   
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
@@ -899,16 +899,16 @@ plotS2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') 
 
 #Session 2: PL IN vs OUT----
 
-getS2GroupInOutPL <- function(group, session = 2, trackloc){
+getR2S2GroupInOutPL <- function(group, session = 2, trackloc){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
   noS2 <- c()
   for(pp in pp_group){
-    pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
+    pp_session <- unique(list.files(sprintf('data/data_run2/%s/%s', group, pp)))
     if(length(pp_session) < 2){
       noS2 <- c(noS2, pp)
     }
@@ -917,7 +917,7 @@ getS2GroupInOutPL <- function(group, session = 2, trackloc){
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantInOutPL(group = group, id = pp, session = session)
+    ppdat <- getR2ParticipantInOutPL(group = group, id = pp, session = session)
     trial <- ppdat$trialno
     
     if(trackloc == 'in'){
@@ -946,12 +946,12 @@ getS2GroupInOutPL <- function(group, session = 2, trackloc){
   return(dataoutput)
 }
 
-getS2AllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, trackloc = 'out'){
+getR2S2AllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, trackloc = 'out'){
   
   alldata <- data.frame()
   
   for(group in groups){
-    data <- getS2GroupInOutPL(group = group, session = session, trackloc = trackloc)
+    data <- getR2S2GroupInOutPL(group = group, session = session, trackloc = trackloc)
     trial <- data$trial
     data1 <- as.matrix(data[,2:(dim(data)[2])])
     
@@ -963,17 +963,17 @@ getS2AllTrackGroupInOutPL <- function(groups = c('T-RACING_0', 'T-RACING_180', '
   }
   ndat <- data.frame(trial, alldata)
   if(trackloc == 'in'){
-    write.csv(ndat, file=sprintf('data/PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_in_AllTrack_S%03d.csv', session), row.names = F) 
   } else if (trackloc == 'out'){
-    write.csv(ndat, file=sprintf('data/PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_out_AllTrack_S%03d.csv', session), row.names = F) 
   }
   
 }
 
-getS2AllTrackGroupInOutPLCI <- function(session = 2, type = 'b', trackloc = 'out'){
+getR2S2AllTrackGroupInOutPLCI <- function(session = 2, type = 'b', trackloc = 'out'){
   
   #data <- getAllTrackGroupInOutPL(session = session, trackloc = trackloc)
-  data <- read.csv(file=sprintf('data/PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
+  data <- read.csv(file=sprintf('data/Run2_PathLength_%s_AllTrack_S%03d.csv', trackloc, session))
   trialno <- data$trial
   data1 <- as.matrix(data[,2:(dim(data)[2])])
   
@@ -996,16 +996,16 @@ getS2AllTrackGroupInOutPLCI <- function(session = 2, type = 'b', trackloc = 'out
       confidence <- rbind(confidence, citrial)
     }
   }
-  write.csv(confidence, file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
+  write.csv(confidence, file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session), row.names = F) 
   
 }
 
-plotS2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2,3,4), trackloc = 'out') {
+plotR2S2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2,3,4), trackloc = 'out') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file=sprintf('doc/fig/Fig14_PathLength_%s_AllTrack_S2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file=sprintf('doc/fig_run2/Fig14_PathLength_%s_AllTrack_S2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1029,7 +1029,7 @@ plotS2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2,3
   }
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
   
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
@@ -1112,16 +1112,16 @@ plotS2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2,3
 }
 
 # CHECK: plot individual data----
-plotIndividualS2PL <- function(group, session = 2){
+plotIndividualR2S2PL <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('01', '02', '03', '04', '05', '20', '22', '25', '44', '46')
-  pp_group <- unique(list.files(sprintf('data/%s', group)))
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
   noS2 <- c()
   for(pp in pp_group){
-    pp_session <- unique(list.files(sprintf('data/%s/%s', group, pp)))
+    pp_session <- unique(list.files(sprintf('data/data_run2/%s/%s', group, pp)))
     if(length(pp_session) < 2){
       noS2 <- c(noS2, pp)
     }
@@ -1130,7 +1130,7 @@ plotIndividualS2PL <- function(group, session = 2){
   
   dataoutput <- data.frame()
   for(pp in pp_group){
-    ppdat <- getParticipantTrajectory(group = group, id = pp, session = session)
+    ppdat <- getR2ParticipantTrajectory(group = group, id = pp, session = session)
     trial <- ppdat$trialno
     pathlength <- ppdat$path_length
     ppdat <- data.frame(trial,pathlength)
@@ -1157,9 +1157,9 @@ plotIndividualS2PL <- function(group, session = 2){
   
 }
 
-plotParticipantTrajectory <- function(group, id, session=2) {
+plotR2ParticipantTrajectory <- function(group, id, session=2) {
   
-  filepath <- sprintf('data/%s/%s/S%03d/trial_results.csv', group, id, session)
+  filepath <- sprintf('data/data_run2/%s/%s/S%03d/trial_results.csv', group, id, session)
   df <- read.csv(filepath, stringsAsFactors = F)
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1185,11 +1185,11 @@ plotParticipantTrajectory <- function(group, id, session=2) {
 
 #plotting sessions together----
 
-plotAcrossSessionPathLength <- function(target='inline'){
+plotR2AcrossSessionPathLength <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3B_PathLength_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig3B_PathLength_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1200,12 +1200,12 @@ plotAcrossSessionPathLength <- function(target='inline'){
   
   # # # # # # # # # #
   # panel A: Session 1
-  plotPathLength()
+  plotR2PathLength()
   mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
   # panel B: Session 2
-  plotS2PathLength()
+  plotR2S2PathLength()
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
@@ -1216,11 +1216,11 @@ plotAcrossSessionPathLength <- function(target='inline'){
   
 }
 
-plotAllTrackAcrossSessionPL<- function(target='inline'){
+plotR2AllTrackAcrossSessionPL<- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig8B_PathLength_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig8B_PathLength_AllTrack_AllSessions.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1231,12 +1231,12 @@ plotAllTrackAcrossSessionPL<- function(target='inline'){
   
   # # # # # # # # # #
   # panel A: Session 1
-  plotAllTrackPL()
+  plotR2AllTrackPL()
   mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
   # panel B: Session 2
-  plotS2AllTrackPL()
+  plotR2S2AllTrackPL()
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
@@ -1249,12 +1249,12 @@ plotAllTrackAcrossSessionPL<- function(target='inline'){
 
 # Remove 1st trial: All tracks----
 
-plotS1FirstLastPL <- function(session = 1, target='inline') {
+plotR2S1FirstLastPL <- function(session = 1, target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig9_PathLength_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig9_PathLength_AllTrack.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1267,7 +1267,7 @@ plotS1FirstLastPL <- function(session = 1, target='inline') {
   axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session))
   
   colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
@@ -1311,12 +1311,12 @@ plotS1FirstLastPL <- function(session = 1, target='inline') {
   
 }
 
-plotS1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out') {
+plotR2S1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file=sprintf('doc/fig/Fig15_PathLength_%s_AllTrack_FirstLast.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file=sprintf('doc/fig_run2/Fig15_PathLength_%s_AllTrack_FirstLast.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1339,7 +1339,7 @@ plotS1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out
   
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
   
   colourscheme <- getAllTrackDayOneColourScheme()
   #take only first, last and middle columns of file
@@ -1383,12 +1383,12 @@ plotS1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out
   
 }
 
-plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
+plotR2S2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig9A_PathLength_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig9A_PathLength_AllTrack_Session2.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1404,7 +1404,7 @@ plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline')
   
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_AllTrack_S%03d.csv', session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_AllTrack_S%03d.csv', session))
   
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
@@ -1479,12 +1479,12 @@ plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline')
   
 }
 
-plotS2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline', trackloc = 'out') {
+plotR2S2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline', trackloc = 'out') {
   
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file=sprintf('doc/fig/Fig15_PathLength_%s_AllTrack_FirstLast_Session2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file=sprintf('doc/fig_run2/Fig15_PathLength_%s_AllTrack_FirstLast_Session2.svg', trackloc), width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1508,7 +1508,7 @@ plotS2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inl
   }
   
   #read in files created by CI function
-  groupconfidence <- read.csv(file=sprintf('data/PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
+  groupconfidence <- read.csv(file=sprintf('data/Run2_PathLengthCI_%s_AllTrack_S%03d.csv', trackloc, session))
   
   #take only first, last and middle columns of file
   lower <- groupconfidence[,1]
@@ -1589,11 +1589,11 @@ plotS2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inl
   
 }
 
-plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
+plotR2FirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig9B_PathLength_AllTrack_AllSessions.svg', width=12, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_run2/Fig9B_PathLength_AllTrack_AllSessions.svg', width=12, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1604,12 +1604,12 @@ plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
   # # # # # # # # # #
   # panel A: Session 1
-  plotS1FirstLastPL()
+  plotR2S1FirstLastPL()
   mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
   # panel B: Session 2
-  plotS2FirstLastPL()
+  plotR2S2FirstLastPL()
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
@@ -1620,11 +1620,11 @@ plotFirstLastAllTrackAcrossSessionPL <- function(target='inline'){
   
 }
 
-plotInOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc= 'out'){
+plotR2InOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc= 'out'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file=sprintf('doc/fig/Fig16_PathLength_%s_AllTrack_AllSessions.svg', trackloc), width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file=sprintf('doc/fig_run2/Fig16_PathLength_%s_AllTrack_AllSessions.svg', trackloc), width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1635,12 +1635,12 @@ plotInOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc=
   
   # # # # # # # # # #
   # panel A: Session 1
-  plotS1InOutFirstLastPL(trackloc = trackloc)
+  plotR2S1InOutFirstLastPL(trackloc = trackloc)
   mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
   # panel B: Session 2
-  plotS2InOutFirstLastPL(trackloc = trackloc)
+  plotR2S2InOutFirstLastPL(trackloc = trackloc)
   mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
@@ -1653,9 +1653,9 @@ plotInOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc=
 
 
 #CHECK: Path Length of track limits----
-getParticipantTrackLimitsPL <- function(group, id, session) {
+getR2ParticipantTrackLimitsPL <- function(group, id, session) {
   
-  filepath <- sprintf('data/track_limits/%s/%s/S%03d/trial_results.csv', group, id, session)
+  filepath <- sprintf('data/data_run2/%s/%s/S%03d/trial_results.csv', group, id, session)
   df <- read.csv(filepath, stringsAsFactors = F)
   
   #setup relevant vectors
@@ -1687,12 +1687,13 @@ getParticipantTrackLimitsPL <- function(group, id, session) {
     z_m <- convertCellToNumVector(df$cursor_path_z[trial])
     
     #convert meters to screen cm for x and z positions
-    x_in <- (x_inner * 62)/ 36
-    z_in <- (z_inner * 62)/ 36
-    x_cen <- (x_centre * 62)/ 36
-    z_cen <- (z_centre * 62)/ 36
-    x_out <- (x_outer * 62)/ 36
-    z_out <- (z_outer * 62)/ 36
+    #multiply by -1 for track mirroring in run2
+    x_in <- ((x_inner * 62)/ 36)*-1
+    z_in <- ((z_inner * 62)/ 36)*-1
+    x_cen <- ((x_centre * 62)/ 36)*-1
+    z_cen <- ((z_centre * 62)/ 36)*-1
+    x_out <- ((x_outer * 62)/ 36)*-1
+    z_out <- ((z_outer * 62)/ 36)*-1
     
     x <- (x_m * 62)/ 36
     z <- (z_m * 62)/ 36
