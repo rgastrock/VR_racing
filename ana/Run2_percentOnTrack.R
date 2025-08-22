@@ -40,7 +40,7 @@ getR2ParticipantAccuracy <- function(group, id, session) {
 getR2GroupAccuracy <- function(group, session){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -258,7 +258,7 @@ plotR2AllTrackAccuracy <- function(session = 1, target='inline') {
 getR2S2GroupAccuracy <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   

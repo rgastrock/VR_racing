@@ -262,7 +262,7 @@ getR2ParticipantInOutPL <- function(group, id, session) {
 getR2GroupPL <- function(group, session){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -479,7 +479,7 @@ plotR2AllTrackPL <- function(session = 1, target='inline') {
 getR2GroupInOutPL <- function(group, session, trackloc){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -632,7 +632,7 @@ plotR2AllTrackInOutPL <- function(session = 1, target='inline', trackloc = 'out'
 getR2S2GroupPL <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -902,7 +902,7 @@ plotR2S2AllTrackPL <- function(session = 2, blocks = c(1,2,3,4), target='inline'
 getR2S2GroupInOutPL <- function(group, session = 2, trackloc){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -1115,7 +1115,7 @@ plotR2S2AllTrackInOutPL <- function(session = 2, target='inline', blocks = c(1,2
 plotIndividualR2S2PL <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   

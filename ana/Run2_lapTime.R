@@ -4,7 +4,7 @@ source('ana/shared.R')
 getR2SessionOneSampleSize <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   
   condition <- c()
   day <- c()
@@ -25,7 +25,7 @@ getR2SessionOneSampleSize <- function(groups = c('T-RACING_0', 'T-RACING_180', '
 getR2SessionTwoSampleSize <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   
   condition <- c()
   day <- c()
@@ -93,7 +93,7 @@ getR2ParticipantLap <- function(group, id, session) {
 getR2GroupLap <- function(group, session){
   
   # exlude participants due to experiment problems
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
@@ -311,7 +311,7 @@ plotR2AllTrackLapTime <- function(session = 1, target='inline') {
 getR2S2GroupLap <- function(group, session = 2){
   
   # exlude participants due to experiment problems/ attrition
-  pp_exclude <- c('p002', 'p005', 'p012', 'p017')
+  pp_exclude <- c('p002', 'p005', 'p012', 'p017', 'p021', 'p032')
   pp_group <- unique(list.files(sprintf('data/data_run2/%s', group)))
   pp_group <- pp_group[which(!pp_group %in% pp_exclude)]
   
