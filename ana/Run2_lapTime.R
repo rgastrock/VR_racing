@@ -788,7 +788,7 @@ plotR2S2FirstLastLapTime <- function(session = 2, blocks = c(1,2,3,4), target='i
   colb2 <- getAllTrackSession2ColourScheme(blocks=2)
   colb3 <- getAllTrackSession2ColourScheme(blocks=3)
   colb4 <- getAllTrackSession2ColourScheme(blocks=4)
-  legend(70,2,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
+  legend(2,2,legend=c('trained track', 'flipped track: 180°', 'reverse track'),
          col=c(colb1[['S']],colb2[['S']],colb3[['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   

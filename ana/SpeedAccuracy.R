@@ -613,13 +613,28 @@ plotSAF <- function(target='inline') {
     subdat_accuracy <- s1b1_accuracy[i,]
     col <- colourscheme[[i]][['S']]
     points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
-    text(subdat_laptime$X50., subdat_accuracy$X50.,labels=i,cex=0.6,col='white')
+    
     col <- colourscheme[[i]][['T']]
     #accuracy CI
     lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
     #laptime CI
     lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
     #text(subdat_laptime$X50., subdat_accuracy$X50.)
+    #connect blocks in session 1
+    if(i == 2){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s1b1_laptime$X50.[1], s1b1_laptime$X50.[2]),c(s1b1_accuracy$X50.[1], s1b1_accuracy$X50.[2]), col=col, lty = 3)
+    } else if (i == 3){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s1b1_laptime$X50.[2], s1b1_laptime$X50.[3]),c(s1b1_accuracy$X50.[2], s1b1_accuracy$X50.[3]), col=col, lty = 3)
+    } else if (i == 4){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s1b1_laptime$X50.[3], s1b1_laptime$X50.[4]),c(s1b1_accuracy$X50.[3], s1b1_accuracy$X50.[4]), col=col, lty = 3)
+    } else if (i == 5){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s1b1_laptime$X50.[4], s1b1_laptime$X50.[5]),c(s1b1_accuracy$X50.[4], s1b1_accuracy$X50.[5]), col=col, lty = 3)
+    }
+    text(subdat_laptime$X50., subdat_accuracy$X50.,labels=i,cex=0.6,col='white')
   }
   
   #session 1, last block
@@ -629,6 +644,7 @@ plotSAF <- function(target='inline') {
   subdat_accuracy <- s1b2_accuracy[i,]
   col <- colourscheme[[6]][['S']]
   points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
+  lines(c(s1b1_laptime$X50.[5], s1b2_laptime$X50.[5]),c(s1b1_accuracy$X50.[5], s1b2_accuracy$X50.[5]), col=col, lty = 3)
   text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
   col <- colourscheme[[6]][['T']]
   #accuracy CI
@@ -644,20 +660,34 @@ plotSAF <- function(target='inline') {
     subdat_accuracy <- s2ball_accuracy[i,]
     col <- colourscheme[[i]][['S']]
     points(subdat_laptime$X50., subdat_accuracy$X50.,pch=15,cex=1.5,col=col)
-    if(i %% 2 == 1){
-      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
-    } else if(i %% 2 == 0){
-      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=2,cex=0.6,col='white')
-    }
+    
     
     col <- colourscheme[[i]][['T']]
     #accuracy CI
     lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
     #laptime CI
     lines(c(subdat_laptime$X2.5., subdat_laptime$X97.5.), rep(subdat_accuracy$X50.,2),col=col)
+    
+    #connect blocks in session 2
+    if(i == 2){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s2ball_laptime$X50.[1], s2ball_laptime$X50.[2]),c(s2ball_accuracy$X50.[1], s2ball_accuracy$X50.[2]), col=col, lty = 3)
+    } else if (i == 4){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s2ball_laptime$X50.[3], s2ball_laptime$X50.[4]),c(s2ball_accuracy$X50.[3], s2ball_accuracy$X50.[4]), col=col, lty = 3)
+    } else if (i == 6){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s2ball_laptime$X50.[5], s2ball_laptime$X50.[6]),c(s2ball_accuracy$X50.[5], s2ball_accuracy$X50.[6]), col=col, lty = 3)
+    } else if (i == 8){
+      col <- colourscheme[[i]][['S']]
+      lines(c(s2ball_laptime$X50.[7], s2ball_laptime$X50.[8]),c(s2ball_accuracy$X50.[7], s2ball_accuracy$X50.[8]), col=col, lty = 3)
+    }
+    if(i %% 2 == 1){
+      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
+    } else if(i %% 2 == 0){
+      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=2,cex=0.6,col='white')
+    }
   }
-  
-  
   
   
   #add legend
