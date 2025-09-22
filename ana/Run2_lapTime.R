@@ -207,7 +207,7 @@ plotR2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
 
 # Session 1: Combine track orientations----
 
-getR2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+getR2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, output='y'){
   
   alldata <- data.frame()
   
@@ -223,7 +223,11 @@ getR2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RA
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_LapTime_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2AllTrackGroupLapCI <- function(session = 1, type = 'b'){
@@ -434,7 +438,7 @@ plotR2S2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_9
 
 # Session 2: Combine track orientations----
 
-getR2S2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+getR2S2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, output='y'){
   
   alldata <- data.frame()
   
@@ -450,7 +454,11 @@ getR2S2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_LapTime_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2S2AllTrackGroupLapCI <- function(session = 2, type = 'b'){

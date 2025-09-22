@@ -376,7 +376,7 @@ plotR2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_
 
 # Session 1: Combine track orientations----
 
-getR2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+getR2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, output='y'){
   
   alldata <- data.frame()
   
@@ -392,7 +392,11 @@ getR2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RAC
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2AllTrackGroupPLCI <- function(session = 1, type = 'b'){
@@ -755,7 +759,7 @@ plotR2S2PathLength <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACIN
 
 # Session 2: Combine track orientations----
 
-getR2S2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+getR2S2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, output='y'){
   
   alldata <- data.frame()
   
@@ -771,7 +775,11 @@ getR2S2AllTrackGroupPL <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-R
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_PathLength_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2S2AllTrackGroupPLCI <- function(session = 2, type = 'b'){

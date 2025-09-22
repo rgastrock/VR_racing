@@ -154,7 +154,7 @@ plotR2Accuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90
 
 # Session 1: Combine track orientations----
 
-getR2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+getR2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, output='y'){
   
   alldata <- data.frame()
   
@@ -170,7 +170,11 @@ getR2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_Accuracy_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2AllTrackGroupAccuracyCI <- function(session = 1, type = 'b'){
@@ -381,7 +385,7 @@ plotR2S2Accuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_
 
 # Session 2: Combine track orientations----
 
-getR2S2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+getR2S2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, output='y'){
   
   alldata <- data.frame()
   
@@ -397,7 +401,11 @@ getR2S2AllTrackGroupAccuracy <- function(groups = c('T-RACING_0', 'T-RACING_180'
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(output == 'y'){
+    write.csv(ndat, file=sprintf('data/Run2_Accuracy_AllTrack_S%03d.csv', session), row.names = F) 
+  } else{
+    return(ndat)
+  }
 }
 
 getR2S2AllTrackGroupAccuracyCI <- function(session = 2, type = 'b'){
