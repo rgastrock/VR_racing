@@ -1651,6 +1651,64 @@ plotInOutFirstLastAllTrackAcrossSessionPL <- function(target='inline', trackloc=
   
 }
 
+# Statistics ----
+testRetentionPL<- function(){
+  
+  #Session  (day) 1 and 2 data
+  PLdat <- getAllTrackGroupPL()
+  PLdatS2 <- getS2AllTrackGroupPL()
+  
+  #get the last trial set for last block of day 1, and first set of block 1 in day2, remove first trial of every block
+  D1lastblockset <- colMeans(PLdat[c(295:300),c(2:ncol(PLdat))])
+  D2firstblockset <- colMeans(PLdatS2[c(2:6),c(2:ncol(PLdatS2))])
+  D1pp <- names(D1lastblockset)
+  D2pp <- names(D2firstblockset)
+  D1 <- data.frame("participant" = D1pp, "PLD1" = as.numeric(D1lastblockset))
+  D2 <- data.frame("participant" = D2pp, "PLD2" = as.numeric(D2firstblockset))
+  
+  ndat <- merge(D1, D2, by = "participant", all = T)
+  ndat$participant <- as.factor(ndat$participant)
+  
+  ndat <- na.omit(ndat)
+  
+  
+  cat('Day 1 (last trial set, last block) compared to Day 2 (first trial set, first block):\n')
+  print(t.test(ndat$PLD1, ndat$PLD2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ndat$PLD1, ndat$PLD2, method = 'paired'))
+  cat('Bayesian t-test:\n')
+  print(ttestBF(ndat$PLD1, ndat$PLD2, paired = TRUE))
+  
+}
+
+
+testDay2GenPL<- function(){
+  
+  #Session  (day) 2 data
+  PLdatS2 <- getS2AllTrackGroupPL()
+  
+  #get the last trial set for block 1 of day 2, and last set of last block reverse in day2, remove first trial of every block
+  control <- colMeans(PLdatS2[c(25:30),c(2:ncol(PLdatS2))])
+  test <- colMeans(PLdatS2[c(85:90),c(2:ncol(PLdatS2))])
+  D1pp <- names(control)
+  D2pp <- names(test)
+  D1 <- data.frame("participant" = D1pp, "PLD1" = as.numeric(control))
+  D2 <- data.frame("participant" = D2pp, "PLD2" = as.numeric(test))
+  
+  ndat <- merge(D1, D2, by = "participant", all = T)
+  ndat$participant <- as.factor(ndat$participant)
+  
+  ndat <- na.omit(ndat)
+  
+  
+  cat('Day 2 (last trial set, first block) compared to Day 2 (last trial set, reverse block):\n')
+  print(t.test(ndat$PLD1, ndat$PLD2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ndat$PLD1, ndat$PLD2, method = 'paired'))
+  cat('Bayesian t-test:\n')
+  print(ttestBF(ndat$PLD1, ndat$PLD2, paired = TRUE))
+  
+}
 
 #CHECK: Path Length of track limits----
 getParticipantTrackLimitsPL <- function(group, id, session) {

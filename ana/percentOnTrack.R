@@ -776,3 +776,33 @@ plotFirstLastAllTrackAcrossSessionAccuracy <- function(target='inline'){
   }
   
 }
+
+#Statistics ----
+testRetentionAccuracy<- function(){
+  
+  #Session  (day) 1 and 2 data
+  accdat <- getAllTrackGroupAccuracy()
+  accdatS2 <- getS2AllTrackGroupAccuracy()
+  
+  #get the last trial set for last block of day 1, and first set of block 1 in day2, remove first trial of every block
+  D1lastblockset <- colMeans(accdat[c(295:300),c(2:ncol(accdat))])
+  D2firstblockset <- colMeans(accdatS2[c(2:6),c(2:ncol(accdatS2))])
+  D1pp <- names(D1lastblockset)
+  D2pp <- names(D2firstblockset)
+  D1 <- data.frame("participant" = D1pp, "accuracyD1" = as.numeric(D1lastblockset))
+  D2 <- data.frame("participant" = D2pp, "accuracyD2" = as.numeric(D2firstblockset))
+  
+  ndat <- merge(D1, D2, by = "participant", all = T)
+  ndat$participant <- as.factor(ndat$participant)
+  
+  ndat <- na.omit(ndat)
+  
+  
+  cat('Day 1 (last trial set, last block) compared to Day 2 (first trial set, first block):\n')
+  print(t.test(ndat$accuracyD1, ndat$accuracyD2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ndat$accuracyD1, ndat$accuracyD2, method = 'paired'))
+  cat('Bayesian t-test:\n')
+  print(ttestBF(ndat$accuracyD1, ndat$accuracyD2, paired = TRUE))
+  
+}

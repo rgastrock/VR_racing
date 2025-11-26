@@ -830,5 +830,33 @@ plotFirstLastAllTrackAcrossSessionLapTime <- function(target='inline'){
   
 }
 
+# Statistics----
+testDay2GenMT<- function(){
+  
+  #Session  (day) 2 data
+  MTdatS2 <- getS2AllTrackGroupLap()
+  
+  #get the last trial set for block 1 of day 2, and last set of last block reverse in day2, remove first trial of every block
+  control <- colMeans(MTdatS2[c(25:30),c(2:ncol(MTdatS2))])
+  test <- colMeans(MTdatS2[c(85:90),c(2:ncol(MTdatS2))])
+  D1pp <- names(control)
+  D2pp <- names(test)
+  D1 <- data.frame("participant" = D1pp, "MTD1" = as.numeric(control))
+  D2 <- data.frame("participant" = D2pp, "MTD2" = as.numeric(test))
+  
+  ndat <- merge(D1, D2, by = "participant", all = T)
+  ndat$participant <- as.factor(ndat$participant)
+  
+  ndat <- na.omit(ndat)
+  
+  
+  cat('Day 2 (last trial set, first block) compared to Day 2 (last trial set, reverse block):\n')
+  print(t.test(ndat$MTD1, ndat$MTD2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ndat$MTD1, ndat$MTD2, method = 'paired'))
+  cat('Bayesian t-test:\n')
+  print(ttestBF(ndat$MTD1, ndat$MTD2, paired = TRUE))
+  
+}
 
 

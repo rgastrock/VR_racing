@@ -1,6 +1,8 @@
 library(Reach)
 library(svglite)
 library(scales)
+library(lsr)
+library(BayesFactor)
 
 getConfidenceInterval <- function(data, variance = var(data), conf.level = 0.95, method='t-distr', resamples=1000, FUN=mean, returndist=FALSE) {
   

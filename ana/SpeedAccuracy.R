@@ -440,6 +440,7 @@ getLapTimeandAccuracy <- function(){
   outdat <- list('mtb1'=mtb1_trialave, 'mtb2'=mtb2_trialave, 'accb1'=accb1_trialave, 'accb2'=accb2_trialave)
   
   return(outdat)
+  #write.csv(outdat, file='data/LapTimeandAcc.csv', row.names = F) 
   
 }
 
@@ -717,6 +718,50 @@ plotSAF <- function(target='inline') {
   
 }
 
+#Relationship between within session improvement and offline gains-----
+
+getWithinImprovementOfflineGainsAcc <- function(){
+  
+  #Session 1
+  data <- getLapTimeandAccuracy()
+  
+  set1block1 <- data[[3]][1,] #indexing lists of lists in data: 3rd list is accuracy for first 30 trials, we get the first set 5 trials (first trial removed)
+  set5block2 <- data[[4]][5,] #same but now we want acc for last 30 trials, we get last set
+  
+  D1set1block1 <- set1block1[,-c(1,21)]#remove participant 8 and 54 as they did not do session 2 (1 and 21 are their idx in this df)
+  D1set5block2 <- set5block2[,-c(1,21)]
+  
+  #Session 2
+  data2 <- getS2LapTimeandAccuracy()
+  D2set1block1 <- data2[[2]][1,] #same but for day 2
+  
+  ndat <- list('D1Set1Block1'=D1set1block1, 'D1Set5Block2'=D1set5block2, 'D2Set1Block1'=D2set1block1)
+  
+  #calculate normalized within session improvements
+  WithinImprovement <- as.numeric(ndat[[2]][1,]) - as.numeric(ndat[[1]][1,]) #subtract last set last block and first set first block
+  WImin <- min(WithinImprovement)
+  WImax <- max(WithinImprovement)
+  WInorm <- c()
+  for(i in c(WithinImprovement)){
+    normval <- 2 * ((i - WImin)/(WImax - WImin)) - 1
+    WInorm <- c(WInorm, normval)
+  }
+  
+  #calculate normalized offline gains
+  OfflineGains <- as.numeric(ndat[[3]][1,]) - as.numeric(ndat[[2]][1,]) #subtract last set last block from first set first block day 2
+  OGmin <- min(OfflineGains)
+  OGmax <- max(OfflineGains)
+  OGnorm <- c()
+  for(i in c(OfflineGains)){
+    normval <- 2 * ((i - OGmin)/(OGmax - OGmin)) - 1
+    OGnorm <- c(OGnorm, normval)
+  }
+  
+  plot(WInorm, OGnorm)
+  corstats <- cor.test(WInorm, OGnorm)
+  return(corstats)
+}
+
 #plot trial 2 and trial 300 for day 1 (individual data)----
 plotIndividualLapTimeandAccuracy <- function(target='inline'){
   #but we can save plot as svg file
@@ -760,23 +805,7 @@ plotIndividualLapTimeandAccuracy <- function(target='inline'){
 
 
 
-# kernelRegression <- function(x,y,width,interpoints) {
-#   
-#   output <- c()
-#   
-#   for (interpoint in interpoints) {
-#     
-#     w <- exp(-1 * ((x-interpoint)^2/(2 * width^2)))
-#     output <- c(output, sum(w*y)/sum(w))
-#     
-#   }
-#   
-#   return(output)
-#   
-# }
-# 
-# interpoints <- c(3.5, 4.0, 4.5, 5, 5.5, 6, 6.5)
-# ab <- kernelRegression(x=ndat$laptime,y=ndat$accuracy,width=.5,interpoints=interpoints)
+
 
 
 
