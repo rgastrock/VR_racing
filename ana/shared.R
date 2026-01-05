@@ -3,6 +3,10 @@ library(svglite)
 library(scales)
 library(lsr)
 library(BayesFactor)
+library(ez)
+library(emmeans)
+library(afex)
+library(bayestestR)
 
 getConfidenceInterval <- function(data, variance = var(data), conf.level = 0.95, method='t-distr', resamples=1000, FUN=mean, returndist=FALSE) {
   

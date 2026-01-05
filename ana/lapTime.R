@@ -207,7 +207,7 @@ plotLapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 
 
 # Session 1: Combine track orientations----
 
-getAllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1){
+getAllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 1, target = 0){
   
   alldata <- data.frame()
   
@@ -223,7 +223,11 @@ getAllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACI
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(target == 1){
+    write.csv(ndat, file=sprintf('data/LapTime_AllTrack_S%03d.csv', session), row.names = F) 
+  } else {
+    return(ndat)
+  }
 }
 
 getAllTrackGroupLapCI <- function(session = 1, type = 'b'){
@@ -434,7 +438,7 @@ plotS2LapTime <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90'
 
 # Session 2: Combine track orientations----
 
-getS2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2){
+getS2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RACING_90', 'T-RACING_270'), session = 2, target = 0){
   
   alldata <- data.frame()
   
@@ -450,7 +454,11 @@ getS2AllTrackGroupLap <- function(groups = c('T-RACING_0', 'T-RACING_180', 'T-RA
     }
   }
   ndat <- data.frame(trial, alldata)
-  return(ndat)
+  if(target == 1){
+    write.csv(ndat, file=sprintf('data/LapTime_AllTrack_S%03d.csv', session), row.names = F) 
+  } else {
+    return(ndat)
+  }
 }
 
 getS2AllTrackGroupLapCI <- function(session = 2, type = 'b'){
@@ -830,33 +838,706 @@ plotFirstLastAllTrackAcrossSessionLapTime <- function(target='inline'){
   
 }
 
-# Statistics----
-testDay2GenMT<- function(){
+# Statistics (Preprocess data) ----
+
+getBlockedLapTime <- function(session, blockdefs) {
   
-  #Session  (day) 2 data
-  MTdatS2 <- getS2AllTrackGroupLap()
+  dat <- read.csv(file=sprintf('data/LapTime_AllTrack_S%03d.csv', session))
+  dat <- dat[,-1] #remove trial rows
+  participants <- colnames(dat)
+  N <- length(participants)
   
-  #get the last trial set for block 1 of day 2, and last set of last block reverse in day2, remove first trial of every block
-  control <- colMeans(MTdatS2[c(25:30),c(2:ncol(MTdatS2))])
-  test <- colMeans(MTdatS2[c(85:90),c(2:ncol(MTdatS2))])
-  D1pp <- names(control)
-  D2pp <- names(test)
-  D1 <- data.frame("participant" = D1pp, "MTD1" = as.numeric(control))
-  D2 <- data.frame("participant" = D2pp, "MTD2" = as.numeric(test))
+  participant <- c()
+  block <- c()
+  dv <- c()
   
-  ndat <- merge(D1, D2, by = "participant", all = T)
-  ndat$participant <- as.factor(ndat$participant)
+  for (ppno in c(1:N)) {
+    
+    pp <- participants[ppno]
+    
+    for (blockno in c(1:length(blockdefs))) {
+      #for each participant, and every 9 trials, get the mean
+      blockdef <- blockdefs[[blockno]]
+      blockstart <- blockdef[1]
+      blockend <- blockstart + blockdef[2] - 1
+      samples <- dat[blockstart:blockend,ppno]
+      samples <- mean(samples, na.rm=TRUE)
+      
+      participant <- c(participant, pp)
+      block <- c(block, names(blockdefs)[blockno])
+      dv <- c(dv, samples)
+    }
+  }
+  LCaov <- data.frame(participant, block, dv)
   
-  ndat <- na.omit(ndat)
+  #need to make some columns as factors for ANOVA
+  #LCaov$participant <- as.factor(LCaov$participant)
+  LCaov$block <- as.factor(LCaov$block)
+  if(session == 1){
+    LCaov$block <- factor(LCaov$block, levels = c('S1_first','S1_last'))
+  } else if(session == 2){
+    LCaov$block <- factor(LCaov$block, levels = c('S2_1','S2_2','S2_3','S2_4','S2_5','S2_6','S2_7','S2_8'))
+  }
   
-  
-  cat('Day 2 (last trial set, first block) compared to Day 2 (last trial set, reverse block):\n')
-  print(t.test(ndat$MTD1, ndat$MTD2, paired = TRUE))
-  cat('Effect Size - Cohen d:\n')
-  print(cohensD(ndat$MTD1, ndat$MTD2, method = 'paired'))
-  cat('Bayesian t-test:\n')
-  print(ttestBF(ndat$MTD1, ndat$MTD2, paired = TRUE))
+  return(LCaov)
   
 }
 
+#Statistics (Retention; Frequentist) ----
+
+retentionLapTimeANOVA <- function() {
+  
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedLapTime(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Lap times during first and last set in session 1 and first and second set in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+retentionLapTimeComparisonMeans <- function(){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedLapTime(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  print(cellmeans)
+  
+}
+
+retentionLapTimeComparisons <- function(method='bonferroni'){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedLapTime(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  #specify contrasts
+  S1_firstvsS1_last <- c(-1,1,0,0)
+  S1_firstvsS2_1 <- c(-1,0,1,0)
+  S1_lastvsS2_1 <- c(0,-1,1,0)
+  S1_lastvsS2_2 <- c(0,-1,0,1)
+  
+  contrastList <- list('Session 1 Set 1 vs Session 1 Set Last' = S1_firstvsS1_last, 
+                       'Session 1 Set 1 vs Session 2 Set 1' = S1_firstvsS2_1, 
+                       'Session 1 Set Last vs Session 2 Set 1' = S1_lastvsS2_1,
+                       'Session 1 Set Last vs Session 2 Set 2' = S1_lastvsS2_2)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+retentionLapTimeComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- retentionLapTimeComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+#Statistics (Retention; Bayesian) ----
+retentionLapTimeBayesANOVA <- function() {
+  
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedLapTime(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  
+  cat('Lap times during first and last set in session 1 and first and second set in session 2:\n')
+  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+retentionLapTimeComparisonsBayesfollowup <- function() {
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedLapTime(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  
+  
+  S1_first <- LC4aov[which(LC4aov$block == 'S1_first'),]
+  S1_last <- LC4aov[which(LC4aov$block == 'S1_last'),]
+  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  
+
+  cat('Bayesian t-test - Session 1 Set 1 vs Session 1 Set Last:\n')
+  print(ttestBF(S1_first$dv, S1_last$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 1 Set 1 vs Session 2 Set 1:\n')
+  print(ttestBF(S1_first$dv, S2_1$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 1 Set Last vs Session 2 Set 1:\n')
+  print(ttestBF(S1_last$dv, S2_1$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 1 Set Last vs Session 2 Set 2:\n')
+  print(ttestBF(S1_last$dv, S2_2$dv, paired = TRUE))
+  
+}
+
+#Statistics (Generalization; Frequentist) ----
+
+genLapTimeANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Lap times during first block in session 2 and second block in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+genLapTimeComparisonMeans <- function(){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  print(cellmeans)
+  
+}
+
+genLapTimeComparisons <- function(method='bonferroni'){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  #specify contrasts
+  S2_1vsS2_3 <- c(-1,0,1,0)
+  S2_2vsS2_3 <- c(0,-1,1,0)
+  S2_2vsS2_4 <- c(0,-1,0,1)
+  
+  contrastList <- list('Session 2 Set 1 vs Session 2 Set 3' = S2_1vsS2_3, 
+                       'Session 2 Set 2 vs Session 2 Set 3' = S2_2vsS2_3, 
+                       'Session 2 Set 2 vs Session 2 Set 4' = S2_2vsS2_4)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+genLapTimeComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- genLapTimeComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+#Statistics (Generalization; Bayesian) ----
+genLapTimeBayesANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  
+  cat('Lap times during first block in session 2 and second block in session 2:\n')
+  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+genLapTimeComparisonsBayesfollowup <- function() {
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  
+  
+  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  S2_3 <- LC4aov[which(LC4aov$block == 'S2_3'),]
+  S2_4 <- LC4aov[which(LC4aov$block == 'S2_4'),]
+  
+  
+  cat('Bayesian t-test - Session 2 Set 1 vs Set 3:\n')
+  print(ttestBF(S2_1$dv, S2_3$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 3:\n')
+  print(ttestBF(S2_2$dv, S2_3$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 4:\n')
+  print(ttestBF(S2_2$dv, S2_4$dv, paired = TRUE))
+  
+}
+
+#Statistics (Reverse direction; Frequentist) ----
+
+revLapTimeANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Lap times during first block in session 2 and third block in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+revLapTimeComparisonMeans <- function(){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  print(cellmeans)
+  
+}
+
+revLapTimeComparisons <- function(method='bonferroni'){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  #specify contrasts
+  S2_1vsS2_5 <- c(-1,0,1,0)
+  S2_2vsS2_5 <- c(0,-1,1,0)
+  S2_2vsS2_6 <- c(0,-1,0,1)
+  
+  contrastList <- list('Session 2 Set 1 vs Session 2 Set 5' = S2_1vsS2_5, 
+                       'Session 2 Set 2 vs Session 2 Set 5' = S2_2vsS2_5, 
+                       'Session 2 Set 2 vs Session 2 Set 6' = S2_2vsS2_6)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+revLapTimeComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- revLapTimeComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+#Statistics (Reverse direction; Bayesian) ----
+revLapTimeBayesANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  
+  cat('Lap times during first block in session 2 and third block in session 2:\n')
+  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+revLapTimeComparisonsBayesfollowup <- function() {
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  
+  
+  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  S2_5 <- LC4aov[which(LC4aov$block == 'S2_5'),]
+  S2_6 <- LC4aov[which(LC4aov$block == 'S2_6'),]
+  
+  
+  cat('Bayesian t-test - Session 2 Set 1 vs Set 5:\n')
+  print(ttestBF(S2_1$dv, S2_5$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 5:\n')
+  print(ttestBF(S2_2$dv, S2_5$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 6:\n')
+  print(ttestBF(S2_2$dv, S2_6$dv, paired = TRUE))
+  
+}
+
+#Statistics (Trained direction; Frequentist) ----
+
+trainLapTimeANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Lap times during first block in session 2 and last block in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+trainLapTimeComparisonMeans <- function(){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  print(cellmeans)
+  
+}
+
+trainLapTimeComparisons <- function(method='bonferroni'){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  
+  #specify contrasts
+  S2_1vsS2_7 <- c(-1,0,1,0)
+  S2_2vsS2_7 <- c(0,-1,1,0)
+  S2_2vsS2_8 <- c(0,-1,0,1)
+  
+  contrastList <- list('Session 2 Set 1 vs Session 2 Set 7' = S2_1vsS2_7, 
+                       'Session 2 Set 2 vs Session 2 Set 7' = S2_2vsS2_7, 
+                       'Session 2 Set 2 vs Session 2 Set 8' = S2_2vsS2_8)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+trainLapTimeComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- trainLapTimeComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+#Statistics (Trained direction; Bayesian) ----
+trainLapTimeBayesANOVA <- function() {
+  
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  
+  cat('Lap times during first block in session 2 and last block in session 2:\n')
+  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+trainLapTimeComparisonsBayesfollowup <- function() {
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedLapTime(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  
+  
+  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  S2_7 <- LC4aov[which(LC4aov$block == 'S2_7'),]
+  S2_8 <- LC4aov[which(LC4aov$block == 'S2_8'),]
+  
+  
+  cat('Bayesian t-test - Session 2 Set 1 vs Set 7:\n')
+  print(ttestBF(S2_1$dv, S2_7$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 7:\n')
+  print(ttestBF(S2_2$dv, S2_7$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 2 Set 2 vs Set 8:\n')
+  print(ttestBF(S2_2$dv, S2_8$dv, paired = TRUE))
+  
+}
+
+
+#Exponential Model Plots----
+getLapTimePars <- function(bootstraps = 1000){
+  
+  data <- getAllTrackGroupLap()
+  subdat <- data[2:nrow(data),2:ncol(data)]
+  lambda <- c()
+  N0 <- c()
+  for(bs in c(1:bootstraps)){
+    cat(sprintf('iteration: %s \n', bs))
+    bs_mat <- subdat[,sample(ncol(subdat),ncol(subdat), replace = TRUE)]
+    bs_dat <- rowMeans(bs_mat, na.rm = TRUE)
+    
+    par <- exponentialFit(signal = bs_dat, mode='washout')
+    lambda <- c(lambda, par['lambda'])
+    N0 <- c(N0, par['N0'])
+  }
+  
+  write.csv(data.frame(lambda, N0), file='data/LapTime_exponentialPars.csv', quote=F, row.names=F)
+}
+  
+
+
+plotLapTimeModel <- function(session = 1, target='inline'){
+  
+  #but we can save plot as svg file
+  if(target=='svg'){
+    svglite(file='doc/fig/pilot/Fig17_LapTime_exponentialFit.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  
+  
+  #par(mfrow = c(1,2))
+  
+  
+  plot(NA, NA, xlim = c(0,300), ylim = c(0,7), 
+       xlab = "Trial", ylab = "Lap time (s)", frame.plot = FALSE, #frame.plot takes away borders
+       main = "Exponential fit, lap time", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  #abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(side=1, at=c(1, 49, 99, 149, 199, 249, 299), labels=c('2', '50', '100', '150', '200', '250', '300'))
+  axis(2, at = c(0,2,4,6)) #tick marks for y axis
+  
+  
+  #show the percent compensation from data
+  groupconfidence <- read.csv(file=sprintf('data/LapTimeCI_AllTrack_S%03d.csv', session))
+  mid <- groupconfidence[2:nrow(groupconfidence),2]
+  x <- c(1:299)
+  col <- '#A9A9A9ff'
+  lines(x, mid, lty=1, col=col)
+  
+  #get model parameters from data - no bootstrapping
+  dat <- getAllTrackGroupLap()
+  subdat <- dat[2:nrow(dat),2:ncol(dat)]
+  
+  bs_dat <- rowMeans(subdat, na.rm = TRUE)
+  par <- exponentialFit(signal = bs_dat, mode='washout')
+  
+  #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
+  #bootstrapped pars are used for lower and upper bounds
+  data <- read.csv(file='data/LapTime_exponentialPars.csv')
+  
+  qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
+  qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
+  
+  lwr <- setNames(c(qs_lambda[['2.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+  mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
+  upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+  
+  xcoords <- c(1:299)
+  dfit <- exponentialModel(par=lwr, timepoints=xcoords)
+  y_lwr <- dfit$output
+  dfit <- exponentialModel(par=mid, timepoints=xcoords)
+  y_mid <- dfit$output
+  dfit <- exponentialModel(par=upr, timepoints=xcoords)
+  y_upr <- dfit$output
+  
+  colourscheme <- getAllTrackDayOneColourScheme()
+  col <- colourscheme[['T']] #use colour scheme according to group
+  #upper and lower bounds create a polygon
+  #polygon creates it from low left to low right, then up right to up left -> use rev
+  #x is just trial nnumber, y depends on values of bounds
+  polygon(x = c(xcoords, rev(xcoords)), y = c(y_lwr, rev(y_upr)), border=NA, col=col)
+  #add CIs for asymptote
+  abline(h = c(qs_N0[['2.5%']], qs_N0[['97.5%']]), col = col, lty = 2, lwd=2)
+  col <- colourscheme[['S']]
+  lines(xcoords, y_mid,col=col,lty=1,lwd=2)
+  
+  #add legend
+  legend(2,100,legend=c('lap time','model (rate of change)','asymptote 95% CI'),
+         col=c('#A9A9A9ff',colourscheme[['S']],colourscheme[['T']]),
+         lty=c(1,1,2),bty='n',cex=.65,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+}
+  
 
