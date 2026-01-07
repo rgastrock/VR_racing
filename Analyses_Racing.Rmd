@@ -1,0 +1,115 @@
+---
+title: "2-D VR racing task"
+author: "Raphael Q. Gastrock"
+date: "2026-01-07"
+output:
+  html_document:
+    toc: TRUE
+    toc_depth: 4
+    toc_float: true
+---
+# Overview
+
+This document discusses detailed results for the 2D VR racing tablet  experiments presented in the manuscript, with both Bayesian and frequentist analyses. We also show additional figures and statistical tests that support our findings.
+
+# Set up the R enviornment
+
+Our scripts require the use of certain packages. If some packages are not available in your own system, run the command:
+
+```{r}
+# Remove comment below
+#install.packages(c('Reach', 'svglite', 'scales', 'lsr', 'BayesFactor', 'ez', 'emmeans', 'afex', 'bayestestR'))
+```
+
+We have written code that pre-processes the data, plots figures, and runs statistical tests. Import the sources below:
+
+```{r message=FALSE, warning=FALSE}
+source('ana/shared.R')
+source('ana/downloadData.R')
+source('ana/lapTime.R')
+source('ana/Run2_lapTime.R')
+source('ana/percentOnTrack.R')
+source('ana/Run2_percentOnTrack.R')
+source('ana/pathLength.R')
+source('ana/Run2_pathLength.R')
+source('ana/SpeedAccuracy.R')
+source('ana/Run2_SpeedAccuracy.R')
+
+#manuscript plots
+source('ana/manuscriptPlots.R')
+```
+
+Then, we ensure that the data is available locally.
+
+```{r}
+# Remove comment below if data is not available locally.
+#getBehaviorData()
+```
+
+
+# Study 1
+
+Participants used a stylus on a digitizing tablet to control a race car through a track as quickly and accurately as possible. They received lap time and accuracy feedback. Lap times are measured by the time it takes to move from the start line to the finish line. Leaving the track limits affects accuracy, where the car turns red and participants hear a buzzing sound. In between trials, participants can rest at a pit stop (area between finish and start lines where the car is yellow). 
+
+It is unclear whether continued improvements in motor execution have the same underlying mechanisms as other types of motor learning. Therefore, we investigated retention and generalization patterns after lengthened practice with the racing task. Participants returned for a second session the next day, and we assessed for any further improvements in speed and accuracy. We expect to observe offline gains (performance improvement upon re-experiencing the task), which suggests robust retention patterns for motor execution. For generalization, we also tested how changes in the task may interfere with previous learning, by altering track orientation or reversing the movement direction.
+
+## Track orientations
+
+We counterbalanced track orientation across participants, where the trained track orientation during session 1 was displayed on the monitor at either 0, 90, 180, or 270 degrees in polar coordinates. Participants practiced the task on their assigned orientation for 300 laps during session 1. In session 2, participants performed 30 laps with the same trained orientation (trained track), followed by 30 laps where the trained track was rotated by 180 degrees (rotated track), followed by 30 laps where the track was rotated by another 90 degrees and participants had to move through the track in reverse (reverse track), before ending the session with 30 laps on the trained track again (trained track).
+
+Below we plot speed (lap times), accuracy (percent on track), and path length (trajectory) measures, according to track orientations.
+
+### Speed: Session 1 and 2
+
+```{r}
+plotLapTime()
+plotS2LapTime()
+```
+
+### Accuracy: Session 1 and 2
+
+```{r}
+plotAccuracy()
+plotS2Accuracy()
+```
+
+### Path Length: Session 1 and 2
+
+```{r}
+plotPathLength()
+plotS2PathLength()
+```
+
+Overall, we do not observe much differences for speed, accuracy, and path length when comparing performance across track orientations. Thus, we combine data from all orientations and analyze the data further.
+
+## Speed (Lap times)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
