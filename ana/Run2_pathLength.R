@@ -2128,7 +2128,7 @@ getR2BlockedPL<- function(session, blockdefs) {
   N <- length(participants)
   
   participant <- c()
-  block <- c()
+  set <- c()
   dv <- c()
   
   for (ppno in c(1:N)) {
@@ -2144,19 +2144,19 @@ getR2BlockedPL<- function(session, blockdefs) {
       samples <- mean(samples, na.rm=TRUE)
       
       participant <- c(participant, pp)
-      block <- c(block, names(blockdefs)[blockno])
+      set <- c(set, names(blockdefs)[blockno])
       dv <- c(dv, samples)
     }
   }
-  LCaov <- data.frame(participant, block, dv)
+  LCaov <- data.frame(participant, set, dv)
   
   #need to make some columns as factors for ANOVA
   #LCaov$participant <- as.factor(LCaov$participant)
-  LCaov$block <- as.factor(LCaov$block)
+  LCaov$set <- as.factor(LCaov$set)
   if(session == 1){
-    LCaov$block <- factor(LCaov$block, levels = c('S1_first','S1_last'))
+    LCaov$set <- factor(LCaov$set, levels = c('S1_first','S1_last'))
   } else if(session == 2){
-    LCaov$block <- factor(LCaov$block, levels = c('S2_1','S2_2','S2_3','S2_4','S2_5','S2_6','S2_7','S2_8'))
+    LCaov$set <- factor(LCaov$set, levels = c('S2_1','S2_2','S2_3','S2_4','S2_5','S2_6','S2_7','S2_8'))
   }
   
   return(LCaov)
@@ -2173,18 +2173,18 @@ retentionR2PLANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length during first and last set in session 1 and first and second set in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2198,17 +2198,17 @@ retentionR2PLComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2220,15 +2220,15 @@ retentionR2PLComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
   #specify contrasts
   S1_firstvsS1_last <- c(-1,1,0,0)
@@ -2241,7 +2241,7 @@ retentionR2PLComparisons <- function(method='bonferroni'){
                        'Session 1 Set Last vs Session 2 Set 1' = S1_lastvsS2_1,
                        'Session 1 Set Last vs Session 2 Set 2' = S1_lastvsS2_2)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -2272,16 +2272,16 @@ retentionR2PLBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   cat('Path Length during first and last set in session 1 and first and second set in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -2300,19 +2300,19 @@ retentionR2PLComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   
-  S1_first <- LC4aov[which(LC4aov$block == 'S1_first'),]
-  S1_last <- LC4aov[which(LC4aov$block == 'S1_last'),]
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  S1_first <- LC4aov[which(LC4aov$set == 'S1_first'),]
+  S1_last <- LC4aov[which(LC4aov$set == 'S1_last'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
   
   
   cat('Bayesian t-test - Session 1 Set 1 vs Session 1 Set Last:\n')
@@ -2336,15 +2336,15 @@ genR2PLANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length during first block in session 2 and second block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2356,14 +2356,14 @@ genR2PLComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2372,12 +2372,12 @@ genR2PLComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs)
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
 
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
 
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
 
   #specify contrasts
   S2_1vsS2_3 <- c(-1,0,1,0)
@@ -2388,7 +2388,7 @@ genR2PLComparisons <- function(method='bonferroni'){
                        'Session 2 Set 2 vs Session 2 Set 3' = S2_2vsS2_3,
                        'Session 2 Set 2 vs Session 2 Set 4' = S2_2vsS2_4)
 
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
 
   print(comparisons)
 
@@ -2416,13 +2416,13 @@ genR2PLBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   cat('Path Length during first block in session 2 and second block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -2438,16 +2438,16 @@ genR2PLComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_3 <- LC4aov[which(LC4aov$block == 'S2_3'),]
-  S2_4 <- LC4aov[which(LC4aov$block == 'S2_4'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_3 <- LC4aov[which(LC4aov$set == 'S2_3'),]
+  S2_4 <- LC4aov[which(LC4aov$set == 'S2_4'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 3:\n')
@@ -2468,15 +2468,15 @@ revR2PLANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length during first block in session 2 and third block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2487,14 +2487,14 @@ revR2PLComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2503,12 +2503,12 @@ revR2PLComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
   #specify contrasts
   S2_1vsS2_5 <- c(-1,0,1,0)
@@ -2519,7 +2519,7 @@ revR2PLComparisons <- function(method='bonferroni'){
                        'Session 2 Set 2 vs Session 2 Set 5' = S2_2vsS2_5, 
                        'Session 2 Set 2 vs Session 2 Set 6' = S2_2vsS2_6)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -2547,13 +2547,13 @@ revR2PLBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   cat('Path Length during first block in session 2 and third block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -2569,16 +2569,16 @@ revR2PLComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_5 <- LC4aov[which(LC4aov$block == 'S2_5'),]
-  S2_6 <- LC4aov[which(LC4aov$block == 'S2_6'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_5 <- LC4aov[which(LC4aov$set == 'S2_5'),]
+  S2_6 <- LC4aov[which(LC4aov$set == 'S2_6'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 5:\n')
@@ -2599,15 +2599,15 @@ trainR2PLANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length during first block in session 2 and last block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2618,14 +2618,14 @@ trainR2PLComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2634,12 +2634,12 @@ trainR2PLComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs)
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
   #specify contrasts
   S2_1vsS2_7 <- c(-1,0,1,0)
@@ -2650,7 +2650,7 @@ trainR2PLComparisons <- function(method='bonferroni'){
                        'Session 2 Set 2 vs Session 2 Set 7' = S2_2vsS2_7,
                        'Session 2 Set 2 vs Session 2 Set 8' = S2_2vsS2_8)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -2678,13 +2678,13 @@ trainR2PLBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   cat('Path Length during first block in session 2 and last block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -2700,16 +2700,16 @@ trainR2PLComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_7 <- LC4aov[which(LC4aov$block == 'S2_7'),]
-  S2_8 <- LC4aov[which(LC4aov$block == 'S2_8'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_7 <- LC4aov[which(LC4aov$set == 'S2_7'),]
+  S2_8 <- LC4aov[which(LC4aov$set == 'S2_8'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 7:\n')
@@ -2733,7 +2733,7 @@ getR2BlockedPLIN<- function(session, blockdefs) {
   N <- length(participants)
   
   participant <- c()
-  block <- c()
+  set <- c()
   dv <- c()
   
   for (ppno in c(1:N)) {
@@ -2749,19 +2749,19 @@ getR2BlockedPLIN<- function(session, blockdefs) {
       samples <- mean(samples, na.rm=TRUE)
       
       participant <- c(participant, pp)
-      block <- c(block, names(blockdefs)[blockno])
+      set <- c(set, names(blockdefs)[blockno])
       dv <- c(dv, samples)
     }
   }
-  LCaov <- data.frame(participant, block, dv)
+  LCaov <- data.frame(participant, set, dv)
   
   #need to make some columns as factors for ANOVA
   #LCaov$participant <- as.factor(LCaov$participant)
-  LCaov$block <- as.factor(LCaov$block)
+  LCaov$set <- as.factor(LCaov$set)
   if(session == 1){
-    LCaov$block <- factor(LCaov$block, levels = c('S1_first','S1_last'))
+    LCaov$set <- factor(LCaov$set, levels = c('S1_first','S1_last'))
   } else if(session == 2){
-    LCaov$block <- factor(LCaov$block, levels = c('S2_1','S2_2','S2_3','S2_4','S2_5','S2_6','S2_7','S2_8'))
+    LCaov$set <- factor(LCaov$set, levels = c('S2_1','S2_2','S2_3','S2_4','S2_5','S2_6','S2_7','S2_8'))
   }
   
   return(LCaov)
@@ -2778,18 +2778,18 @@ retentionR2PLINANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length in during first and last set in session 1 and first and second set in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2804,17 +2804,17 @@ retentionR2PLINComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2826,15 +2826,15 @@ retentionR2PLINComparisonMeans <- function(){
 #   #session2
 #   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
 #   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs)
-#   LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+#   LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
 # 
 #   #but we only want to analyze participants with data in both
 #   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
 #   LC4aov <- rbind(LC_part1, LC_part2)
 #   LC4aov$participant <- as.factor(LC4aov$participant)
-#   LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+#   LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
 # 
-#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
 # 
 #   #specify contrasts
 #   S1_firstvsS1_last <- c(-1,1,0,0)
@@ -2847,7 +2847,7 @@ retentionR2PLINComparisonMeans <- function(){
 #                        'Session 1 Set Last vs Session 2 Set 1' = S1_lastvsS2_1,
 #                        'Session 1 Set Last vs Session 2 Set 2' = S1_lastvsS2_2)
 # 
-#   comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+#   comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
 # 
 #   print(comparisons)
 # 
@@ -2878,16 +2878,16 @@ retentionR2PLINBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   cat('Path Length in during first and last set in session 1 and first and second set in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -2906,19 +2906,19 @@ retentionR2PLINComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   
   #but we only want to analyze participants with data in both
   LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last','S2_1','S2_2'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_1','S2_2'))
   
   
-  S1_first <- LC4aov[which(LC4aov$block == 'S1_first'),]
-  S1_last <- LC4aov[which(LC4aov$block == 'S1_last'),]
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
+  S1_first <- LC4aov[which(LC4aov$set == 'S1_first'),]
+  S1_last <- LC4aov[which(LC4aov$set == 'S1_last'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
   
   
   cat('Bayesian t-test - Session 1 Set 1 vs Session 1 Set Last:\n')
@@ -2942,15 +2942,15 @@ genR2PLINANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length in during first block in session 2 and second block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -2962,14 +2962,14 @@ genR2PLINComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -2978,12 +2978,12 @@ genR2PLINComparisonMeans <- function(){
 #   #session2
 #   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
 #   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs)
-#   LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+#   LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
 #   
 #   LC4aov$participant <- as.factor(LC4aov$participant)
-#   LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+#   LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
 #   
-#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
 #   
 #   #specify contrasts
 #   S2_1vsS2_3 <- c(-1,0,1,0)
@@ -2994,7 +2994,7 @@ genR2PLINComparisonMeans <- function(){
 #                        'Session 2 Set 2 vs Session 2 Set 3' = S2_2vsS2_3,
 #                        'Session 2 Set 2 vs Session 2 Set 4' = S2_2vsS2_4)
 #   
-#   comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+#   comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
 #   
 #   print(comparisons)
 #   
@@ -3022,13 +3022,13 @@ genR2PLINBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   cat('Path Length in during first block in session 2 and second block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3044,16 +3044,16 @@ genR2PLINComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_3' | LC_part2$block == 'S2_4'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_3','S2_4'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_3','S2_4'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_3 <- LC4aov[which(LC4aov$block == 'S2_3'),]
-  S2_4 <- LC4aov[which(LC4aov$block == 'S2_4'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_3 <- LC4aov[which(LC4aov$set == 'S2_3'),]
+  S2_4 <- LC4aov[which(LC4aov$set == 'S2_4'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 3:\n')
@@ -3074,15 +3074,15 @@ revR2PLINANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length in during first block in session 2 and third block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3093,14 +3093,14 @@ revR2PLINComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -3109,12 +3109,12 @@ revR2PLINComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
   #specify contrasts
   S2_1vsS2_5 <- c(-1,0,1,0)
@@ -3125,7 +3125,7 @@ revR2PLINComparisons <- function(method='bonferroni'){
                        'Session 2 Set 2 vs Session 2 Set 5' = S2_2vsS2_5, 
                        'Session 2 Set 2 vs Session 2 Set 6' = S2_2vsS2_6)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -3153,13 +3153,13 @@ revR2PLINBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   cat('Path Length in during first block in session 2 and third block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3175,16 +3175,16 @@ revR2PLINComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_5' | LC_part2$block == 'S2_6'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_5' | LC_part2$set == 'S2_6'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_5','S2_6'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_5','S2_6'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_5 <- LC4aov[which(LC4aov$block == 'S2_5'),]
-  S2_6 <- LC4aov[which(LC4aov$block == 'S2_6'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_5 <- LC4aov[which(LC4aov$set == 'S2_5'),]
+  S2_6 <- LC4aov[which(LC4aov$set == 'S2_6'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 5:\n')
@@ -3205,15 +3205,15 @@ trainR2PLINANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length in during first block in session 2 and last block in session 2:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3225,14 +3225,14 @@ trainR2PLINComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block'))
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
   print(cellmeans)
   
 }
@@ -3241,12 +3241,12 @@ trainR2PLINComparisonMeans <- function(){
 #   #session2
 #   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
 #   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs)
-#   LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+#   LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
 # 
 #   LC4aov$participant <- as.factor(LC4aov$participant)
-#   LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+#   LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
 # 
-#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"))
+#   secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
 # 
 #   #specify contrasts
 #   S2_1vsS2_7 <- c(-1,0,1,0)
@@ -3257,7 +3257,7 @@ trainR2PLINComparisonMeans <- function(){
 #                        'Session 2 Set 2 vs Session 2 Set 7' = S2_2vsS2_7,
 #                        'Session 2 Set 2 vs Session 2 Set 8' = S2_2vsS2_8)
 # 
-#   comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+#   comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
 # 
 #   print(comparisons)
 # 
@@ -3285,13 +3285,13 @@ trainR2PLINBayesANOVA <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   cat('Path Length in during first block in session 2 and last block in session 2:\n')
-  bfLC<- anovaBF(dv ~ block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3307,16 +3307,16 @@ trainR2PLINComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  LC4aov <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2' | LC_part2$block == 'S2_7' | LC_part2$block == 'S2_8'),]
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7' | LC_part2$set == 'S2_8'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S2_1','S2_2','S2_7','S2_8'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_1','S2_2','S2_7','S2_8'))
   
   
-  S2_1 <- LC4aov[which(LC4aov$block == 'S2_1'),]
-  S2_2 <- LC4aov[which(LC4aov$block == 'S2_2'),]
-  S2_7 <- LC4aov[which(LC4aov$block == 'S2_7'),]
-  S2_8 <- LC4aov[which(LC4aov$block == 'S2_8'),]
+  S2_1 <- LC4aov[which(LC4aov$set == 'S2_1'),]
+  S2_2 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  S2_7 <- LC4aov[which(LC4aov$set == 'S2_7'),]
+  S2_8 <- LC4aov[which(LC4aov$set == 'S2_8'),]
   
   
   cat('Bayesian t-test - Session 2 Set 1 vs Set 7:\n')
@@ -3346,13 +3346,13 @@ compareStudiesPLANOVA <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length during first and last set in session 1 between studies:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3373,12 +3373,12 @@ studiesPLComparisonMeans <- function(){
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block','study'))
+  cellmeans <- emmeans(secondAOV,specs=c('set','study'))
   print(cellmeans)
   
 }
@@ -3396,10 +3396,10 @@ studiesPLComparisons <- function(method='bonferroni'){
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
   #specify contrasts
   S1B1vsS2B1 <- c(-1,0,1,0)
@@ -3409,7 +3409,7 @@ studiesPLComparisons <- function(method='bonferroni'){
   contrastList <- list('Study 1 Set 1 vs Study 2 Set 1' = S1B1vsS2B1, 
                        'Study 1 Set 2 vs Study 2 Set 2' = S1B2vsS2B2)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block','study')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set','study')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -3446,11 +3446,11 @@ studiesPLBayesANOVA <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   cat('Path Length during first and last set in session 1 between studies:\n')
-  bfLC<- anovaBF(dv ~ block*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3475,13 +3475,13 @@ studiesPLComparisonsBayesfollowup <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  S1B1 <- LC4aov[which(LC4aov$block == 'S1_first' & LC4aov$study == 1),]
-  S1B2 <- LC4aov[which(LC4aov$block == 'S1_last' & LC4aov$study == 1),]
-  S2B1 <- LC4aov[which(LC4aov$block == 'S1_first' & LC4aov$study == 2),]
-  S2B2 <- LC4aov[which(LC4aov$block == 'S1_last' & LC4aov$study == 2),]
+  S1B1 <- LC4aov[which(LC4aov$set == 'S1_first' & LC4aov$study == 1),]
+  S1B2 <- LC4aov[which(LC4aov$set == 'S1_last' & LC4aov$study == 1),]
+  S2B1 <- LC4aov[which(LC4aov$set == 'S1_first' & LC4aov$study == 2),]
+  S2B2 <- LC4aov[which(LC4aov$set == 'S1_last' & LC4aov$study == 2),]
   
   
   cat('Bayesian t-test - Study 1 Set 1 vs Study 2 Set 1:\n')
@@ -3500,25 +3500,25 @@ compareStudiesS2PLANOVA <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length in session 2 between studies:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3529,24 +3529,24 @@ studiesS2PLComparisonMeans <- function(){
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block','study'))
+  cellmeans <- emmeans(secondAOV,specs=c('set','study'))
   print(cellmeans)
   
 }
@@ -3555,22 +3555,22 @@ studiesS2PLComparisons <- function(method='bonferroni'){
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
   #specify contrasts
   S1B1vsS2B1 <- c(-1,0,0,0,0,0,0,0,
@@ -3600,7 +3600,7 @@ studiesS2PLComparisons <- function(method='bonferroni'){
                        'Study 1 Set 7 vs Study 2 Set 7' = S1B7vsS2B7,
                        'Study 1 Set 8 vs Study 2 Set 8' = S1B8vsS2B8)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block','study')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set','study')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -3628,23 +3628,23 @@ studiesS2PLBayesANOVA <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   cat('Path Length in session 2 between studies:\n')
-  bfLC<- anovaBF(dv ~ block*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3660,40 +3660,40 @@ studiesS2PLComparisonsBayesfollowup <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPL(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   
-  S1B1 <- LC4aov[which(LC4aov$block == 'S2_1' & LC4aov$study == 1),]
-  S1B2 <- LC4aov[which(LC4aov$block == 'S2_2' & LC4aov$study == 1),]
-  S1B3 <- LC4aov[which(LC4aov$block == 'S2_3' & LC4aov$study == 1),]
-  S1B4 <- LC4aov[which(LC4aov$block == 'S2_4' & LC4aov$study == 1),]
-  S1B5 <- LC4aov[which(LC4aov$block == 'S2_5' & LC4aov$study == 1),]
-  S1B6 <- LC4aov[which(LC4aov$block == 'S2_6' & LC4aov$study == 1),]
-  S1B7 <- LC4aov[which(LC4aov$block == 'S2_7' & LC4aov$study == 1),]
-  S1B8 <- LC4aov[which(LC4aov$block == 'S2_8' & LC4aov$study == 1),]
+  S1B1 <- LC4aov[which(LC4aov$set == 'S2_1' & LC4aov$study == 1),]
+  S1B2 <- LC4aov[which(LC4aov$set == 'S2_2' & LC4aov$study == 1),]
+  S1B3 <- LC4aov[which(LC4aov$set == 'S2_3' & LC4aov$study == 1),]
+  S1B4 <- LC4aov[which(LC4aov$set == 'S2_4' & LC4aov$study == 1),]
+  S1B5 <- LC4aov[which(LC4aov$set == 'S2_5' & LC4aov$study == 1),]
+  S1B6 <- LC4aov[which(LC4aov$set == 'S2_6' & LC4aov$study == 1),]
+  S1B7 <- LC4aov[which(LC4aov$set == 'S2_7' & LC4aov$study == 1),]
+  S1B8 <- LC4aov[which(LC4aov$set == 'S2_8' & LC4aov$study == 1),]
   
   
-  S2B1 <- LC4aov[which(LC4aov$block == 'S2_1' & LC4aov$study == 2),]
-  S2B2 <- LC4aov[which(LC4aov$block == 'S2_2' & LC4aov$study == 2),]
-  S2B3 <- LC4aov[which(LC4aov$block == 'S2_3' & LC4aov$study == 2),]
-  S2B4 <- LC4aov[which(LC4aov$block == 'S2_4' & LC4aov$study == 2),]
-  S2B5 <- LC4aov[which(LC4aov$block == 'S2_5' & LC4aov$study == 2),]
-  S2B6 <- LC4aov[which(LC4aov$block == 'S2_6' & LC4aov$study == 2),]
-  S2B7 <- LC4aov[which(LC4aov$block == 'S2_7' & LC4aov$study == 2),]
-  S2B8 <- LC4aov[which(LC4aov$block == 'S2_8' & LC4aov$study == 2),]
+  S2B1 <- LC4aov[which(LC4aov$set == 'S2_1' & LC4aov$study == 2),]
+  S2B2 <- LC4aov[which(LC4aov$set == 'S2_2' & LC4aov$study == 2),]
+  S2B3 <- LC4aov[which(LC4aov$set == 'S2_3' & LC4aov$study == 2),]
+  S2B4 <- LC4aov[which(LC4aov$set == 'S2_4' & LC4aov$study == 2),]
+  S2B5 <- LC4aov[which(LC4aov$set == 'S2_5' & LC4aov$study == 2),]
+  S2B6 <- LC4aov[which(LC4aov$set == 'S2_6' & LC4aov$study == 2),]
+  S2B7 <- LC4aov[which(LC4aov$set == 'S2_7' & LC4aov$study == 2),]
+  S2B8 <- LC4aov[which(LC4aov$set == 'S2_8' & LC4aov$study == 2),]
   
   
   cat('Bayesian t-test - Study 1 Set 1 vs Study 2 Set 1:\n')
@@ -3738,13 +3738,13 @@ compareStudiesPLINANOVA <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length inside during first and last set in session 1 between studies:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3764,12 +3764,12 @@ studiesPLINComparisonMeans <- function(){
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block','study'))
+  cellmeans <- emmeans(secondAOV,specs=c('set','study'))
   print(cellmeans)
   
 }
@@ -3787,10 +3787,10 @@ studiesPLINComparisons <- function(method='bonferroni'){
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
   #specify contrasts
   S1B1vsS2B1 <- c(-1,0,1,0)
@@ -3800,7 +3800,7 @@ studiesPLINComparisons <- function(method='bonferroni'){
   contrastList <- list('Study 1 Set 1 vs Study 2 Set 1' = S1B1vsS2B1, 
                        'Study 1 Set 2 vs Study 2 Set 2' = S1B2vsS2B2)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block','study')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set','study')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -3837,11 +3837,11 @@ studiesPLINBayesANOVA <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   cat('Path Length inside during first and last set in session 1 between studies:\n')
-  bfLC<- anovaBF(dv ~ block*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -3866,13 +3866,13 @@ studiesPLINComparisonsBayesfollowup <- function() {
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- factor(LC4aov$block, levels = c('S1_first','S1_last'))
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last'))
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  S1B1 <- LC4aov[which(LC4aov$block == 'S1_first' & LC4aov$study == 1),]
-  S1B2 <- LC4aov[which(LC4aov$block == 'S1_last' & LC4aov$study == 1),]
-  S2B1 <- LC4aov[which(LC4aov$block == 'S1_first' & LC4aov$study == 2),]
-  S2B2 <- LC4aov[which(LC4aov$block == 'S1_last' & LC4aov$study == 2),]
+  S1B1 <- LC4aov[which(LC4aov$set == 'S1_first' & LC4aov$study == 1),]
+  S1B2 <- LC4aov[which(LC4aov$set == 'S1_last' & LC4aov$study == 1),]
+  S2B1 <- LC4aov[which(LC4aov$set == 'S1_first' & LC4aov$study == 2),]
+  S2B2 <- LC4aov[which(LC4aov$set == 'S1_last' & LC4aov$study == 2),]
   
   
   cat('Bayesian t-test - Study 1 Set 1 vs Study 2 Set 1:\n')
@@ -3891,25 +3891,25 @@ compareStudiesS2PLINANOVA <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   #ANOVA's
   # for ez, case ID should be a factor:
   
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(block), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), between = c(study), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Path Length inside for session 2 between studies:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -3920,24 +3920,24 @@ studiesS2PLINComparisonMeans <- function(){
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('block','study'))
+  cellmeans <- emmeans(secondAOV,specs=c('set','study'))
   print(cellmeans)
   
 }
@@ -3946,22 +3946,22 @@ studiesS2PLINComparisons <- function(method='bonferroni'){
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
-  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("block"),between=c("study"))
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"),between=c("study"))
   
   #specify contrasts
   S1B1vsS2B1 <- c(-1,0,0,0,0,0,0,0,
@@ -3991,7 +3991,7 @@ studiesS2PLINComparisons <- function(method='bonferroni'){
                        'Study 1 Set 7 vs Study 2 Set 7' = S1B7vsS2B7,
                        'Study 1 Set 8 vs Study 2 Set 8' = S1B8vsS2B8)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('block','study')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set','study')), contrastList, adjust=method)
   
   print(comparisons)
   
@@ -4019,23 +4019,23 @@ studiesS2PLINBayesANOVA <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   cat('Path Length inside for session 2 between studies:\n')
-  bfLC<- anovaBF(dv ~ block*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(dv ~ set*study + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -4051,40 +4051,40 @@ studiesS2PLINComparisonsBayesfollowup <- function() {
   #study1
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part1 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part1 <- LC_part1[which(LC_part1$block == 'S2_1' | LC_part1$block == 'S2_2'),]
+  #LC_part1 <- LC_part1[which(LC_part1$set == 'S2_1' | LC_part1$set == 'S2_2'),]
   LC_part1$study <- rep(1, nrow(LC_part1))
   
   #study2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getR2BlockedPLIN(session = 2, blockdefs=blockdefs) 
-  #LC_part2 <- LC_part2[which(LC_part2$block == 'S2_1' | LC_part2$block == 'S2_2'),]
+  #LC_part2 <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2'),]
   LC_part2$study <- rep(2, nrow(LC_part2))
   
   #between subjects comparison
   LC4aov <- rbind(LC_part1, LC_part2)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  LC4aov$block <- as.factor(LC4aov$block)
+  LC4aov$set <- as.factor(LC4aov$set)
   LC4aov$study <- factor(LC4aov$study, levels = c(1,2))
   
   
-  S1B1 <- LC4aov[which(LC4aov$block == 'S2_1' & LC4aov$study == 1),]
-  S1B2 <- LC4aov[which(LC4aov$block == 'S2_2' & LC4aov$study == 1),]
-  S1B3 <- LC4aov[which(LC4aov$block == 'S2_3' & LC4aov$study == 1),]
-  S1B4 <- LC4aov[which(LC4aov$block == 'S2_4' & LC4aov$study == 1),]
-  S1B5 <- LC4aov[which(LC4aov$block == 'S2_5' & LC4aov$study == 1),]
-  S1B6 <- LC4aov[which(LC4aov$block == 'S2_6' & LC4aov$study == 1),]
-  S1B7 <- LC4aov[which(LC4aov$block == 'S2_7' & LC4aov$study == 1),]
-  S1B8 <- LC4aov[which(LC4aov$block == 'S2_8' & LC4aov$study == 1),]
+  S1B1 <- LC4aov[which(LC4aov$set == 'S2_1' & LC4aov$study == 1),]
+  S1B2 <- LC4aov[which(LC4aov$set == 'S2_2' & LC4aov$study == 1),]
+  S1B3 <- LC4aov[which(LC4aov$set == 'S2_3' & LC4aov$study == 1),]
+  S1B4 <- LC4aov[which(LC4aov$set == 'S2_4' & LC4aov$study == 1),]
+  S1B5 <- LC4aov[which(LC4aov$set == 'S2_5' & LC4aov$study == 1),]
+  S1B6 <- LC4aov[which(LC4aov$set == 'S2_6' & LC4aov$study == 1),]
+  S1B7 <- LC4aov[which(LC4aov$set == 'S2_7' & LC4aov$study == 1),]
+  S1B8 <- LC4aov[which(LC4aov$set == 'S2_8' & LC4aov$study == 1),]
   
   
-  S2B1 <- LC4aov[which(LC4aov$block == 'S2_1' & LC4aov$study == 2),]
-  S2B2 <- LC4aov[which(LC4aov$block == 'S2_2' & LC4aov$study == 2),]
-  S2B3 <- LC4aov[which(LC4aov$block == 'S2_3' & LC4aov$study == 2),]
-  S2B4 <- LC4aov[which(LC4aov$block == 'S2_4' & LC4aov$study == 2),]
-  S2B5 <- LC4aov[which(LC4aov$block == 'S2_5' & LC4aov$study == 2),]
-  S2B6 <- LC4aov[which(LC4aov$block == 'S2_6' & LC4aov$study == 2),]
-  S2B7 <- LC4aov[which(LC4aov$block == 'S2_7' & LC4aov$study == 2),]
-  S2B8 <- LC4aov[which(LC4aov$block == 'S2_8' & LC4aov$study == 2),]
+  S2B1 <- LC4aov[which(LC4aov$set == 'S2_1' & LC4aov$study == 2),]
+  S2B2 <- LC4aov[which(LC4aov$set == 'S2_2' & LC4aov$study == 2),]
+  S2B3 <- LC4aov[which(LC4aov$set == 'S2_3' & LC4aov$study == 2),]
+  S2B4 <- LC4aov[which(LC4aov$set == 'S2_4' & LC4aov$study == 2),]
+  S2B5 <- LC4aov[which(LC4aov$set == 'S2_5' & LC4aov$study == 2),]
+  S2B6 <- LC4aov[which(LC4aov$set == 'S2_6' & LC4aov$study == 2),]
+  S2B7 <- LC4aov[which(LC4aov$set == 'S2_7' & LC4aov$study == 2),]
+  S2B8 <- LC4aov[which(LC4aov$set == 'S2_8' & LC4aov$study == 2),]
   
   
   cat('Bayesian t-test - Study 1 Set 1 vs Study 2 Set 1:\n')
