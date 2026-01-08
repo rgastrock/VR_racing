@@ -353,7 +353,7 @@ plotIndSessionsPLInside <- function(target='inline', trackloc = 'in'){
   
 }
 
-plotSessionsSAF <- function(target='inline', trackloc = 'in'){
+plotSessionsSAF <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
