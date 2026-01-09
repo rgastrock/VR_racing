@@ -84,32 +84,1202 @@ Overall, we do not observe much differences for speed, accuracy, and path length
 
 ## Speed (Lap times)
 
+We first show lap times across both sessions. 
+
+```{r, fig.width = 12, fig.height = 6}
+plotFirstLastAllTrackAcrossSessionLapTime()
+```
+
+The plot below adds individual data to the previous plot.
+
+```{r, fig.width = 12, fig.height = 6}
+plotIndFirstLastAllTrackAcrossSessionLapTime()
+```
+
+For all analyses we present, we compare performance across different blocks of trials across the two sessions. Each block consists of 30 trials. For session 1, participants encounter the same track orientation for 10 blocks of 30 trials (300 trials in total). In session 2, participants encounter different track orientations every block (4 blocks for 120 trials in total). 
+
+Given that improvements seem to occur quickly within each block (see figures above), we further subdivided each block into five sets of six trials, and compare these sets. Visual inspection of the data revealed substantial variability in the very first trial of session 1, as well as in the first trial of each block in session 2. These trials likely reflect participants’ initial engagement with the specific task condition. To minimize potential confounds arising from this variability, we exclude these first trials and instead include only the remaining five trials from the first set of each block.
+
+For all statistical tests presented below, we include a frequentist and Bayesian version of the test.
+
+### Retention (Lap times)
+
+As speed improvements plateau toward the end of session 1, we examine performance retention when participants re-encounter the trained track in session 2. Specifically, we test for offline gains, defined as performance at the start of session 2 that is comparable to or better than performance at the end of session 1. Accordingly, for session 1 we analyze the first set from the first block and the final set from the last block. For session 2, we analyze the first and final sets from the first block.
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionLapTimeANOVA()
+retentionLapTimeComparisonMeans()
+retentionLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance. Finally, we find no differences between the final sets across the two sessions, indicating that performance quickly rebounds to the level achieved on the previous day.
+
+#### Bayesian test
+
+```{r}
+retentionLapTimeBayesANOVA()
+retentionLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Lap times)
+
+Next, we compare performance across blocks in session 2. We use the first block of trials with the trained track during session 2 as a baseline for comparing the other blocks. First, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genLapTimeANOVA()
+genLapTimeComparisonMeans()
+genLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+
+#### Bayesian test
+
+```{r}
+genLapTimeBayesANOVA()
+genLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revLapTimeANOVA()
+revLapTimeComparisonMeans()
+revLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+
+#### Bayesian test
+
+```{r}
+revLapTimeBayesANOVA()
+revLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Lap times)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainLapTimeANOVA()
+trainLapTimeComparisonMeans()
+trainLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first set in each block, where the first set in the last block shows decreased lap times. Interestingly, performance seems to continue to improve, as the last set in the last block also shows a significant difference compared to the last set in the first block.
+
+#### Bayesian test
+
+```{r}
+trainLapTimeBayesANOVA()
+trainLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test, except when comparing the last sets in each block where the effect is small.
+
+## Accuracy (Percent on Track)
+
+Next, we repeat the same analyses steps as in the previous section, but now use Percentage on Track (Accuracy) as the dependent variable.
+
+### Retention (Accuracy)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionAccuracyANOVA()
+retentionAccuracyComparisonMeans()
+retentionAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons reveal that this effect is driven by a difference between the first set in session 1 and the first set in session 2. Notably, there is no difference between the last set in session 1 and the first set in session 2, indicating that accuracy at the start of session 2 is comparable to that achieved at the end of the previous training day. 
+
+#### Bayesian test
+
+```{r}
+retentionAccuracyBayesANOVA()
+retentionAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Accuracy)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genAccuracyANOVA()
+genAccuracyComparisonMeans()
+genAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track. Furthermore, the last set in the rotated track also differs from the last set in the trained track.
+
+#### Bayesian test
+
+```{r}
+genAccuracyBayesANOVA()
+genAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revAccuracyANOVA()
+revAccuracyComparisonMeans()
+revAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that accuracy in the reverse track is lower than in the trained track.
+
+#### Bayesian test
+
+```{r}
+revAccuracyBayesANOVA()
+revAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Accuracy)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainAccuracyANOVA()
+trainAccuracyComparisonMeans()
+```
+
+We do not observe an effect of set, suggesting no accuracy differences between the first and last blocks in session 2.
+
+#### Bayesian test
+
+```{r}
+trainAccuracyBayesANOVA()
+trainAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Speed and Accuracy
+
+We plot speed and accuracy functions below. Note that both speed and accuracy measures improve with training within blocks and across sessions.
+
+```{r, fig.width = 6, fig.height = 6}
+plotSAF()
+```
+
+We also explored whether within session improvements in session 1 are associated with the amount of offline gains observed with the accuracy measure. 
+
+To calculate for within session improvements: First, we take the accuracy differences between the first and last sets in session 1 across participants. We then normalize these values to range from -1 to 1 using the equation:
+
+Xnorm = 2 * ((X - Xmin)/(Xmax - Xmin)) - 1
+
+To calculate for Offline gains: We take the accuracy differences between the last set of session 1 and the first set of session 2 across participants, before normalizing values using the same equation above.
+
+Finally, we assess the relationship of the values using a Pearson's correlation test.
+
+```{r}
+getWithinImprovementOfflineGainsAcc()
+```
+
+We find that within session improvements are negatively correlated with offline gains (r = - 0.5512393, p = 0.0001277).
+
+## Movement Efficiency (Path Length)
+
+Next, we repeat the same analyses steps as with the speed and accuracy measures, but now use Path length as the dependent variable.
+
+### Retention (Path Length)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionPLANOVA()
+retentionPLComparisonMeans()
+retentionPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons do not reveal any significant differences.
+
+#### Bayesian test
+
+```{r}
+retentionPLBayesANOVA()
+retentionPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Path Length)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genPLANOVA()
+genPLComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+genPLBayesANOVA()
+genPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revPLANOVA()
+revPLComparisonMeans()
+revPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to those in the trained track.
+
+#### Bayesian test
+
+```{r}
+revPLBayesANOVA()
+revPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Path Length)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainPLANOVA()
+trainPLComparisonMeans()
+trainPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow up comparisons show that this effect is driven by a difference between the last set of block 1 and the first set of the last block.
+
+#### Bayesian test
+
+```{r}
+trainPLBayesANOVA()
+trainPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Movement Efficiency INSIDE track (Path Length inside)
+
+Next, we repeat the same analyses steps as in the previous section, but now use Path length inside the track as the dependent variable.
+
+### Retention (Path Length inside)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionPLINANOVA()
+retentionPLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+retentionPLINBayesANOVA()
+retentionPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Path Length inside)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genPLINANOVA()
+genPLINComparisonMeans()
+genPLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during rotated-track trials than during trained-track trials, suggesting more frequent departures beyond the track limits in the rotated condition.
+
+#### Bayesian test
+
+```{r}
+genPLINBayesANOVA()
+genPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length inside)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revPLINANOVA()
+revPLINComparisonMeans()
+revPLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is longer during reverse-track trials than during trained-track trials, suggesting less efficient movement within the track for reverse movements.
+
+#### Bayesian test
+
+```{r}
+revPLINBayesANOVA()
+revPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Path Length inside)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainPLINANOVA()
+trainPLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+trainPLINBayesANOVA()
+trainPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
 
 
+# Study 2
 
+Given that in Study 1, we found that moving through the track in reverse revealed a movement direction effect (across all measures), we conducted a second study to investigate this further. The movement direction effect can be due to either interference in learning from the previous track conditions, or due to a bias in right-handed movements (all participants were right handed and used their right hand for moving). Thus, in study 2, we repeated the same experiment procedure and analyses as in study 1, but the only difference is that participants now moved in the reverse (counterclockwise) direction during the trained track trials, and moved in the clockwise direction during reverse track trials.
 
+## Track orientations
 
+As in the previous study, track orientations were counterbalanced across participants.
 
+Below we plot speed (lap times), accuracy (percent on track), and path length (trajectory) measures, according to track orientations.
 
+### Speed: Session 1 and 2
 
+```{r}
+plotR2LapTime()
+plotR2S2LapTime()
+```
 
+### Accuracy: Session 1 and 2
 
+```{r}
+plotR2Accuracy()
+plotR2S2Accuracy()
+```
 
+### Path Length: Session 1 and 2
 
+```{r}
+plotR2PathLength()
+plotR2S2PathLength()
+```
 
+Much like in study 1, we do not observe differences for speed, accuracy, and path length when comparing performance across track orientations. Thus, we combine data from all orientations and analyze the data further.
 
+## Speed (Lap times)
 
+We first show lap times across both sessions. 
 
+```{r, fig.width = 12, fig.height = 6}
+plotR2FirstLastAllTrackAcrossSessionLapTime()
+```
 
+The plot below adds individual data to the previous plot.
 
+```{r, fig.width = 12, fig.height = 6}
+plotR2IndFirstLastAllTrackAcrossSessionLapTime()
+```
 
+Results presented below follow the same analyses steps conducted in Study 1.
 
+### Retention (Lap times)
 
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
 
+#### Frequentist test
 
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
 
+```{r}
+retentionR2LapTimeANOVA()
+retentionR2LapTimeComparisonMeans()
+retentionR2LapTimeComparisonsEffSize()
+```
 
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance. Finally, we find no differences between the final sets across the two sessions, indicating that performance quickly rebounds to the level achieved on the previous day.
 
+#### Bayesian test
 
+```{r}
+retentionR2LapTimeBayesANOVA()
+retentionR2LapTimeComparisonsBayesfollowup()
+```
 
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Lap times)
+
+Next, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2LapTimeANOVA()
+genR2LapTimeComparisonMeans()
+genR2LapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+
+#### Bayesian test
+
+```{r}
+genR2LapTimeBayesANOVA()
+genR2LapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2LapTimeANOVA()
+revR2LapTimeComparisonMeans()
+revR2LapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+
+#### Bayesian test
+
+```{r}
+revR2LapTimeBayesANOVA()
+revR2LapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Lap times)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainR2LapTimeANOVA()
+trainR2LapTimeComparisonMeans()
+trainR2LapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first set in each block, where the first set in the last block shows decreased lap times.
+
+#### Bayesian test
+
+```{r}
+trainR2LapTimeBayesANOVA()
+trainR2LapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+## Accuracy (Percent on Track)
+
+Next, we repeat the same analyses steps as in the previous section, but now use Percentage on Track (Accuracy) as the dependent variable.
+
+### Retention (Accuracy)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionR2AccuracyANOVA()
+retentionR2AccuracyComparisonMeans()
+retentionR2AccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons reveal that this effect is driven by a difference between the first and last sets of session 1, suggesting within session improvements. Moreover, there is also a difference between the first set in session 1 and the first set in session 2. Notably, there is no difference between the last set in session 1 and the first set in session 2, indicating that accuracy at the start of session 2 is comparable to that achieved at the end of the previous training day. 
+
+#### Bayesian test
+
+```{r}
+retentionR2AccuracyBayesANOVA()
+retentionR2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Accuracy)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2AccuracyANOVA()
+genR2AccuracyComparisonMeans()
+genR2AccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track.
+#### Bayesian test
+
+```{r}
+genR2AccuracyBayesANOVA()
+genR2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2AccuracyANOVA()
+revR2AccuracyComparisonMeans()
+revR2AccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that accuracy for the first set in the reverse track is lower than both first and last sets in the trained track.
+
+#### Bayesian test
+
+```{r}
+revR2AccuracyBayesANOVA()
+revR2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Accuracy)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainR2AccuracyANOVA()
+trainR2AccuracyComparisonMeans()
+```
+
+We do not observe an effect of set, suggesting no accuracy differences between the first and last blocks in session 2.
+
+#### Bayesian test
+
+```{r}
+trainR2AccuracyBayesANOVA()
+trainR2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Speed and Accuracy
+
+We plot speed and accuracy functions below. Note that both speed and accuracy measures improve with training within blocks and across sessions.
+
+```{r, fig.width = 6, fig.height = 6}
+plotR2SAF()
+```
+
+We also explored whether within session improvements in session 1 are associated with the amount of offline gains observed with the accuracy measure. 
+
+To calculate for within session improvements: First, we take the accuracy differences between the first and last sets in session 1 across participants. We then normalize these values to range from -1 to 1 using the equation:
+
+Xnorm = 2 * ((X - Xmin)/(Xmax - Xmin)) - 1
+
+To calculate for Offline gains: We take the accuracy differences between the last set of session 1 and the first set of session 2 across participants, before normalizing values using the same equation above.
+
+Finally, we assess the relationship of the values using a Pearson's correlation test.
+
+```{r}
+getR2WithinImprovementOfflineGainsAcc()
+```
+
+Although we observe a negative association between within session improvements and offline gains, this relationship is not statistically significant (r = -0.2808949, p = 0.09702).
+
+## Movement Efficiency (Path Length)
+
+Next, we repeat the same analyses steps as with the speed and accuracy measures, but now use Path length as the dependent variable.
+
+### Retention (Path Length)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionR2PLANOVA()
+retentionR2PLComparisonMeans()
+retentionR2PLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show within session improvements in session 1, and a difference in path length between the first sets in each session.
+
+#### Bayesian test
+
+```{r}
+retentionR2PLBayesANOVA()
+retentionR2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Path Length)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2PLANOVA()
+genR2PLComparisonMeans()
+genR2PLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path lengths are longer in the rotated track trials compared to trained track trials.
+
+#### Bayesian test
+
+```{r}
+genR2PLBayesANOVA()
+genR2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2PLANOVA()
+revR2PLComparisonMeans()
+revR2PLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to the last set in the trained track.
+
+#### Bayesian test
+
+```{r}
+revR2PLBayesANOVA()
+revR2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Path Length)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainR2PLANOVA()
+trainR2PLComparisonMeans()
+trainR2PLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow up comparisons show that path lengths are longer during the last block of trials compared to the first block.
+
+#### Bayesian test
+
+```{r}
+trainR2PLBayesANOVA()
+trainR2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Movement Efficiency INSIDE track (Path Length inside)
+
+Next, we repeat the same analyses steps as in the previous section, but now use Path length inside the track as the dependent variable.
+
+### Retention (Path Length inside)
+
+Session 1: first block, first set and last block, last set
+Session 2: first block, first set and first block, last set
+
+#### Frequentist test
+
+We perform a repeated measures one-way ANOVA to test for an effect across trial sets.
+
+```{r}
+retentionR2PLINANOVA()
+retentionR2PLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+retentionR2PLINBayesANOVA()
+retentionR2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Generalization (Path Length inside)
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2PLINANOVA()
+genR2PLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+genR2PLINBayesANOVA()
+genR2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length inside)
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2PLINANOVA()
+revR2PLINComparisonMeans()
+revR2PLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during the first set of reverse-track trials than during trained-track trials, suggesting more errors at the beginning of the reverse track.
+
+#### Bayesian test
+
+```{r}
+revR2PLINBayesANOVA()
+revR2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Trained track (Path Length inside)
+
+Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
+
+trained track, Session 2: block 1, first set and block 1, last set
+trained track, Session 2: block 4, first set and block 4, last set
+
+#### Frequentist test
+
+```{r}
+trainR2PLINANOVA()
+trainR2PLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+trainR2PLINBayesANOVA()
+trainR2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+# Comparing Studies 1 & 2
+
+Overall, performance in the second study is poorer than in the first study. Because this difference is already evident during the initial training session, it suggests that the movement-direction effect (i.e., counterclockwise versus clockwise movement around the track) reflects inherent biases in hand movements rather than learning-related factors.
+
+To formally assess this difference, we include study as a between-subjects factor in a mixed-design repeated-measures ANOVA, with set as a within-subjects factor. Separate ANOVAs are conducted for sessions 1 and 2. Our primary focus is on the main effect of study to confirm overall poorer performance in study 2. Any interaction effects are interpreted in light of the effects on set we report above within each study.
+
+## Speed (Lap times)
+
+### Session 1
+
+Study 1: block 1, first set and last block, last set
+Study 2: block 1, first set and last block, last set
+
+#### Frequentist test
+
+```{r}
+compareStudiesLapTimeANOVA()
+studiesLapTimeComparisonMeans()
+studiesLapTimeComparisonsEffSize()
+```
+
+We find a main effect of study, and a studyxset interaction. Follow-up comparisons show that overall lap times are slower in study 2 compared to study 1.
+
+#### Bayesian test
+
+```{r}
+studiesLapTimeBayesANOVA()
+studiesLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Session 2
+
+Study 1: first and last set of all 4 blocks
+Study 2: first and last set of all 4 blocks
+
+#### Frequentist test
+
+```{r}
+compareStudiesS2LapTimeANOVA()
+studiesS2LapTimeComparisonMeans()
+studiesS2LapTimeComparisonsEffSize()
+```
+
+We find a main effect of study. Follow-up comparisons show that lap times are slower for these trial sets:
+
+last set, of trained track (first block)
+first and last set of rotated track
+first and last set of trained track (last block)
+
+#### Bayesian test
+
+```{r}
+studiesS2LapTimeBayesANOVA()
+studiesS2LapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test, but also show a difference between the first set in each study.
+
+## Accuracy (Percent on Track)
+
+### Session 1
+
+Study 1: block 1, first set and last block, last set
+Study 2: block 1, first set and last block, last set
+
+#### Frequentist test
+
+```{r}
+compareStudiesAccuracyANOVA()
+studiesAccuracyComparisonMeans()
+studiesAccuracyComparisonsEffSize()
+```
+
+We find a main effect of study. Follow-up comparisons show that accuracy during the last set of trials in session 1 is higher in study 2 compared to study 1.
+
+#### Bayesian test
+
+```{r}
+studiesAccuracyBayesANOVA()
+studiesAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Session 2
+
+Study 1: first and last set of all 4 blocks
+Study 2: first and last set of all 4 blocks
+
+#### Frequentist test
+
+```{r}
+compareStudiesS2AccuracyANOVA()
+studiesS2AccuracyComparisonMeans()
+studiesS2AccuracyComparisonsEffSize()
+```
+
+We find a main effect of study. Follow-up comparisons show that accuracy during the first set of the reverse track is higher in study 2 compared to study 1.
+
+#### Bayesian test
+
+```{r}
+studiesS2AccuracyBayesANOVA()
+studiesS2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Movement Efficiency (Path Length)
+
+### Session 1
+
+Study 1: block 1, first set and last block, last set
+Study 2: block 1, first set and last block, last set
+
+#### Frequentist test
+
+```{r}
+compareStudiesPLANOVA()
+studiesPLComparisonMeans()
+studiesPLComparisonsEffSize()
+```
+
+We find a main effect of study. Follow-up comparisons show that path lengths are overall longer in study 2 than in study 1.
+
+#### Bayesian test
+
+```{r}
+studiesPLBayesANOVA()
+studiesPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Session 2
+
+Study 1: first and last set of all 4 blocks
+Study 2: first and last set of all 4 blocks
+
+#### Frequentist test
+
+```{r}
+compareStudiesS2PLANOVA()
+studiesS2PLComparisonMeans()
+studiesS2PLComparisonsEffSize()
+```
+
+We find a main effect of study, and a studyxset interaction. Follow-up comparisons show that path lengths are overall longer during study 2 than in study 1.
+
+#### Bayesian test
+
+```{r}
+studiesS2PLBayesANOVA()
+studiesS2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+## Movement Efficiency INSIDE track (Path Length inside)
+
+### Session 1
+
+Study 1: block 1, first set and last block, last set
+Study 2: block 1, first set and last block, last set
+
+#### Frequentist test
+
+```{r}
+compareStudiesPLINANOVA()
+studiesPLINComparisonMeans()
+studiesPLINComparisonsEffSize()
+```
+
+We find a main effect of study. Follow-up comparisons show that path lengths inside the track are overall longer in study 2 than in study 1.
+
+#### Bayesian test
+
+```{r}
+studiesPLINBayesANOVA()
+studiesPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Session 2
+
+Study 1: first and last set of all 4 blocks
+Study 2: first and last set of all 4 blocks
+
+#### Frequentist test
+
+```{r}
+compareStudiesS2PLINANOVA()
+studiesS2PLINComparisonMeans()
+studiesS2PLINComparisonsEffSize()
+```
+
+We find a main effect of study, and a studyxset interaction. Follow-up comparisons show that path lengths inside the track are overall longer during study 2 than in study 1, except during reverse track trials.
+
+#### Bayesian test
+
+```{r}
+studiesS2PLINBayesANOVA()
+studiesS2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+# Manuscript plots
+
+Below are plots that can be used for summarizing results in the manuscript.
+
+```{r, fig.width = 18, fig.height = 5}
+plotSessionsLapTimes()
+plotSessionsAccuracy()
+plotSessionsPL()
+plotSessionsPLInside()
+```
+
+## Plots with individual data
+
+```{r, fig.width = 18, fig.height = 5}
+plotIndSessionsLapTimes()
+plotIndSessionsAccuracy()
+plotIndSessionsPL()
+plotIndSessionsPLInside()
+```
+
+# Speed-Accuracy functions
+```{r, fig.width = 12, fig.height = 6}
+plotSessionsSAF()
+```
 
