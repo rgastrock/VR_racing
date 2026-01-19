@@ -52,6 +52,49 @@ plotSessionsLapTimes <- function(target='inline'){
   
 }
 
+plotLongSessionsLapTimes <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/manuscript/Fig1C_LapTimes.svg', width=10, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(2,2,2,2), heights=c(1,1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1FirstLastLapTime()
+  # mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2FirstLastLapTime()
+  # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastLapTime()
+  # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastLapTime()
+  # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
 plotIndSessionsLapTimes <- function(target='inline'){
   
   #but we can save plot as svg file
@@ -107,6 +150,49 @@ plotSessionsAccuracy <- function(target='inline'){
   
   #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
   layout(matrix(c(1,2,3,4), 1, 4, byrow = TRUE), widths=c(2,2,2,2), heights=c(1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1FirstLastAccuracy()
+  # mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2FirstLastAccuracy()
+  # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastAccuracy()
+  # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastAccuracy()
+  # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotLongSessionsAccuracy <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/manuscript/Fig2C_Accuracy.svg', width=10, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(2,2,2,2), heights=c(1,1))
   
   # # # # # # # # # #
   # panel A: Session 1
@@ -287,6 +373,49 @@ plotSessionsPL <- function(target='inline'){
   
 }
 
+plotLongSessionsPL <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/manuscript/Fig3C_PathLength.svg', width=10, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(2,2,2,2), heights=c(1,1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1FirstLastPL()
+  # mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2FirstLastPL()
+  # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastPL()
+  # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastPL()
+  # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
 plotIndSessionsPL <- function(target='inline'){
   
   #but we can save plot as svg file
@@ -342,6 +471,49 @@ plotSessionsPLInside <- function(target='inline', trackloc = 'in'){
   
   #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
   layout(matrix(c(1,2,3,4), 1, 4, byrow = TRUE), widths=c(2,2,2,2), heights=c(1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1InOutFirstLastPL(trackloc = trackloc)
+  # mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2InOutFirstLastPL(trackloc = trackloc)
+  # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel C: Run 2 - Session 1
+  plotR2S1InOutFirstLastPL(trackloc = trackloc)
+  # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel D: Run 2 - Session 2
+  plotR2S2InOutFirstLastPL(trackloc = trackloc)
+  # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotLongSessionsPLInside <- function(target='inline', trackloc = 'in'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/manuscript/Fig4C_PathLength_InsideTrack.svg', width=10, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), widths=c(2,2,2,2), heights=c(1,1))
   
   # # # # # # # # # #
   # panel A: Session 1
