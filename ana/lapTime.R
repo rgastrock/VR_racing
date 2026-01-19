@@ -1667,17 +1667,19 @@ getLapTimePars <- function(bootstraps = 1000){
   subdat <- data[2:nrow(data),2:ncol(data)]
   lambda <- c()
   N0 <- c()
+  C <- c()
   for(bs in c(1:bootstraps)){
     cat(sprintf('iteration: %s \n', bs))
     bs_mat <- subdat[,sample(ncol(subdat),ncol(subdat), replace = TRUE)]
     bs_dat <- rowMeans(bs_mat, na.rm = TRUE)
     
-    par <- exponentialFit(signal = bs_dat, mode='washout')
+    par <- decayFit(signal = bs_dat)
     lambda <- c(lambda, par['lambda'])
     N0 <- c(N0, par['N0'])
+    C <- c(C, par['C'])
   }
   
-  write.csv(data.frame(lambda, N0), file='data/LapTime_exponentialPars.csv', quote=F, row.names=F)
+  write.csv(data.frame(lambda, N0, C), file='data/LapTime_exponentialPars.csv', quote=F, row.names=F)
 }
   
 
@@ -1714,7 +1716,7 @@ plotLapTimeModel <- function(session = 1, target='inline'){
   subdat <- dat[2:nrow(dat),2:ncol(dat)]
   
   bs_dat <- rowMeans(subdat, na.rm = TRUE)
-  par <- exponentialFit(signal = bs_dat, mode='washout')
+  par <- decayFit(signal = bs_dat)
   
   #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
   #bootstrapped pars are used for lower and upper bounds
@@ -1722,17 +1724,18 @@ plotLapTimeModel <- function(session = 1, target='inline'){
   
   qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
   qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
+  qs_C <- quantile(data$C, probs = c(0.025, 0.500, 0.975))
   
-  lwr <- setNames(c(qs_lambda[['2.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
-  mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
-  upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+  lwr <- setNames(c(qs_lambda[['2.5%']], qs_N0[['50%']],qs_C[['2.5%']]), c('lambda', 'N0', 'C'))
+  mid <- setNames(c(par[['lambda']], qs_N0[['50%']],par[['C']]), c('lambda', 'N0', 'C'))
+  upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']],qs_C[['97.5%']]), c('lambda', 'N0','C'))
   
   xcoords <- c(1:299)
-  dfit <- exponentialModel(par=lwr, timepoints=xcoords)
+  dfit <- decayModel(par=lwr, timepoints=xcoords)
   y_lwr <- dfit$output
-  dfit <- exponentialModel(par=mid, timepoints=xcoords)
+  dfit <- decayModel(par=mid, timepoints=xcoords)
   y_mid <- dfit$output
-  dfit <- exponentialModel(par=upr, timepoints=xcoords)
+  dfit <- decayModel(par=upr, timepoints=xcoords)
   y_upr <- dfit$output
   
   colourscheme <- getAllTrackDayOneColourScheme()

@@ -181,6 +181,69 @@ plotIndSessionsAccuracy <- function(target='inline'){
   
 }
 
+plotSessionsLapTimesAccuracy <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/manuscript/Fig6_LapTimeandAccuracy.svg', width=16, height=6, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4,5,6,7,8), 2, 4, byrow = TRUE), widths=c(2,2,2,2), heights=c(1,1))
+  
+  # # # # # # # # # #
+  # panel A: Session 1
+  plotS1FirstLastLapTime()
+  # mtext('a', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel B: Session 2
+  plotS2FirstLastLapTime()
+  # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastLapTime()
+  # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastLapTime()
+  # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # panel E: Session 1
+  plotS1FirstLastAccuracy()
+  # mtext('e', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel F: Session 2
+  plotS2FirstLastAccuracy()
+  # mtext('f', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel G: Run 2 - Session 1
+  plotR2S1FirstLastAccuracy()
+  # mtext('g', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  # # # # # # # # # #
+  # panel H: Run 2 - Session 2
+  plotR2S2FirstLastAccuracy()
+  # mtext('h', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  
+  
+  
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+
 plotSessionsPL <- function(target='inline'){
   
   #but we can save plot as svg file
