@@ -1270,6 +1270,74 @@ plotS1FirstLastPL <- function(session = 1, target='inline') {
   plot(NA, NA, xlim = c(1,61), ylim = c(45, 56), 
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  
+  # include shaded regions to highlight trial set 1
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(2, lim[3], 6, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 1
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(4, 55,pch=16,cex=2,col=col)
+  text(4, 55,labels=set,cex=0.6,col='white')
+  
+  # trial set 2
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(7, lim[3], 12, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 2
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(9.5, 55,pch=16,cex=2,col=col)
+  text(9.5, 55,labels=set,cex=0.6,col='white')
+  
+  # trial set 3
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(13, lim[3], 18, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 3
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(15.5, 55,pch=16,cex=2,col=col)
+  text(15.5, 55,labels=set,cex=0.6,col='white')
+  
+  # trial set 4
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(19, lim[3], 24, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 4
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(21.5, 55,pch=16,cex=2,col=col)
+  text(21.5, 55,labels=set,cex=0.6,col='white')
+  
+  # trial set 5
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(25, lim[3], 30, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 5
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(27.5, 55,pch=16,cex=2,col=col)
+  text(27.5, 55,labels=set,cex=0.6,col='white')
+  
+  # trial set 50
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(55, lim[3], 60, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 6
+  colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(57.5, 55,pch=16,cex=2,col=col)
+  text(57.5, 55,labels=50,cex=0.6,col='white')
+  
   abline(v = c(30), h = c(49.68), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
   axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
@@ -1333,6 +1401,74 @@ plotS1InOutFirstLastPL <- function(session = 1, target='inline', trackloc = 'out
     plot(NA, NA, xlim = c(1,61), ylim = c(41, 51), 
          xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("Path length %sside trials: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    # include shaded regions to highlight trial set 1
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(2, lim[3], 6, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 1
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(4, 51,pch=16,cex=2,col=col)
+    text(4, 51,labels=set,cex=0.6,col='white')
+    
+    # trial set 2
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(7, lim[3], 12, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 2
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(9.5, 51,pch=16,cex=2,col=col)
+    text(9.5, 51,labels=set,cex=0.6,col='white')
+    
+    # trial set 3
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(13, lim[3], 18, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 3
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(15.5, 51,pch=16,cex=2,col=col)
+    text(15.5, 51,labels=set,cex=0.6,col='white')
+    
+    # trial set 4
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(19, lim[3], 24, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 4
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(21.5, 51,pch=16,cex=2,col=col)
+    text(21.5, 51,labels=set,cex=0.6,col='white')
+    
+    # trial set 5
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(25, lim[3], 30, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 5
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(27.5, 51,pch=16,cex=2,col=col)
+    text(27.5, 51,labels=set,cex=0.6,col='white')
+    
+    # trial set 50
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(55, lim[3], 60, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 6
+    colourscheme <- getAllTrackSession1ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(57.5, 51,pch=16,cex=2,col=col)
+    text(57.5, 51,labels=50,cex=0.6,col='white')
+    
     abline(v = c(30), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     axis(side=1, at=c(2, 15, 30, 32, 45, 60), labels=c('2', '15', '30', '272', '285', '300'))
     axis(2, at = c(41, 43, 45, 47, 49, 51), las=2) #tick marks for y axis
@@ -1404,6 +1540,103 @@ plotS2FirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inline')
   plot(NA, NA, xlim = c(0,121), ylim = c(45, 56), 
        xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
        main = sprintf("Path length across trials: Session %s", session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  
+  # include shaded regions to highlight trial set 1
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(2, lim[3], 6, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 1
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(4, 55,pch=15,cex=2,col=col)
+  text(4, 55,labels=1,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 2
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(25, lim[3], 30, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 2
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(27.5, 55,pch=15,cex=2,col=col)
+  text(27.5, 55,labels=5,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 3
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(32, lim[3], 36, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 3
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(34, 55,pch=15,cex=2,col=col)
+  text(34, 55,labels=1,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 4
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(55, lim[3], 60, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 4
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(57.5, 55,pch=15,cex=2,col=col)
+  text(57.5, 55,labels=5,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 5
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(62, lim[3], 66, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 5
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(64, 55,pch=15,cex=2,col=col)
+  text(64, 55,labels=1,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 6
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(85, lim[3], 90, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 6
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(87.5, 55,pch=15,cex=2,col=col)
+  text(87.5, 55,labels=5,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 7
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(92, lim[3], 96, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 7
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(94, 55,pch=15,cex=2,col=col)
+  text(94, 55,labels=1,cex=0.6,col='white')
+  
+  # include shaded regions to highlight trial set 8
+  lim <- par('usr')
+  col <- "#ededed"
+  col <- alpha(col, .5)
+  rect(115, lim[3], 120, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+  
+  set <- 8
+  colourscheme <- getSAFS2ColourScheme(blocks=set)
+  col <- colourscheme[[set]][['S']]
+  points(117.5, 55,pch=15,cex=2,col=col)
+  text(117.5, 55,labels=5,cex=0.6,col='white')
+  
   abline(v = c(30, 60, 90), h = c(49.68), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   #axis(1, at = c(1, 15, 30, 60, 90, 120)) #tick marks for x axis
   #axis(2, at = c(45, 47, 49, 51, 53, 55), las=2) #tick marks for y axis
@@ -1509,6 +1742,103 @@ plotS2InOutFirstLastPL <- function(session = 2, blocks = c(1,2,3,4), target='inl
     plot(NA, NA, xlim = c(0,121), ylim = c(41, 51), 
          xlab = "Trial", ylab = "Path length (cm on screen)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("Path length %sside track: Session %s", trackloc, session), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    # include shaded regions to highlight trial set 1
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(2, lim[3], 6, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 1
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(4, 51,pch=15,cex=2,col=col)
+    text(4, 51,labels=1,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 2
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(25, lim[3], 30, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 2
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(27.5, 51,pch=15,cex=2,col=col)
+    text(27.5, 51,labels=5,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 3
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(32, lim[3], 36, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 3
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(34, 51,pch=15,cex=2,col=col)
+    text(34, 51,labels=1,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 4
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(55, lim[3], 60, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 4
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(57.5, 51,pch=15,cex=2,col=col)
+    text(57.5, 51,labels=5,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 5
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(62, lim[3], 66, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 5
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(64, 51,pch=15,cex=2,col=col)
+    text(64, 51,labels=1,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 6
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(85, lim[3], 90, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 6
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(87.5, 51,pch=15,cex=2,col=col)
+    text(87.5, 51,labels=5,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 7
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(92, lim[3], 96, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 7
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(94, 51,pch=15,cex=2,col=col)
+    text(94, 51,labels=1,cex=0.6,col='white')
+    
+    # include shaded regions to highlight trial set 8
+    lim <- par('usr')
+    col <- "#ededed"
+    col <- alpha(col, .5)
+    rect(115, lim[3], 120, lim[4]+2, border = col, col = col) #xleft, ybottom, x right, ytop; light grey hex code
+    
+    set <- 8
+    colourscheme <- getSAFS2ColourScheme(blocks=set)
+    col <- colourscheme[[set]][['S']]
+    points(117.5, 51,pch=15,cex=2,col=col)
+    text(117.5, 51,labels=5,cex=0.6,col='white')
+    
     #abline(v = c(30, 60, 90, 120, 150, 180, 210, 240, 270), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v = c(30, 60, 90), col = 8, lty = 2)
     axis(1, at = c(2, 30, 60, 90, 120)) #tick marks for x axis
@@ -2671,6 +3001,26 @@ trainPLComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+# T-tests to compare last set in block 1 and first set in block 4 (both trained track in Session 2)
+trainPLTtest <- function(){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedPL(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_2','S2_7'))
+  
+  subdat1 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  subdat2 <- LC4aov[which(LC4aov$set == 'S2_7'),]
+  
+  cat('Session 2 Set 2 vs. Session 2 Set 7:\n')
+  print(t.test(subdat1$dv, subdat2$dv, paired = T))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1$dv, subdat2$dv))
+  
+}
+
 #Statistics (Trained direction; Bayesian) ----
 trainPLBayesANOVA <- function() {
   
@@ -3276,6 +3626,26 @@ trainPLINComparisonMeans <- function(){
 #   #print(comparisons)
 #   print(effectsize)
 # }
+
+# T-tests to compare last set in block 1 and first set in block 4 (both trained track in Session 2)
+trainPLINTtest <- function(){
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedPLIN(session = 2, blockdefs=blockdefs) 
+  LC4aov <- LC_part2[which(LC_part2$set == 'S2_2' | LC_part2$set == 'S2_7'),]
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S2_2','S2_7'))
+  
+  subdat1 <- LC4aov[which(LC4aov$set == 'S2_2'),]
+  subdat2 <- LC4aov[which(LC4aov$set == 'S2_7'),]
+  
+  cat('Session 2 Set 2 vs. Session 2 Set 7:\n')
+  print(t.test(subdat1$dv, subdat2$dv, paired = T))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1$dv, subdat2$dv))
+  
+}
 
 #Statistics: PL IN (Trained direction; Bayesian) ----
 trainPLINBayesANOVA <- function() {

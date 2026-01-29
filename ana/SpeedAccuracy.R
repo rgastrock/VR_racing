@@ -646,7 +646,7 @@ plotSAF <- function(target='inline') {
   col <- colourscheme[[6]][['S']]
   points(subdat_laptime$X50., subdat_accuracy$X50.,pch=16,cex=1.5,col=col)
   lines(c(s1b1_laptime$X50.[5], s1b2_laptime$X50.[5]),c(s1b1_accuracy$X50.[5], s1b2_accuracy$X50.[5]), col=col, lty = 3)
-  text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
+  text(subdat_laptime$X50., subdat_accuracy$X50.,labels=50,cex=0.6,col='white') #50th block
   col <- colourscheme[[6]][['T']]
   #accuracy CI
   lines(rep(subdat_laptime$X50.,2), c(subdat_accuracy$X2.5., subdat_accuracy$X97.5.),col=col)
@@ -686,7 +686,7 @@ plotSAF <- function(target='inline') {
     if(i %% 2 == 1){
       text(subdat_laptime$X50., subdat_accuracy$X50.,labels=1,cex=0.6,col='white')
     } else if(i %% 2 == 0){
-      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=2,cex=0.6,col='white')
+      text(subdat_laptime$X50., subdat_accuracy$X50.,labels=5,cex=0.6,col='white')
     }
   }
   
