@@ -1670,7 +1670,7 @@ performance.</p>
 <pre><code>## Lap times during first and last set in session 1 and first and set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1.474273e+20 ±0.89%
+## [1] set + participant : 1.447016e+20 ±0.64%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -1681,7 +1681,7 @@ performance.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.50            1     1.47e+20
+## set             0.50            1     1.45e+20
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -1730,6 +1730,96 @@ performance.</p>
 </div>
 <div id="generalization-lap-times" class="section level3">
 <h3>Generalization (Lap times)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-1" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genLapTimeANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  84 78.31803 6.347172e-20     * 0.5085261
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W            p p&lt;.05
+## 2    set 0.3251791 9.965813e-11     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.5970788 7.386714e-13         * 0.6046778 5.430436e-13         *</code></pre>
+<pre class="r"><code>genLapTimeComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first   5.72 0.3145 42     5.08     6.35
+##  S1_last    2.68 0.0725 42     2.53     2.82
+##  S2_3       3.43 0.1057 42     3.22     3.64
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genLapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -2.287 0.302 42  -7.563  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 3    0.753 0.107 42   7.040  &lt;.0001
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.5766121
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.5413016</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+rotated track.</p>
+</div>
+<div id="bayesian-test-1" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genLapTimeBayesANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 4.754934e+19 ±0.59%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00            1             
+## set             0.50            1     4.75e+19
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genLapTimeComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 5141210 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1016611 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="generalization-lap-times-with-top-up-training-as-reference" class="section level3">
+<h3>Generalization (Lap times): with Top up training as reference</h3>
+<p>We may also compare perfromance within Session 2. For these analyses,
+we use the first trained track block from Session 2 as the reference
+with which we compare the novel track conditions.</p>
 <p>Next, we compare performance across blocks in session 2. We use the
 first block of trials with the trained track during session 2 as a
 baseline for comparing the other blocks. First, we compare how
@@ -1737,9 +1827,9 @@ performance is affected when participants encounter the 180 degree
 rotated track orientation:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-1" class="section level4">
+<div id="frequentist-test-2" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genLapTimeANOVA()</code></pre>
+<pre class="r"><code>genTopUpLapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -1752,7 +1842,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.8119553 3.058912e-15         * 0.8656176 4.292571e-16         *</code></pre>
-<pre class="r"><code>genLapTimeComparisonMeans()</code></pre>
+<pre class="r"><code>genTopUpLapTimeComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1   3.52 0.1083 42     3.30     3.74
 ##  S2_2   2.75 0.0705 42     2.61     2.90
@@ -1760,29 +1850,27 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4   2.87 0.0850 42     2.70     3.05
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genLapTimeComparisonsEffSize()</code></pre>
-<pre><code>##  contrast                           estimate     SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3  -0.0901 0.1069 42  -0.843  1.0000
-##  Session 2 Set 2 vs Session 2 Set 3   0.6774 0.0732 42   9.255  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 4   0.1207 0.0699 42   1.726  0.2752
+<pre class="r"><code>genTopUpLapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -2.287 0.302 42  -7.563  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 3    0.753 0.107 42   7.040  &lt;.0001
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3 0.01662090
-## 2 Session 2 Set 2 vs Session 2 Set 3 0.67100056
-## 3 Session 2 Set 2 vs Session 2 Set 4 0.06622379</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.5766121
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.5413016</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the last set in the
 trained track and first set in the rotated track. However, this
 difference is not significant by the last set in the rotated track.</p>
 </div>
-<div id="bayesian-test-1" class="section level4">
+<div id="bayesian-test-2" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genLapTimeBayesANOVA()</code></pre>
+<pre class="r"><code>genTopUpLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1.584025e+15 ±0.54%
+## [1] set + participant : 1.61307e+15 ±0.64%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -1793,11 +1881,11 @@ difference is not significant by the last set in the rotated track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     1.58e+15
+## set             0.50         1.00     1.61e+15
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genLapTimeComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genTopUpLapTimeComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -1832,13 +1920,99 @@ difference is not significant by the last set in the rotated track.</p>
 </div>
 <div id="reverse-track-lap-times" class="section level3">
 <h3>Reverse track (Lap times)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-3" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revLapTimeANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  84 83.12319 1.225412e-20     * 0.4947199
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W            p p&lt;.05
+## 2    set 0.2730765 2.778619e-12     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.5790644 5.863243e-13         * 0.5851782 4.531941e-13         *</code></pre>
+<pre class="r"><code>revLapTimeComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first   5.72 0.3145 42     5.08     6.35
+##  S1_last    2.68 0.0725 42     2.53     2.82
+##  S2_5       3.71 0.1098 42     3.49     3.93
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revLapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate     SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5    -2.01 0.2722 42  -7.379  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5     1.03 0.0962 42  10.718  &lt;.0001
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.5645584
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.7322888</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-3" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revLapTimeBayesANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 4.962336e+19 ±0.82%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00            1             
+## set             0.50            1     4.96e+19
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revLapTimeComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 2912685 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 56526077358 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-lap-times-with-top-up-training-as-reference" class="section level3">
+<h3>Reverse track (Lap times): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-2" class="section level4">
+<div id="frequentist-test-4" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revLapTimeANOVA()</code></pre>
+<pre class="r"><code>revTopUpLapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F          p p&lt;.05       ges
@@ -1851,7 +2025,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
 ## 2    set 0.8332009 1.187457e-17         * 0.8901422 1.07344e-18         *</code></pre>
-<pre class="r"><code>revLapTimeComparisonMeans()</code></pre>
+<pre class="r"><code>revTopUpLapTimeComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1   3.52 0.1083 42     3.30     3.74
 ##  S2_2   2.75 0.0705 42     2.61     2.90
@@ -1859,29 +2033,27 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   3.22 0.0963 42     3.02     3.41
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revLapTimeComparisonsEffSize()</code></pre>
+<pre class="r"><code>revTopUpLapTimeComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate     SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5    0.188 0.0985 42   1.904  0.1912
-##  Session 2 Set 2 vs Session 2 Set 5    0.955 0.0854 42  11.188  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 6    0.465 0.0749 42   6.209  &lt;.0001
+##  Session 1 Set 1 vs Session 2 Set 5    -2.01 0.2722 42  -7.379  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5     1.03 0.0962 42  10.718  &lt;.0001
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5 0.07947331
-## 2 Session 2 Set 2 vs Session 2 Set 5 0.74875196
-## 3 Session 2 Set 2 vs Session 2 Set 6 0.47863561</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.5645584
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.7322888</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the last set in the
 trained track and first set in the reverse track. This difference
 remains up to the last set in the reverse track.</p>
 </div>
-<div id="bayesian-test-2" class="section level4">
+<div id="bayesian-test-4" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revLapTimeBayesANOVA()</code></pre>
+<pre class="r"><code>revTopUpLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 3.907712e+17 ±0.9%
+## [1] set + participant : 3.913128e+17 ±1.1%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -1896,7 +2068,7 @@ remains up to the last set in the reverse track.</p>
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revLapTimeComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revTopUpLapTimeComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -1958,7 +2130,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-3" class="section level4">
+<div id="frequentist-test-5" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainLapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and last block in session 2:
@@ -1999,13 +2171,13 @@ Interestingly, performance seems to continue to improve, as the last set
 in the last block also shows a significant difference compared to the
 last set in the first block.</p>
 </div>
-<div id="bayesian-test-3" class="section level4">
+<div id="bayesian-test-5" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1.625889e+20 ±0.8%
+## [1] set + participant : 1.623759e+20 ±0.63%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2016,7 +2188,7 @@ last set in the first block.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.50            1     1.63e+20
+## set             0.50            1     1.62e+20
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -2124,7 +2296,7 @@ variable.</p>
 <h3>Retention (Accuracy)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-4" class="section level4">
+<div id="frequentist-test-6" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -2167,13 +2339,13 @@ the last set in session 1 and the first set in session 2, indicating
 that accuracy at the start of session 2 is comparable to that achieved
 at the end of the previous training day.</p>
 </div>
-<div id="bayesian-test-4" class="section level4">
+<div id="bayesian-test-6" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 5.791877 ±0.72%
+## [1] set + participant : 5.826874 ±1.2%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2184,7 +2356,7 @@ at the end of the previous training day.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.85         5.79
+## set             0.50         0.85         5.83
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -2233,13 +2405,88 @@ at the end of the previous training day.</p>
 </div>
 <div id="generalization-accuracy" class="section level3">
 <h3>Generalization (Accuracy)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-7" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genAccuracyANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F         p p&lt;.05        ges
+## 2    set   2  84 1.904015 0.1553432       0.02364817
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W         p p&lt;.05
+## 2    set 0.9390139 0.2752812      
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe     p[GG] p[GG]&lt;.05       HFe     p[HF] p[HF]&lt;.05
+## 2    set 0.9425194 0.1580445           0.9853764 0.1560325</code></pre>
+<pre class="r"><code>genAccuracyComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   94.4 0.763 42     92.9     96.0
+##  S1_last    95.4 0.527 42     94.4     96.5
+##  S2_3       93.8 0.716 42     92.3     95.2
+## 
+## Confidence level used: 0.95</code></pre>
+<p>We do not observe a main effect of set.</p>
+</div>
+<div id="bayesian-test-7" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genAccuracyBayesANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 0.3822117 ±0.64%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.28        0.382
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genAccuracyComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.2155163 ±0.05%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1.454772 ±0.02%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="generalization-accuracy-with-top-up-training-as-reference" class="section level3">
+<h3>Generalization (Accuracy): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-5" class="section level4">
+<div id="frequentist-test-8" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genAccuracyANOVA()</code></pre>
+<pre class="r"><code>genTopUpAccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -2252,7 +2499,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe       p[GG] p[GG]&lt;.05      HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.7819346 5.33701e-06         * 0.831098 2.996753e-06         *</code></pre>
-<pre class="r"><code>genAccuracyComparisonMeans()</code></pre>
+<pre class="r"><code>genTopUpAccuracyComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   96.9 0.494 42     95.9     97.9
 ##  S2_2   97.0 0.393 42     96.2     97.8
@@ -2260,30 +2507,28 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4   95.3 0.535 42     94.3     96.4
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genAccuracyComparisonsEffSize()</code></pre>
+<pre class="r"><code>genTopUpAccuracyComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3    -3.15 0.512 42  -6.140  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 3    -3.20 0.716 42  -4.477  0.0002
-##  Session 2 Set 2 vs Session 2 Set 4    -1.65 0.546 42  -3.022  0.0128
+##  Session 1 Set 1 vs Session 2 Set 3   -0.656 0.870 42  -0.754  0.9098
+##  Session 1 Set 2 vs Session 2 Set 3   -1.660 0.753 42  -2.204  0.0661
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3  0.4730474
-## 2 Session 2 Set 2 vs Session 2 Set 3  0.3230319
-## 3 Session 2 Set 2 vs Session 2 Set 4  0.1786392</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.0133639
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.1036775</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the first and last sets in
 the trained track and first set in the rotated track. Furthermore, the
 last set in the rotated track also differs from the last set in the
 trained track.</p>
 </div>
-<div id="bayesian-test-5" class="section level4">
+<div id="bayesian-test-8" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genAccuracyBayesANOVA()</code></pre>
+<pre class="r"><code>genTopUpAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 42001.74 ±1.14%
+## [1] set + participant : 41592.49 ±0.53%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2294,11 +2539,11 @@ trained track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     4.20e+04
+## set             0.50         1.00     4.16e+04
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genAccuracyComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genTopUpAccuracyComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -2333,13 +2578,99 @@ trained track.</p>
 </div>
 <div id="reverse-track-accuracy" class="section level3">
 <h3>Reverse track (Accuracy)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-9" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revAccuracyANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F          p p&lt;.05        ges
+## 2    set   2  84 7.805927 0.00077744     * 0.09069141
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W         p p&lt;.05
+## 2    set 0.9443095 0.3089185      
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.9472473 0.0009897964         * 0.9906778 0.0008113083         *</code></pre>
+<pre class="r"><code>revAccuracyComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   94.4 0.763 42     92.9     96.0
+##  S1_last    95.4 0.527 42     94.4     96.5
+##  S2_5       92.2 0.688 42     90.8     93.6
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revAccuracyComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5    -2.26 0.771 42  -2.929  0.0109
+##  Session 1 Set 2 vs Session 2 Set 5    -3.26 0.821 42  -3.976  0.0005
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1696166
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.2734297</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-9" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revAccuracyBayesANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 54.10737 ±0.75%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.98        54.11
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revAccuracyComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 6.677724 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 96.55368 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-accuracy-with-top-up-training-as-reference" class="section level3">
+<h3>Reverse track (Accuracy): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-6" class="section level4">
+<div id="frequentist-test-10" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revAccuracyANOVA()</code></pre>
+<pre class="r"><code>revTopUpAccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -2352,7 +2683,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.9123152 2.406095e-12         * 0.9821673 4.062574e-13         *</code></pre>
-<pre class="r"><code>revAccuracyComparisonMeans()</code></pre>
+<pre class="r"><code>revTopUpAccuracyComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   96.9 0.494 42     95.9     97.9
 ##  S2_2   97.0 0.393 42     96.2     97.8
@@ -2360,27 +2691,25 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   95.2 0.485 42     94.2     96.2
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revAccuracyComparisonsEffSize()</code></pre>
+<pre class="r"><code>revTopUpAccuracyComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5    -4.75 0.710 42  -6.692  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 5    -4.81 0.637 42  -7.552  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 6    -1.79 0.586 42  -3.047  0.0120
+##  Session 1 Set 1 vs Session 2 Set 5    -2.26 0.771 42  -2.929  0.0109
+##  Session 1 Set 2 vs Session 2 Set 5    -3.26 0.821 42  -3.976  0.0005
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.5160436
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.5758750
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.1810044</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1696166
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.2734297</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 accuracy in the reverse track is lower than in the trained track.</p>
 </div>
-<div id="bayesian-test-6" class="section level4">
+<div id="bayesian-test-10" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revAccuracyBayesANOVA()</code></pre>
+<pre class="r"><code>revTopUpAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 59922904287 ±0.77%
+## [1] set + participant : 59917522230 ±1.09%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2395,7 +2724,7 @@ accuracy in the reverse track is lower than in the trained track.</p>
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revAccuracyComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revTopUpAccuracyComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -2457,7 +2786,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-7" class="section level4">
+<div id="frequentist-test-11" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainAccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and last block in session 2:
@@ -2483,13 +2812,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 <p>We do not observe an effect of set, suggesting no accuracy
 differences between the first and last blocks in session 2.</p>
 </div>
-<div id="bayesian-test-7" class="section level4">
+<div id="bayesian-test-11" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.06535981 ±0.84%
+## [1] set + participant : 0.0647305 ±0.54%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2584,7 +2913,7 @@ variable.</p>
 <h3>Retention (Path Length)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-8" class="section level4">
+<div id="frequentist-test-12" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -2623,13 +2952,13 @@ across trial sets.</p>
 <p>We observe a main effect of set. Follow-up comparisons do not reveal
 any significant differences.</p>
 </div>
-<div id="bayesian-test-8" class="section level4">
+<div id="bayesian-test-12" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionPLBayesANOVA()</code></pre>
 <pre><code>## Path Length during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 8.547841 ±0.85%
+## [1] set + participant : 8.466701 ±0.61%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2640,7 +2969,7 @@ any significant differences.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.90         8.55
+## set             0.50         0.89         8.47
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -2689,14 +3018,101 @@ any significant differences.</p>
 </div>
 <div id="generalization-path-length" class="section level3">
 <h3>Generalization (Path Length)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-13" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genPLANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F          p p&lt;.05        ges
+## 2    set   2  84 5.652289 0.00497682     * 0.08212979
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W            p p&lt;.05
+## 2    set 0.3084474 3.374529e-11     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe      p[HF] p[HF]&lt;.05
+## 2    set 0.5911729 0.01680977         * 0.5982812 0.01645659         *</code></pre>
+<pre class="r"><code>genPLComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first  47.75 0.4515 42    46.84    48.66
+##  S1_last   46.59 0.1089 42    46.37    46.80
+##  S2_3      46.63 0.1299 42    46.37    46.89
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genPLComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3  -1.1219 0.462 42  -2.430  0.0389
+##  Session 1 Set 2 vs Session 2 Set 3   0.0449 0.162 42   0.277  1.0000
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast  etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3 0.123287522
+## 2 Session 1 Set 2 vs Session 2 Set 3 0.001829043</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons show that this
+is driven by the difference between the first set in session 1 and the
+first rotated track set.</p>
+</div>
+<div id="bayesian-test-13" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 14.49133 ±0.73%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.94        14.49
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genPLComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 2.26068 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.1710972 ±0.06%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show that the effect between the first sets is
+small.</p>
+</div>
+</div>
+<div id="generalization-path-length-with-top-up-training-as-reference" class="section level3">
+<h3>Generalization (Path Length): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-9" class="section level4">
+<div id="frequentist-test-14" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genPLANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and second block in session 2:
+<pre class="r"><code>genTopUpPLANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F          p p&lt;.05       ges
 ## 2    set   3 126 2.243903 0.08641302       0.0300308
@@ -2708,7 +3124,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe     p[GG] p[GG]&lt;.05       HFe      p[HF] p[HF]&lt;.05
 ## 2    set 0.7917782 0.1018983           0.8423995 0.09790745</code></pre>
-<pre class="r"><code>genPLComparisonMeans()</code></pre>
+<pre class="r"><code>genTopUpPLComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1  46.73 0.1753 42    46.37    47.08
 ##  S2_2  46.37 0.1053 42    46.16    46.58
@@ -2718,13 +3134,13 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-9" class="section level4">
+<div id="bayesian-test-14" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genPLBayesANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and second block in session 2:
+<pre class="r"><code>genTopUpPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.4619954 ±0.61%
+## [1] set + participant : 0.4607838 ±0.54%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2735,11 +3151,11 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.32        0.462
+## set             0.50         0.32        0.461
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genPLComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genTopUpPLComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -2774,14 +3190,101 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 </div>
 <div id="reverse-track-path-length" class="section level3">
 <h3>Reverse track (Path Length)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-15" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revPLANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  84 50.35922 4.229596e-15     * 0.3708423
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W            p p&lt;.05
+## 2    set 0.3140341 4.875551e-11     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.5931318 6.735111e-10         * 0.6004024 5.433254e-10         *</code></pre>
+<pre class="r"><code>revPLComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first  47.75 0.4515 42    46.84    48.66
+##  S1_last   46.59 0.1089 42    46.37    46.80
+##  S2_5      50.08 0.1990 42    49.68    50.48
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revPLComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5     2.32 0.321 42   7.241  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5     3.49 0.221 42  15.808  &lt;.0001
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.5552074
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.8561178</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-15" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 1.970245e+13 ±0.95%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         1.00     1.97e+13
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revPLComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1894861 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:</code></pre>
+<pre><code>## t is large; approximation invoked.</code></pre>
+<pre><code>## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1.777994e+16 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-path-length-with-top-up-training-as-reference" class="section level3">
+<h3>Reverse track (Path Length): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-10" class="section level4">
+<div id="frequentist-test-16" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revPLANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and third block in session 2:
+<pre class="r"><code>revTopUpPLANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
 ## 2    set   3 126 214.8918 2.328248e-49     * 0.7544419
@@ -2793,7 +3296,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe       p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.8235242 4.19538e-41         * 0.8789622 1.068149e-43         *</code></pre>
-<pre class="r"><code>revPLComparisonMeans()</code></pre>
+<pre class="r"><code>revTopUpPLComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1  46.73 0.1753 42    46.37    47.08
 ##  S2_2  46.37 0.1053 42    46.16    46.58
@@ -2801,28 +3304,26 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6  50.04 0.1201 42    49.79    50.28
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revPLComparisonsEffSize()</code></pre>
+<pre class="r"><code>revTopUpPLComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5     3.35 0.220 42  15.201  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 5     3.71 0.233 42  15.910  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 6     3.67 0.132 42  27.712  &lt;.0001
+##  Session 1 Set 1 vs Session 2 Set 5     2.32 0.321 42   7.241  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5     3.49 0.221 42  15.808  &lt;.0001
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.8461899
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.8576853
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.9481435</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.5552074
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.8561178</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 path length in the reverse track is increased compared to those in the
 trained track.</p>
 </div>
-<div id="bayesian-test-10" class="section level4">
+<div id="bayesian-test-16" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revPLBayesANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and third block in session 2:
+<pre class="r"><code>revTopUpPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 2.658589e+52 ±0.84%
+## [1] set + participant : 2.715251e+52 ±1.09%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2833,11 +3334,11 @@ trained track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.50            1     2.66e+52
+## set             0.50            1     2.72e+52
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revPLComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revTopUpPLComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:</code></pre>
 <pre><code>## t is large; approximation invoked.</code></pre>
 <pre><code>## Bayes factor analysis
@@ -2902,7 +3403,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-11" class="section level4">
+<div id="frequentist-test-17" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainPLANOVA()</code></pre>
 <pre><code>## Path Length during first block in session 2 and last block in session 2:
@@ -2940,13 +3441,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 effect is driven by a difference between the last set of block 1 and the
 first set of the last block.</p>
 </div>
-<div id="bayesian-test-11" class="section level4">
+<div id="bayesian-test-17" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainPLBayesANOVA()</code></pre>
 <pre><code>## Path Length during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 9.005584 ±0.6%
+## [1] set + participant : 8.962943 ±0.47%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -2957,7 +3458,7 @@ first set of the last block.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.90         9.01
+## set             0.50         0.90         8.96
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -3003,7 +3504,7 @@ but now use Path length inside the track as the dependent variable.</p>
 <h3>Retention (Path Length inside)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-12" class="section level4">
+<div id="frequentist-test-18" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -3030,13 +3531,13 @@ across trial sets.</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-12" class="section level4">
+<div id="bayesian-test-18" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionPLINBayesANOVA()</code></pre>
 <pre><code>## Path Length in during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.2439809 ±0.77%
+## [1] set + participant : 0.2497222 ±1.06%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3047,7 +3548,7 @@ across trial sets.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.20        0.244
+## set             0.50         0.20        0.250
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -3096,14 +3597,102 @@ across trial sets.</p>
 </div>
 <div id="generalization-path-length-inside" class="section level3">
 <h3>Generalization (Path Length inside)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-19" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F          p p&lt;.05       ges
+## 2    set   2  84 3.507881 0.03442171     * 0.0390005
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W         p p&lt;.05
+## 2    set 0.9306146 0.2289719      
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe     p[HF] p[HF]&lt;.05
+## 2    set 0.9351166 0.03764383         * 0.9770805 0.0355269         *</code></pre>
+<pre class="r"><code>genPLINComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   44.9 0.433 42     44.1     45.8
+##  S1_last    44.5 0.288 42     43.9     45.1
+##  S2_3       43.7 0.406 42     42.9     44.6
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genPLINComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -1.205 0.443 42  -2.719  0.0190
+##  Session 1 Set 2 vs Session 2 Set 3   -0.756 0.415 42  -1.821  0.1516
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3 0.14966919
+## 2 Session 1 Set 2 vs Session 2 Set 3 0.07313979</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons show that this
+is driven by the difference between the first set in session 1 and the
+first rotated track set.</p>
+</div>
+<div id="bayesian-test-19" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 1.435123 ±0.78%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.59         1.44
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genPLINComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 4.157843 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.7466156 ±0.03%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show that the effect between the first sets is
+small.</p>
+</div>
+</div>
+<div id="generalization-path-length-inside-with-top-up-training-as-reference" class="section level3">
+<h3>Generalization (Path Length inside): with Top Up training as
+reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-13" class="section level4">
+<div id="frequentist-test-20" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genPLINANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and second block in session 2:
+<pre class="r"><code>genTopUpPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05        ges
 ## 2    set   3 126 8.473319 3.588742e-05     * 0.07907562
@@ -3115,7 +3704,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.8887066 8.282315e-05         * 0.9545897 5.046144e-05         *</code></pre>
-<pre class="r"><code>genPLINComparisonMeans()</code></pre>
+<pre class="r"><code>genTopUpPLINComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   45.2 0.289 42     44.6     45.8
 ##  S2_2   45.0 0.224 42     44.6     45.5
@@ -3123,29 +3712,27 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4   44.2 0.311 42     43.6     44.8
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genPLINComparisonsEffSize()</code></pre>
+<pre class="r"><code>genTopUpPLINComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3   -1.471 0.299 42  -4.923  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 3   -1.282 0.392 42  -3.270  0.0064
-##  Session 2 Set 2 vs Session 2 Set 4   -0.804 0.313 42  -2.573  0.0411
+##  Session 1 Set 1 vs Session 2 Set 3   -1.205 0.443 42  -2.719  0.0190
+##  Session 1 Set 2 vs Session 2 Set 3   -0.756 0.415 42  -1.821  0.1516
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3  0.3659447
-## 2 Session 2 Set 2 vs Session 2 Set 3  0.2029700
-## 3 Session 2 Set 2 vs Session 2 Set 4  0.1361679</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 3 0.14966919
+## 2 Session 1 Set 2 vs Session 2 Set 3 0.07313979</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons show that path
 length within the track is shorter during rotated-track trials than
 during trained-track trials, suggesting more frequent departures beyond
 the track limits in the rotated condition.</p>
 </div>
-<div id="bayesian-test-13" class="section level4">
+<div id="bayesian-test-20" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genPLINBayesANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and second block in session 2:
+<pre class="r"><code>genTopUpPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 593.8753 ±0.74%
+## [1] set + participant : 588.0314 ±0.46%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3156,11 +3743,11 @@ the track limits in the rotated condition.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00       593.88
+## set             0.50         1.00       588.03
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genPLINComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genTopUpPLINComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -3195,14 +3782,101 @@ the track limits in the rotated condition.</p>
 </div>
 <div id="reverse-track-path-length-inside" class="section level3">
 <h3>Reverse track (Path Length inside)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-21" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F           p p&lt;.05        ges
+## 2    set   2  84 6.848453 0.001756855     * 0.07778388
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W         p p&lt;.05
+## 2    set 0.9214638 0.1869842      
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe       p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
+## 2    set 0.9271826 0.002327184         * 0.9681962 0.001986189         *</code></pre>
+<pre class="r"><code>revPLINComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   44.9 0.433 42     44.1     45.8
+##  S1_last    44.5 0.288 42     43.9     45.1
+##  S2_5       46.1 0.364 42     45.4     46.9
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revPLINComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5     1.19 0.437 42   2.714  0.0192
+##  Session 1 Set 2 vs Session 2 Set 5     1.64 0.411 42   3.980  0.0005
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1492079
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.2738164</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-21" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 23.89053 ±2.25%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.96        23.89
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revPLINComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 4.113091 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 97.58926 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-path-length-inside-with-top-up-training-as-reference" class="section level3">
+<h3>Reverse track (Path Length inside): with Top Up training as
+reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-14" class="section level4">
+<div id="frequentist-test-22" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revPLINANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and third block in session 2:
+<pre class="r"><code>revTopUpPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
 ## 2    set   3 126 25.98054 3.764347e-13     * 0.2301514
@@ -3214,7 +3888,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect      GGe        p[GG] p[GG]&lt;.05      HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.961053 9.999497e-13         * 1.039415 3.764347e-13         *</code></pre>
-<pre class="r"><code>revPLINComparisonMeans()</code></pre>
+<pre class="r"><code>revTopUpPLINComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   45.2 0.289 42     44.6     45.8
 ##  S2_2   45.0 0.224 42     44.6     45.5
@@ -3222,29 +3896,27 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   47.7 0.293 42     47.1     48.3
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revPLINComparisonsEffSize()</code></pre>
+<pre class="r"><code>revTopUpPLINComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5     0.92 0.330 42   2.787  0.0238
-##  Session 2 Set 2 vs Session 2 Set 5     1.11 0.356 42   3.116  0.0099
-##  Session 2 Set 2 vs Session 2 Set 6     2.66 0.322 42   8.269  &lt;.0001
+##  Session 1 Set 1 vs Session 2 Set 5     1.19 0.437 42   2.714  0.0192
+##  Session 1 Set 2 vs Session 2 Set 5     1.64 0.411 42   3.980  0.0005
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.1561089
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.1877234
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.6194875</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1492079
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.2738164</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons show that path
 length within the track is longer during reverse-track trials than
 during trained-track trials, suggesting less efficient movement within
 the track for reverse movements.</p>
 </div>
-<div id="bayesian-test-14" class="section level4">
+<div id="bayesian-test-22" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revPLINBayesANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and third block in session 2:
+<pre class="r"><code>revTopUpPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 31331435183 ±0.5%
+## [1] set + participant : 31602041710 ±1.06%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3255,11 +3927,11 @@ the track for reverse movements.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     3.13e+10
+## set             0.50         1.00     3.16e+10
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revPLINComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revTopUpPLINComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -3321,7 +3993,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-15" class="section level4">
+<div id="frequentist-test-23" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainPLINANOVA()</code></pre>
 <pre><code>## Path Length in during first block in session 2 and last block in session 2:
@@ -3346,13 +4018,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-15" class="section level4">
+<div id="bayesian-test-23" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainPLINBayesANOVA()</code></pre>
 <pre><code>## Path Length in during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.08555823 ±0.54%
+## [1] set + participant : 0.08604924 ±0.71%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3461,7 +4133,7 @@ Study 1.</p>
 <h3>Retention (Lap times)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-16" class="section level4">
+<div id="frequentist-test-24" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -3504,13 +4176,13 @@ session 2 is lower than the first set in session 1, but not as low as
 the final set in session 1, suggesting partial retention of
 performance.</p>
 </div>
-<div id="bayesian-test-16" class="section level4">
+<div id="bayesian-test-24" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionR2LapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1.513813e+25 ±1.77%
+## [1] set + participant : 1.492019e+25 ±0.9%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3521,7 +4193,7 @@ performance.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.50            1     1.51e+25
+## set             0.50            1     1.49e+25
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -3570,13 +4242,100 @@ performance.</p>
 </div>
 <div id="generalization-lap-times-1" class="section level3">
 <h3>Generalization (Lap times)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-25" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genR2LapTimeANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  70 140.1175 3.356229e-25     * 0.6787807
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W            p p&lt;.05
+## 2    set 0.1608607 3.233324e-14     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.5437326 8.600384e-15         * 0.5477141 6.973406e-15         *</code></pre>
+<pre class="r"><code>genR2LapTimeComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first   7.83 0.3925 35     7.03     8.63
+##  S1_last    3.09 0.0953 35     2.90     3.29
+##  S2_3       3.87 0.1067 35     3.65     4.08
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genR2LapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate     SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -3.963 0.3448 35 -11.494  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 3    0.772 0.0971 35   7.947  &lt;.0001
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.7905473
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.6434205</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+rotated track.</p>
+</div>
+<div id="bayesian-test-25" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genR2LapTimeBayesANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 3.314089e+26 ±0.64%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00            1             
+## set             0.50            1     3.31e+26
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genR2LapTimeComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 38864814313 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 4990399 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="generalization-lap-times-with-top-up-training-as-reference-1" class="section level3">
+<h3>Generalization (Lap times): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the 180 degree rotated track orientation:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-17" class="section level4">
+<div id="frequentist-test-26" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genR2LapTimeANOVA()</code></pre>
+<pre class="r"><code>genR2TopUpLapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -3589,7 +4348,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
 ## 2    set 0.6600091 1.851506e-10         * 0.6993846 5.97042e-11         *</code></pre>
-<pre class="r"><code>genR2LapTimeComparisonMeans()</code></pre>
+<pre class="r"><code>genR2TopUpLapTimeComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1   3.98 0.1376 35     3.70     4.26
 ##  S2_2   3.20 0.0818 35     3.03     3.36
@@ -3597,29 +4356,27 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4   3.29 0.0863 35     3.12     3.47
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genR2LapTimeComparisonsEffSize()</code></pre>
+<pre class="r"><code>genR2TopUpLapTimeComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate     SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3  -0.1127 0.1268 35  -0.889  1.0000
-##  Session 2 Set 2 vs Session 2 Set 3   0.6690 0.0737 35   9.081  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 4   0.0983 0.0678 35   1.449  0.4687
+##  Session 1 Set 1 vs Session 2 Set 3   -3.963 0.3448 35 -11.494  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 3    0.772 0.0971 35   7.947  &lt;.0001
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3 0.02207547
-## 2 Session 2 Set 2 vs Session 2 Set 3 0.70203809
-## 3 Session 2 Set 2 vs Session 2 Set 4 0.05659622</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.7905473
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.6434205</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the last set in the
 trained track and first set in the rotated track. However, this
 difference is not significant by the last set in the rotated track.</p>
 </div>
-<div id="bayesian-test-17" class="section level4">
+<div id="bayesian-test-26" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genR2LapTimeBayesANOVA()</code></pre>
+<pre class="r"><code>genR2TopUpLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 607031641365 ±0.77%
+## [1] set + participant : 601116871606 ±0.65%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3630,11 +4387,11 @@ difference is not significant by the last set in the rotated track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     6.07e+11
+## set             0.50         1.00     6.01e+11
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genR2LapTimeComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genR2TopUpLapTimeComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -3669,13 +4426,99 @@ difference is not significant by the last set in the rotated track.</p>
 </div>
 <div id="reverse-track-lap-times-1" class="section level3">
 <h3>Reverse track (Lap times)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-27" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revR2LapTimeANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F           p p&lt;.05       ges
+## 2    set   2  70 126.9417 5.18589e-24     * 0.6736969
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W           p p&lt;.05
+## 2    set 0.2909026 7.65085e-10     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.5851042 4.871072e-15         * 0.5930793 3.271454e-15         *</code></pre>
+<pre class="r"><code>revR2LapTimeComparisonMeans()</code></pre>
+<pre><code>##  set      emmean     SE df lower.CL upper.CL
+##  S1_first   7.83 0.3925 35     7.03     8.63
+##  S1_last    3.09 0.0953 35     2.90     3.29
+##  S2_5       3.92 0.1185 35     3.67     4.16
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revR2LapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5   -3.914 0.372 35 -10.518  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5    0.821 0.127 35   6.469  &lt;.0001
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.7596715
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.5445304</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-27" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revR2LapTimeBayesANOVA()</code></pre>
+<pre><code>## Lap times during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 4.55552e+25 ±0.62%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00            1             
+## set             0.50            1     4.56e+25
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revR2LapTimeComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 3818909760 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 82476.03 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-lap-times-with-top-up-training-as-reference-1" class="section level3">
+<h3>Reverse track (Lap times): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-18" class="section level4">
+<div id="frequentist-test-28" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revR2LapTimeANOVA()</code></pre>
+<pre class="r"><code>revR2TopUpLapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -3688,7 +4531,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.7551619 2.623565e-08         * 0.8101285 9.311866e-09         *</code></pre>
-<pre class="r"><code>revR2LapTimeComparisonMeans()</code></pre>
+<pre class="r"><code>revR2TopUpLapTimeComparisonMeans()</code></pre>
 <pre><code>##  set  emmean     SE df lower.CL upper.CL
 ##  S2_1   3.98 0.1376 35     3.70     4.26
 ##  S2_2   3.20 0.0818 35     3.03     3.36
@@ -3696,29 +4539,27 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   3.45 0.1064 35     3.23     3.67
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revR2LapTimeComparisonsEffSize()</code></pre>
-<pre><code>##  contrast                           estimate     SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5  -0.0633 0.1441 35  -0.439  1.0000
-##  Session 2 Set 2 vs Session 2 Set 5   0.7185 0.1175 35   6.114  &lt;.0001
-##  Session 2 Set 2 vs Session 2 Set 6   0.2542 0.0966 35   2.632  0.0376
+<pre class="r"><code>revR2TopUpLapTimeComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5   -3.914 0.372 35 -10.518  &lt;.0001
+##  Session 1 Set 2 vs Session 2 Set 5    0.821 0.127 35   6.469  &lt;.0001
 ## 
-## P value adjustment: bonferroni method for 3 tests 
-##                             contrast  etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5 0.005475191
-## 2 Session 2 Set 2 vs Session 2 Set 5 0.516472860
-## 3 Session 2 Set 2 vs Session 2 Set 6 0.165201592</code></pre>
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.7596715
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.5445304</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the last set in the
 trained track and first set in the reverse track. This difference
 remains up to the last set in the reverse track.</p>
 </div>
-<div id="bayesian-test-18" class="section level4">
+<div id="bayesian-test-28" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revR2LapTimeBayesANOVA()</code></pre>
+<pre class="r"><code>revR2TopUpLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 43497549 ±0.61%
+## [1] set + participant : 43544376 ±0.52%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3733,7 +4574,7 @@ remains up to the last set in the reverse track.</p>
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revR2LapTimeComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revR2TopUpLapTimeComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -3795,7 +4636,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-19" class="section level4">
+<div id="frequentist-test-29" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainR2LapTimeANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and last block in session 2:
@@ -3834,13 +4675,13 @@ this effect is driven by a difference between the first set in each
 block, where the first set in the last block shows decreased lap
 times.</p>
 </div>
-<div id="bayesian-test-19" class="section level4">
+<div id="bayesian-test-29" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainR2LapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1.550047e+13 ±0.6%
+## [1] set + participant : 1.540981e+13 ±0.54%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -3851,7 +4692,7 @@ times.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     1.55e+13
+## set             0.50         1.00     1.54e+13
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -3951,7 +4792,7 @@ SD values below).</p>
 <h3>Retention (Accuracy)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-20" class="section level4">
+<div id="frequentist-test-30" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -3993,13 +4834,13 @@ session 1, suggesting within session improvements. Moreover, there is
 also a difference between the first set in session 1 and the first set
 in session 2.</p>
 </div>
-<div id="bayesian-test-20" class="section level4">
+<div id="bayesian-test-30" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionR2AccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 15.63055 ±0.72%
+## [1] set + participant : 15.94199 ±2.37%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4010,7 +4851,7 @@ in session 2.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.94        15.63
+## set             0.50         0.94        15.94
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -4059,13 +4900,99 @@ in session 2.</p>
 </div>
 <div id="generalization-accuracy-1" class="section level3">
 <h3>Generalization (Accuracy)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-31" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genR2AccuracyANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F           p p&lt;.05        ges
+## 2    set   2  70 5.276617 0.007337143     * 0.07812856
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W           p p&lt;.05
+## 2    set 0.7594468 0.009299412     *
+## 
+## $`Sphericity Corrections`
+##   Effect      GGe      p[GG] p[GG]&lt;.05       HFe      p[HF] p[HF]&lt;.05
+## 2    set 0.806092 0.01226765         * 0.8392077 0.01123394         *</code></pre>
+<pre class="r"><code>genR2AccuracyComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   95.8 0.597 35     94.6     97.0
+##  S1_last    97.5 0.342 35     96.8     98.2
+##  S2_3       95.6 0.504 35     94.6     96.7
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genR2AccuracyComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -0.145 0.774 35  -0.188  1.0000
+##  Session 1 Set 2 vs Session 2 Set 3   -1.867 0.508 35  -3.675  0.0016
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast  etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3 0.001006812
+## 2 Session 1 Set 2 vs Session 2 Set 3 0.278403692</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons show this is
+driven by a difference between the last set of Session 1 and the first
+set of the rotated track.</p>
+</div>
+<div id="bayesian-test-31" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genR2AccuracyBayesANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 7.626963 ±0.62%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.88         7.63
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genR2AccuracyComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.1819834 ±0.04%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 38.79867 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="generalization-accuracy-with-top-up-training-as-reference-1" class="section level3">
+<h3>Generalization (Accuracy): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-21" class="section level4">
+<div id="frequentist-test-32" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genR2AccuracyANOVA()</code></pre>
+<pre class="r"><code>genR2TopUpAccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -4078,7 +5005,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
 ## 2    set 0.9042439 0.0003656052         * 0.9875755 0.000223206         *</code></pre>
-<pre class="r"><code>genR2AccuracyComparisonMeans()</code></pre>
+<pre class="r"><code>genR2TopUpAccuracyComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   97.6 0.300 35     97.0     98.2
 ##  S2_2   97.7 0.349 35     97.0     98.5
@@ -4086,26 +5013,24 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4   96.9 0.387 35     96.1     97.6
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genR2AccuracyComparisonsEffSize()</code></pre>
+<pre class="r"><code>genR2TopUpAccuracyComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3   -1.936 0.594 35  -3.259  0.0075
-##  Session 2 Set 2 vs Session 2 Set 3   -2.122 0.532 35  -3.991  0.0010
-##  Session 2 Set 2 vs Session 2 Set 4   -0.894 0.509 35  -1.755  0.2642
+##  Session 1 Set 1 vs Session 2 Set 3   -0.145 0.774 35  -0.188  1.0000
+##  Session 1 Set 2 vs Session 2 Set 3   -1.867 0.508 35  -3.675  0.0016
 ## 
-## P value adjustment: bonferroni method for 3 tests 
-##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3 0.23285959
-## 2 Session 2 Set 2 vs Session 2 Set 3 0.31278603
-## 3 Session 2 Set 2 vs Session 2 Set 4 0.08085349</code></pre>
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast  etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3 0.001006812
+## 2 Session 1 Set 2 vs Session 2 Set 3 0.278403692</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 this effect is driven by a difference between the first and last sets in
 the trained track and first set in the rotated track. #### Bayesian
 test</p>
-<pre class="r"><code>genR2AccuracyBayesANOVA()</code></pre>
+<pre class="r"><code>genR2TopUpAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 193.0364 ±0.5%
+## [1] set + participant : 194.4491 ±0.85%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4116,11 +5041,11 @@ test</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.99       193.04
+## set             0.50         0.99       194.45
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genR2AccuracyComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genR2TopUpAccuracyComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -4155,13 +5080,98 @@ test</p>
 </div>
 <div id="reverse-track-accuracy-1" class="section level3">
 <h3>Reverse track (Accuracy)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-33" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revR2AccuracyANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F           p p&lt;.05        ges
+## 2    set   2  70 5.335025 0.006974291     * 0.08394339
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W          p p&lt;.05
+## 2    set 0.7764025 0.01353561     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe     p[HF] p[HF]&lt;.05
+## 2    set 0.8172622 0.01140879         * 0.8518218 0.0103923         *</code></pre>
+<pre class="r"><code>revR2AccuracyComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   95.8 0.597 35     94.6     97.0
+##  S1_last    97.5 0.342 35     96.8     98.2
+##  S2_5       95.3 0.600 35     94.1     96.5
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revR2AccuracyComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5   -0.475 0.858 35  -0.553  1.0000
+##  Session 1 Set 2 vs Session 2 Set 5   -2.196 0.629 35  -3.492  0.0026
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast  etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5 0.008676605
+## 2 Session 1 Set 2 vs Session 2 Set 5 0.258362029</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between the last set of Session 1
+and the first set of the reverse track.</p>
+</div>
+<div id="bayesian-test-32" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revR2AccuracyBayesANOVA()</code></pre>
+<pre><code>## Accuracy during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 9.781995 ±7.41%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.91         9.78
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revR2AccuracyComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.2065108 ±0.04%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 24.65143 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-accuracy-with-top-up-training-as-reference-1" class="section level3">
+<h3>Reverse track (Accuracy): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-22" class="section level4">
+<div id="frequentist-test-34" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revR2AccuracyANOVA()</code></pre>
+<pre class="r"><code>revR2TopUpAccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05       ges
@@ -4174,7 +5184,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.7623438 0.0002086151         * 0.8185655 0.0001359168         *</code></pre>
-<pre class="r"><code>revR2AccuracyComparisonMeans()</code></pre>
+<pre class="r"><code>revR2TopUpAccuracyComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   97.6 0.300 35     97.0     98.2
 ##  S2_2   97.7 0.349 35     97.0     98.5
@@ -4182,28 +5192,26 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   96.8 0.361 35     96.0     97.5
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revR2AccuracyComparisonsEffSize()</code></pre>
+<pre class="r"><code>revR2TopUpAccuracyComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5   -2.266 0.692 35  -3.275  0.0072
-##  Session 2 Set 2 vs Session 2 Set 5   -2.452 0.548 35  -4.474  0.0002
-##  Session 2 Set 2 vs Session 2 Set 6   -0.972 0.397 35  -2.447  0.0587
+##  Session 1 Set 1 vs Session 2 Set 5   -0.475 0.858 35  -0.553  1.0000
+##  Session 1 Set 2 vs Session 2 Set 5   -2.196 0.629 35  -3.492  0.0026
 ## 
-## P value adjustment: bonferroni method for 3 tests 
-##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.2345565
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.3637898
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.1461150</code></pre>
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast  etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5 0.008676605
+## 2 Session 1 Set 2 vs Session 2 Set 5 0.258362029</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 accuracy for the first set in the reverse track is lower than both first
 and last sets in the trained track.</p>
 </div>
-<div id="bayesian-test-21" class="section level4">
+<div id="bayesian-test-33" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revR2AccuracyBayesANOVA()</code></pre>
+<pre class="r"><code>revR2TopUpAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 1045.483 ±0.54%
+## [1] set + participant : 1037.597 ±0.49%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4214,11 +5222,11 @@ and last sets in the trained track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     1.05e+03
+## set             0.50         1.00     1.04e+03
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revR2AccuracyComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revR2TopUpAccuracyComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -4280,7 +5288,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-23" class="section level4">
+<div id="frequentist-test-35" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainR2AccuracyANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and last block in session 2:
@@ -4306,13 +5314,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 <p>We do not observe an effect of set, suggesting no accuracy
 differences between the first and last blocks in session 2.</p>
 </div>
-<div id="bayesian-test-22" class="section level4">
+<div id="bayesian-test-34" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainR2AccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.04556038 ±0.61%
+## [1] set + participant : 0.0462962 ±2.02%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4408,7 +5416,7 @@ variable.</p>
 <h3>Retention (Path Length)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-24" class="section level4">
+<div id="frequentist-test-36" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -4448,13 +5456,13 @@ across trial sets.</p>
 session improvements in session 1, and a difference in path length
 between the first sets in each session.</p>
 </div>
-<div id="bayesian-test-23" class="section level4">
+<div id="bayesian-test-35" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionR2PLBayesANOVA()</code></pre>
 <pre><code>## Path Length during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 349743294 ±1.16%
+## [1] set + participant : 346310109 ±1%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4465,7 +5473,7 @@ between the first sets in each session.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00     3.50e+08
+## set             0.50         1.00     3.46e+08
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -4514,14 +5522,100 @@ between the first sets in each session.</p>
 </div>
 <div id="generalization-path-length-1" class="section level3">
 <h3>Generalization (Path Length)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-37" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genR2PLANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  70 20.64719 8.950947e-08     * 0.2692429
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W          p p&lt;.05
+## 2    set 0.8245728 0.03766112     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.8507545 6.276866e-07         * 0.8897449 3.771129e-07         *</code></pre>
+<pre class="r"><code>genR2PLComparisonMeans()</code></pre>
+<pre><code>##  set      emmean      SE df lower.CL upper.CL
+##  S1_first  49.96 0.18241 35    49.59    50.33
+##  S1_last   48.83 0.08485 35    48.66    49.00
+##  S2_3      49.19 0.10571 35    48.97    49.40
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>genR2PLComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 3   -0.769 0.196 35  -3.914  0.0008
+##  Session 1 Set 2 vs Session 2 Set 3    0.361 0.137 35   2.636  0.0248
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.3044000
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.1656876</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons show that this
+is driven by the difference between both the first and last sets of
+session 1 when each is compared with the first rotated track set.</p>
+</div>
+<div id="bayesian-test-36" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genR2PLBayesANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 1686998 ±0.76%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         1.00     1.69e+06
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genR2PLComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 71.26561 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 3.523208 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as the frequentist tests.</p>
+</div>
+</div>
+<div id="generalization-path-length-with-top-up-training-as-reference-1" class="section level3">
+<h3>Generalization (Path Length): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-25" class="section level4">
+<div id="frequentist-test-38" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genR2PLANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and second block in session 2:
+<pre class="r"><code>genR2TopUpPLANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F            p p&lt;.05        ges
 ## 2    set   3 105 6.304408 0.0005652126     * 0.09994492
@@ -4533,7 +5627,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe        p[GG] p[GG]&lt;.05      HFe        p[HF] p[HF]&lt;.05
 ## 2    set 0.9352262 0.0007819267         * 1.025071 0.0005652126         *</code></pre>
-<pre class="r"><code>genR2PLComparisonMeans()</code></pre>
+<pre class="r"><code>genR2TopUpPLComparisonMeans()</code></pre>
 <pre><code>##  set  emmean      SE df lower.CL upper.CL
 ##  S2_1  48.85 0.09095 35    48.67    49.04
 ##  S2_2  48.67 0.08031 35    48.51    48.83
@@ -4541,28 +5635,26 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_4  48.97 0.10210 35    48.76    49.18
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>genR2PLComparisonsEffSize()</code></pre>
+<pre class="r"><code>genR2TopUpPLComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 3    0.336 0.129 35   2.602  0.0404
-##  Session 2 Set 2 vs Session 2 Set 3    0.518 0.121 35   4.286  0.0004
-##  Session 2 Set 2 vs Session 2 Set 4    0.298 0.113 35   2.624  0.0384
+##  Session 1 Set 1 vs Session 2 Set 3   -0.769 0.196 35  -3.914  0.0008
+##  Session 1 Set 2 vs Session 2 Set 3    0.361 0.137 35   2.636  0.0248
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 3  0.1621297
-## 2 Session 2 Set 2 vs Session 2 Set 3  0.3442113
-## 3 Session 2 Set 2 vs Session 2 Set 4  0.1643989</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 3  0.3044000
+## 2 Session 1 Set 2 vs Session 2 Set 3  0.1656876</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons show that path
 lengths are longer in the rotated track trials compared to trained track
 trials.</p>
 </div>
-<div id="bayesian-test-24" class="section level4">
+<div id="bayesian-test-37" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genR2PLBayesANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and second block in session 2:
+<pre class="r"><code>genR2TopUpPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 69.38842 ±1.04%
+## [1] set + participant : 68.28159 ±0.54%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4573,11 +5665,11 @@ trials.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.99        69.39
+## set             0.50         0.99        68.28
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genR2PLComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genR2TopUpPLComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -4612,14 +5704,100 @@ trials.</p>
 </div>
 <div id="reverse-track-path-length-1" class="section level3">
 <h3>Reverse track (Path Length)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-39" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revR2PLANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F            p p&lt;.05       ges
+## 2    set   2  70 21.76613 4.459182e-08     * 0.2750004
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W          p p&lt;.05
+## 2    set 0.7731509 0.01260353     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+## 2    set 0.8150961 5.639144e-07         * 0.8493744 3.520174e-07         *</code></pre>
+<pre class="r"><code>revR2PLComparisonMeans()</code></pre>
+<pre><code>##  set      emmean      SE df lower.CL upper.CL
+##  S1_first  49.96 0.18241 35    49.59    50.33
+##  S1_last   48.83 0.08485 35    48.66    49.00
+##  S2_5      49.16 0.10104 35    48.96    49.37
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revR2PLComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5   -0.793 0.193 35  -4.117  0.0004
+##  Session 1 Set 2 vs Session 2 Set 5    0.337 0.127 35   2.646  0.0243
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.3262804
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.1666441</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons indicate that
+this effect is driven by a difference between both the first and last
+sets of Session 1, when each is compared with the first set of the
+reverse track.</p>
+</div>
+<div id="bayesian-test-38" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revR2PLBayesANOVA()</code></pre>
+<pre><code>## Path length during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 3165697 ±3.99%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         1.00     3.17e+06
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revR2PLComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 121.0745 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 3.590504 ±0%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-path-length-with-top-up-training-as-reference-1" class="section level3">
+<h3>Reverse track (Path Length): with Top Up training as reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-26" class="section level4">
+<div id="frequentist-test-40" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revR2PLANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and third block in session 2:
+<pre class="r"><code>revR2TopUpPLANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F          p p&lt;.05        ges
 ## 2    set   3 105 5.144282 0.00233442     * 0.09418558
@@ -4631,7 +5809,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe       p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
 ## 2    set 0.7733091 0.005486684         * 0.8314688 0.004402002         *</code></pre>
-<pre class="r"><code>revR2PLComparisonMeans()</code></pre>
+<pre class="r"><code>revR2TopUpPLComparisonMeans()</code></pre>
 <pre><code>##  set  emmean      SE df lower.CL upper.CL
 ##  S2_1  48.85 0.09095 35    48.67    49.04
 ##  S2_2  48.67 0.08031 35    48.51    48.83
@@ -4639,28 +5817,26 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6  49.14 0.14560 35    48.84    49.43
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revR2PLComparisonsEffSize()</code></pre>
+<pre class="r"><code>revR2TopUpPLComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5    0.312 0.128 35   2.445  0.0589
-##  Session 2 Set 2 vs Session 2 Set 5    0.494 0.120 35   4.103  0.0007
-##  Session 2 Set 2 vs Session 2 Set 6    0.465 0.179 35   2.591  0.0416
+##  Session 1 Set 1 vs Session 2 Set 5   -0.793 0.193 35  -4.117  0.0004
+##  Session 1 Set 2 vs Session 2 Set 5    0.337 0.127 35   2.646  0.0243
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.1459242
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.3247461
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.1609110</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.3262804
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.1666441</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons indicate that
 path length in the reverse track is increased compared to the last set
 in the trained track.</p>
 </div>
-<div id="bayesian-test-25" class="section level4">
+<div id="bayesian-test-39" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revR2PLBayesANOVA()</code></pre>
-<pre><code>## Path Length during first block in session 2 and third block in session 2:
+<pre class="r"><code>revR2TopUpPLBayesANOVA()</code></pre>
+<pre><code>## Path length during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 23.98748 ±1.3%
+## [1] set + participant : 23.74551 ±0.51%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4671,11 +5847,11 @@ in the trained track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.96        23.99
+## set             0.50         0.96        23.75
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revR2PLComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revR2TopUpPLComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -4737,7 +5913,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-27" class="section level4">
+<div id="frequentist-test-41" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainR2PLANOVA()</code></pre>
 <pre><code>## Path Length during first block in session 2 and last block in session 2:
@@ -4775,13 +5951,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 lengths are longer during the last block of trials compared to the first
 block.</p>
 </div>
-<div id="bayesian-test-26" class="section level4">
+<div id="bayesian-test-40" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainR2PLBayesANOVA()</code></pre>
 <pre><code>## Path Length during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 325.7446 ±0.46%
+## [1] set + participant : 331.8841 ±1.13%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4792,7 +5968,7 @@ block.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         1.00       325.74
+## set             0.50         1.00       331.88
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -4838,7 +6014,7 @@ but now use Path length inside the track as the dependent variable.</p>
 <h3>Retention (Path Length inside)</h3>
 <p>Session 1: first block, first set and last block, last set Session 2:
 first block, first set</p>
-<div id="frequentist-test-28" class="section level4">
+<div id="frequentist-test-42" class="section level4">
 <h4>Frequentist test</h4>
 <p>We perform a repeated measures one-way ANOVA to test for an effect
 across trial sets.</p>
@@ -4865,13 +6041,13 @@ across trial sets.</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-27" class="section level4">
+<div id="bayesian-test-41" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>retentionR2PLINBayesANOVA()</code></pre>
 <pre><code>## Path Length in during first and last set in session 1 and first set in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.1030263 ±0.59%
+## [1] set + participant : 0.1104309 ±4.17%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4882,7 +6058,7 @@ across trial sets.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.09        0.103
+## set             0.50         0.10        0.110
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -4931,14 +6107,90 @@ across trial sets.</p>
 </div>
 <div id="generalization-path-length-inside-1" class="section level3">
 <h3>Generalization (Path Length inside)</h3>
+<p>Next, we compare performance between the novel track conditions and
+the original trained track. We analyze the first and final sets from
+session 1, and the first set of the rotated track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set</p>
+<div id="frequentist-test-43" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>genR2PLINANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of rotated track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F         p p&lt;.05        ges
+## 2    set   2  70 2.307363 0.1070464       0.03774757
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W           p p&lt;.05
+## 2    set 0.7188321 0.003653142     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe     p[GG] p[GG]&lt;.05       HFe     p[HF] p[HF]&lt;.05
+## 2    set 0.7805378 0.1205546           0.8104136 0.1186684</code></pre>
+<pre class="r"><code>genR2PLINComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   47.8 0.379 35     47.0     48.6
+##  S1_last    47.6 0.189 35     47.2     48.0
+##  S2_3       47.0 0.305 35     46.4     47.6
+## 
+## Confidence level used: 0.95</code></pre>
+<p>We do not observe a main effect of set.</p>
+</div>
+<div id="bayesian-test-42" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>genR2PLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of rotated track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 0.6550421 ±1.06%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.40        0.655
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>genR2PLINComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.6367615 ±0.03%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 0.7488929 ±0.03%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as the frequentist tests.</p>
+</div>
+</div>
+<div id="generalization-path-length-inside-with-top-up-training-as-reference-1" class="section level3">
+<h3>Generalization (Path Length inside): with Top Up training as
+reference</h3>
 <p>Next, we compare how performance is affected when participants
 encounter the track rotated by 180 degrees:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 rotated track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-29" class="section level4">
+<div id="frequentist-test-44" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>genR2PLINANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and second block in session 2:
+<pre class="r"><code>genR2TopUpPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and second block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F          p p&lt;.05        ges
 ## 2    set   3 105 2.360027 0.07569134       0.04257853
@@ -4950,7 +6202,7 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe      p[HF] p[HF]&lt;.05
 ## 2    set 0.8956472 0.08309681           0.9772096 0.07724941</code></pre>
-<pre class="r"><code>genR2PLINComparisonMeans()</code></pre>
+<pre class="r"><code>genR2TopUpPLINComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   47.7 0.143 35     47.4     48.0
 ##  S2_2   47.6 0.201 35     47.2     48.0
@@ -4960,13 +6212,13 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-28" class="section level4">
+<div id="bayesian-test-43" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>genR2PLINBayesANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and second block in session 2:
+<pre class="r"><code>genR2TopUpPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and second block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.6865595 ±2.32%
+## [1] set + participant : 0.6644375 ±0.56%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -4977,11 +6229,11 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.41        0.687
+## set             0.50         0.40        0.664
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>genR2PLINComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>genR2TopUpPLINComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 3:
 ## Bayes factor analysis
 ## --------------
@@ -5016,14 +6268,99 @@ rotated track, Session 2: block 2, first set and block 2, last set</p>
 </div>
 <div id="reverse-track-path-length-inside-1" class="section level3">
 <h3>Reverse track (Path Length inside)</h3>
+<p>We analyze the first and final sets from session 1, and the first set
+of the reverse track from session 2.</p>
+<p>trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set</p>
+<div id="frequentist-test-45" class="section level4">
+<h4>Frequentist test</h4>
+<pre class="r"><code>revR2PLINANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of reverse track in session 2:
+## $ANOVA
+##   Effect DFn DFd        F         p p&lt;.05        ges
+## 2    set   2  70 3.832132 0.0263444     * 0.05570618
+## 
+## $`Mauchly&#39;s Test for Sphericity`
+##   Effect         W          p p&lt;.05
+## 2    set 0.8287082 0.04100416     *
+## 
+## $`Sphericity Corrections`
+##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe      p[HF] p[HF]&lt;.05
+## 2    set 0.8537582 0.03328036         * 0.8931534 0.03124829         *</code></pre>
+<pre class="r"><code>revR2PLINComparisonMeans()</code></pre>
+<pre><code>##  set      emmean    SE df lower.CL upper.CL
+##  S1_first   47.8 0.379 35     47.0     48.6
+##  S1_last    47.6 0.189 35     47.2     48.0
+##  S2_5       46.8 0.339 35     46.1     47.5
+## 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>revR2PLINComparisonsEffSize()</code></pre>
+<pre><code>##  contrast                           estimate    SE df t.ratio p.value
+##  Session 1 Set 1 vs Session 2 Set 5   -1.047 0.473 35  -2.211  0.0673
+##  Session 1 Set 2 vs Session 2 Set 5   -0.824 0.362 35  -2.273  0.0585
+## 
+## P value adjustment: bonferroni method for 2 tests 
+##                             contrast etasquared
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1225877
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.1286656</code></pre>
+<p>We observe a main effect of set. Follow-up comparisons however
+indicate no significant effects.</p>
+</div>
+<div id="bayesian-test-44" class="section level4">
+<h4>Bayesian test</h4>
+<pre class="r"><code>revR2PLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first and last set in session 1 and first set of reverse track in session 2:
+## Bayes factor analysis
+## --------------
+## [1] set + participant : 2.157676 ±0.64%
+## 
+## Against denominator:
+##   dv ~ participant 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+## 
+## Inclusion Bayes Factors (Model Averaged)
+## 
+##             P(prior) P(posterior) Inclusion BF
+## participant     1.00         1.00             
+## set             0.50         0.68         2.16
+## 
+## * Compared among: all models
+## *    Priors odds: uniform-equal</code></pre>
+<pre class="r"><code>revR2PLINComparisonsBayesfollowup()</code></pre>
+<pre><code>## Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1.535993 ±0.02%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS
+## 
+## Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:
+## Bayes factor analysis
+## --------------
+## [1] Alt., r=0.707 : 1.722323 ±0.02%
+## 
+## Against denominator:
+##   Null, mu = 0 
+## ---
+## Bayes factor type: BFoneSample, JZS</code></pre>
+<p>Bayesian tests show the same findings as in the frequentist test.</p>
+</div>
+</div>
+<div id="reverse-track-path-length-inside-with-top-up-training-as-reference-1" class="section level3">
+<h3>Reverse track (Path Length inside): with Top Up training as
+reference</h3>
 <p>Next, we compare how performance is affected when participants move
 through the track in reverse:</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 reverse track, Session 2: block 2, first set and block 2, last set</p>
-<div id="frequentist-test-30" class="section level4">
+<div id="frequentist-test-46" class="section level4">
 <h4>Frequentist test</h4>
-<pre class="r"><code>revR2PLINANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and third block in session 2:
+<pre class="r"><code>revR2TopUpPLINANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and third block in session 2:
 ## $ANOVA
 ##   Effect DFn DFd        F           p p&lt;.05        ges
 ## 2    set   3 105 4.446613 0.005542561     * 0.06524377
@@ -5035,7 +6372,7 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ## $`Sphericity Corrections`
 ##   Effect       GGe      p[GG] p[GG]&lt;.05       HFe       p[HF] p[HF]&lt;.05
 ## 2    set 0.7731083 0.01099438         * 0.8312323 0.009217282         *</code></pre>
-<pre class="r"><code>revR2PLINComparisonMeans()</code></pre>
+<pre class="r"><code>revR2TopUpPLINComparisonMeans()</code></pre>
 <pre><code>##  set  emmean    SE df lower.CL upper.CL
 ##  S2_1   47.7 0.143 35     47.4     48.0
 ##  S2_2   47.6 0.201 35     47.2     48.0
@@ -5043,29 +6380,27 @@ reverse track, Session 2: block 2, first set and block 2, last set</p>
 ##  S2_6   47.4 0.199 35     47.0     47.9
 ## 
 ## Confidence level used: 0.95</code></pre>
-<pre class="r"><code>revR2PLINComparisonsEffSize()</code></pre>
+<pre class="r"><code>revR2TopUpPLINComparisonsEffSize()</code></pre>
 <pre><code>##  contrast                           estimate    SE df t.ratio p.value
-##  Session 2 Set 1 vs Session 2 Set 5   -0.922 0.355 35  -2.598  0.0409
-##  Session 2 Set 2 vs Session 2 Set 5   -0.835 0.292 35  -2.862  0.0212
-##  Session 2 Set 2 vs Session 2 Set 6   -0.152 0.243 35  -0.628  1.0000
+##  Session 1 Set 1 vs Session 2 Set 5   -1.047 0.473 35  -2.211  0.0673
+##  Session 1 Set 2 vs Session 2 Set 5   -0.824 0.362 35  -2.273  0.0585
 ## 
-## P value adjustment: bonferroni method for 3 tests 
+## P value adjustment: bonferroni method for 2 tests 
 ##                             contrast etasquared
-## 1 Session 2 Set 1 vs Session 2 Set 5  0.1616283
-## 2 Session 2 Set 2 vs Session 2 Set 5  0.1896113
-## 3 Session 2 Set 2 vs Session 2 Set 6  0.0111422</code></pre>
+## 1 Session 1 Set 1 vs Session 2 Set 5  0.1225877
+## 2 Session 1 Set 2 vs Session 2 Set 5  0.1286656</code></pre>
 <p>We observe a main effect of set. Follow-up comparisons show that path
 length within the track is shorter during the first set of reverse-track
 trials than during trained-track trials, suggesting more errors at the
 beginning of the reverse track.</p>
 </div>
-<div id="bayesian-test-29" class="section level4">
+<div id="bayesian-test-45" class="section level4">
 <h4>Bayesian test</h4>
-<pre class="r"><code>revR2PLINBayesANOVA()</code></pre>
-<pre><code>## Path Length in during first block in session 2 and third block in session 2:
+<pre class="r"><code>revR2TopUpPLINBayesANOVA()</code></pre>
+<pre><code>## Path length IN during first block in session 2 and third block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 6.876056 ±0.66%
+## [1] set + participant : 6.818288 ±0.49%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5076,11 +6411,11 @@ beginning of the reverse track.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.50         0.87         6.88
+## set             0.50         0.87         6.82
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
-<pre class="r"><code>revR2PLINComparisonsBayesfollowup()</code></pre>
+<pre class="r"><code>revR2TopUpPLINComparisonsBayesfollowup()</code></pre>
 <pre><code>## Bayesian t-test - Session 2 Set 1 vs Set 5:
 ## Bayes factor analysis
 ## --------------
@@ -5142,7 +6477,7 @@ with learning in the trained track.</p>
 <p>trained track, Session 2: block 1, first set and block 1, last set
 trained track, Session 2: block 4, first set and block 4, last set</p>
 </div>
-<div id="frequentist-test-31" class="section level4">
+<div id="frequentist-test-47" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>trainR2PLINANOVA()</code></pre>
 <pre><code>## Path Length in during first block in session 2 and last block in session 2:
@@ -5167,13 +6502,13 @@ trained track, Session 2: block 4, first set and block 4, last set</p>
 ## Confidence level used: 0.95</code></pre>
 <p>We do not observe a main effect of set.</p>
 </div>
-<div id="bayesian-test-30" class="section level4">
+<div id="bayesian-test-46" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>trainR2PLINBayesANOVA()</code></pre>
 <pre><code>## Path Length in during first block in session 2 and last block in session 2:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant : 0.1387836 ±0.52%
+## [1] set + participant : 0.1387031 ±0.5%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5244,7 +6579,7 @@ each study.</p>
 <h3>Session 1</h3>
 <p>Study 1: block 1, first set and last block, last set Study 2: block
 1, first set and last block, last set</p>
-<div id="frequentist-test-32" class="section level4">
+<div id="frequentist-test-48" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesLapTimeANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -5309,16 +6644,16 @@ each study.</p>
 Follow-up comparisons show that overall lap times are slower in study 2
 compared to study 1.</p>
 </div>
-<div id="bayesian-test-31" class="section level4">
+<div id="bayesian-test-47" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesLapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times during first and last set in session 1 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 2.266545e+30 ±3.28%
-## [2] study + participant                   : 6.946646     ±2.2%
-## [3] set + study + participant             : 1.16581e+33  ±2.11%
-## [4] set + study + set:study + participant : 1.692977e+35 ±2.41%
+## [1] set + participant                     : 2.228039e+30 ±1.38%
+## [2] study + participant                   : 7.437608     ±6.1%
+## [3] set + study + participant             : 1.239628e+33 ±3.03%
+## [4] set + study + set:study + participant : 1.798698e+35 ±6.28%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5330,8 +6665,8 @@ compared to study 1.</p>
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
 ## set             0.60         1.00     1.43e+34
-## study           0.60         1.00     5.01e+04
-## set:study       0.20         0.99       579.75
+## study           0.60         1.00     5.42e+04
+## set:study       0.20         0.99       579.36
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -5362,7 +6697,7 @@ compared to study 1.</p>
 <h3>Session 2</h3>
 <p>Study 1: first and last set of all 4 blocks Study 2: first and last
 set of all 4 blocks</p>
-<div id="frequentist-test-33" class="section level4">
+<div id="frequentist-test-49" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesS2LapTimeANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -5431,16 +6766,16 @@ times are slower for these trial sets:</p>
 <p>last set, of trained track (first block) first and last set of
 rotated track first and last set of trained track (last block)</p>
 </div>
-<div id="bayesian-test-32" class="section level4">
+<div id="bayesian-test-48" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesS2LapTimeBayesANOVA()</code></pre>
 <pre><code>## Lap times in session 2 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 4.096008e+68 ±0.47%
-## [2] study + participant                   : 51.39354     ±0.79%
-## [3] set + study + participant             : 2.326587e+70 ±2.7%
-## [4] set + study + set:study + participant : 1.548149e+69 ±9.61%
+## [1] set + participant                     : 4.058701e+68 ±0.35%
+## [2] study + participant                   : 53.02618     ±1.69%
+## [3] set + study + participant             : 2.210348e+70 ±1.3%
+## [4] set + study + set:study + participant : 1.337894e+69 ±1.6%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5451,9 +6786,9 @@ rotated track first and last set of trained track (last block)</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.60         1.00     3.21e+68
-## study           0.60         0.98        40.39
-## set:study       0.20         0.06        0.262
+## set             0.60         1.00     2.94e+68
+## study           0.60         0.98        38.50
+## set:study       0.20         0.06        0.238
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -5548,7 +6883,7 @@ also show a difference between the first set in each study.</p>
 <h3>Session 1</h3>
 <p>Study 1: block 1, first set and last block, last set Study 2: block
 1, first set and last block, last set</p>
-<div id="frequentist-test-34" class="section level4">
+<div id="frequentist-test-50" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesAccuracyANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -5613,16 +6948,16 @@ also show a difference between the first set in each study.</p>
 accuracy during the last set of trials in session 1 is higher in study 2
 compared to study 1.</p>
 </div>
-<div id="bayesian-test-33" class="section level4">
+<div id="bayesian-test-49" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesAccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy during first and last set in session 1 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 2.490713 ±4.02%
-## [2] study + participant                   : 5.099503 ±1.36%
-## [3] set + study + participant             : 13.06745 ±2.27%
-## [4] set + study + set:study + participant : 3.227253 ±3.93%
+## [1] set + participant                     : 2.389859 ±1.33%
+## [2] study + participant                   : 4.953151 ±0.66%
+## [3] set + study + participant             : 12.62096 ±1.49%
+## [4] set + study + set:study + participant : 3.125788 ±3.17%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5633,8 +6968,8 @@ compared to study 1.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.60         0.75         2.05
-## study           0.60         0.86         4.09
+## set             0.60         0.75         2.03
+## study           0.60         0.86         4.07
 ## set:study       0.20         0.13        0.596
 ## 
 ## * Compared among: all models
@@ -5666,7 +7001,7 @@ compared to study 1.</p>
 <h3>Session 2</h3>
 <p>Study 1: first and last set of all 4 blocks Study 2: first and last
 set of all 4 blocks</p>
-<div id="frequentist-test-35" class="section level4">
+<div id="frequentist-test-51" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesS2AccuracyANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -5734,16 +7069,16 @@ set of all 4 blocks</p>
 accuracy during the first set of the reverse track is higher in study 2
 compared to study 1.</p>
 </div>
-<div id="bayesian-test-34" class="section level4">
+<div id="bayesian-test-50" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesS2AccuracyBayesANOVA()</code></pre>
 <pre><code>## Accuracy in session 2 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 9.15392e+21  ±0.41%
-## [2] study + participant                   : 21.40673     ±0.99%
-## [3] set + study + participant             : 2.18208e+23  ±1.23%
-## [4] set + study + set:study + participant : 5.157195e+22 ±1.04%
+## [1] set + participant                     : 9.116296e+21 ±0.35%
+## [2] study + participant                   : 21.88649     ±1.41%
+## [3] set + study + participant             : 2.197374e+23 ±1.62%
+## [4] set + study + set:study + participant : 5.267561e+22 ±1.17%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5754,9 +7089,9 @@ compared to study 1.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.60         1.00     8.30e+21
-## study           0.60         0.97        19.65
-## set:study       0.20         0.18        0.907
+## set             0.60         1.00     8.20e+21
+## study           0.60         0.97        19.92
+## set:study       0.20         0.19        0.921
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -5850,7 +7185,7 @@ compared to study 1.</p>
 <h3>Session 1</h3>
 <p>Study 1: block 1, first set and last block, last set Study 2: block
 1, first set and last block, last set</p>
-<div id="frequentist-test-36" class="section level4">
+<div id="frequentist-test-52" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesPLANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -5914,16 +7249,16 @@ compared to study 1.</p>
 <p>We find a main effect of study. Follow-up comparisons show that path
 lengths are overall longer in study 2 than in study 1.</p>
 </div>
-<div id="bayesian-test-35" class="section level4">
+<div id="bayesian-test-51" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesPLBayesANOVA()</code></pre>
 <pre><code>## Path Length during first and last set in session 1 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 896.0323     ±1.19%
-## [2] study + participant                   : 450179790    ±4.2%
-## [3] set + study + participant             : 1.893039e+12 ±1.44%
-## [4] set + study + set:study + participant : 432495379873 ±2.42%
+## [1] set + participant                     : 907.7426     ±1.53%
+## [2] study + participant                   : 439474007    ±1.52%
+## [3] set + study + participant             : 1.94464e+12  ±5.01%
+## [4] set + study + set:study + participant : 414032253542 ±1.5%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -5934,9 +7269,9 @@ lengths are overall longer in study 2 than in study 1.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.60         1.00     3.44e+03
+## set             0.60         1.00     3.58e+03
 ## study           0.60         1.00     1.73e+09
-## set:study       0.20         0.19        0.914
+## set:study       0.20         0.18        0.851
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -5968,7 +7303,7 @@ lengths are overall longer in study 2 than in study 1.</p>
 <h3>Session 2</h3>
 <p>Study 1: first and last set of all 4 blocks Study 2: first and last
 set of all 4 blocks</p>
-<div id="frequentist-test-37" class="section level4">
+<div id="frequentist-test-53" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesS2PLANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -6036,16 +7371,16 @@ set of all 4 blocks</p>
 Follow-up comparisons show that path lengths are overall longer during
 study 2 than in study 1.</p>
 </div>
-<div id="bayesian-test-36" class="section level4">
+<div id="bayesian-test-52" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesS2PLBayesANOVA()</code></pre>
 <pre><code>## Path Length in session 2 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 4.693181e+61  ±0.47%
-## [2] study + participant                   : 5.429161e+18  ±1%
-## [3] set + study + participant             : 1.024921e+84  ±0.96%
-## [4] set + study + set:study + participant : 2.111008e+169 ±1.57%
+## [1] set + participant                     : 4.693605e+61  ±0.39%
+## [2] study + participant                   : 5.576766e+18  ±2.51%
+## [3] set + study + participant             : 1.06145e+84   ±2.69%
+## [4] set + study + set:study + participant : 2.077393e+169 ±1.12%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -6056,9 +7391,9 @@ study 2 than in study 1.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.60            1    2.59e+150
-## study           0.60            1    3.00e+107
-## set:study       0.20            1     8.24e+85
+## set             0.60            1    2.48e+150
+## study           0.60            1    2.95e+107
+## set:study       0.20            1     7.83e+85
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -6156,7 +7491,7 @@ study 2 than in study 1.</p>
 <h3>Session 1</h3>
 <p>Study 1: block 1, first set and last block, last set Study 2: block
 1, first set and last block, last set</p>
-<div id="frequentist-test-38" class="section level4">
+<div id="frequentist-test-54" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesPLINANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -6221,16 +7556,16 @@ study 2 than in study 1.</p>
 lengths inside the track are overall longer in study 2 than in study
 1.</p>
 </div>
-<div id="bayesian-test-37" class="section level4">
+<div id="bayesian-test-53" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesPLINBayesANOVA()</code></pre>
 <pre><code>## Path Length inside during first and last set in session 1 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 0.3420577  ±3.04%
-## [2] study + participant                   : 3880156785 ±1.41%
-## [3] set + study + participant             : 1418993418 ±4.82%
-## [4] set + study + set:study + participant : 347435603  ±12.75%
+## [1] set + participant                     : 0.32396    ±1.53%
+## [2] study + participant                   : 3856085188 ±0.9%
+## [3] set + study + participant             : 1360038018 ±2.5%
+## [4] set + study + set:study + participant : 295583419  ±1.53%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -6241,9 +7576,9 @@ lengths inside the track are overall longer in study 2 than in study
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00         1.00             
-## set             0.60         0.31        0.303
-## study           0.60         1.00     2.80e+09
-## set:study       0.20         0.06        0.262
+## set             0.60         0.30        0.286
+## study           0.60         1.00     2.78e+09
+## set:study       0.20         0.05        0.227
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>
@@ -6274,7 +7609,7 @@ lengths inside the track are overall longer in study 2 than in study
 <h3>Session 2</h3>
 <p>Study 1: first and last set of all 4 blocks Study 2: first and last
 set of all 4 blocks</p>
-<div id="frequentist-test-39" class="section level4">
+<div id="frequentist-test-55" class="section level4">
 <h4>Frequentist test</h4>
 <pre class="r"><code>compareStudiesS2PLINANOVA()</code></pre>
 <pre><code>## Warning: Data is unbalanced (unequal N per group). Make sure you specified a
@@ -6343,16 +7678,16 @@ Follow-up comparisons show that path lengths inside the track are
 overall longer during study 2 than in study 1, except during reverse
 track trials.</p>
 </div>
-<div id="bayesian-test-38" class="section level4">
+<div id="bayesian-test-54" class="section level4">
 <h4>Bayesian test</h4>
 <pre class="r"><code>studiesS2PLINBayesANOVA()</code></pre>
 <pre><code>## Path Length inside for session 2 between studies:
 ## Bayes factor analysis
 ## --------------
-## [1] set + participant                     : 3.618383e+15 ±0.32%
-## [2] study + participant                   : 17222775336  ±0.76%
-## [3] set + study + participant             : 7.022545e+25 ±1.11%
-## [4] set + study + set:study + participant : 1.673648e+42 ±1.05%
+## [1] set + participant                     : 3.625847e+15 ±0.48%
+## [2] study + participant                   : 17726520826  ±1.56%
+## [3] set + study + participant             : 7.081284e+25 ±1.05%
+## [4] set + study + set:study + participant : 1.668696e+42 ±1.41%
 ## 
 ## Against denominator:
 ##   dv ~ participant 
@@ -6363,9 +7698,9 @@ track trials.</p>
 ## 
 ##             P(prior) P(posterior) Inclusion BF
 ## participant     1.00            1             
-## set             0.60            1     6.48e+31
-## study           0.60            1     3.08e+26
-## set:study       0.20            1     9.53e+16
+## set             0.60            1     6.28e+31
+## study           0.60            1     3.07e+26
+## set:study       0.20            1     9.43e+16
 ## 
 ## * Compared among: all models
 ## *    Priors odds: uniform-equal</code></pre>

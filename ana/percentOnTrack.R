@@ -1378,13 +1378,13 @@ retentionAccuracyComparisonsBayesfollowup <- function() {
   
 }
 
-#Statistics (Generalization; Frequentist) ----
+#Top Up Statistics (Generalization; Frequentist) ----
 
-genAccuracyANOVA <- function() {
+genTopUpAccuracyANOVA <- function() {
   
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
-  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs)
   LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
@@ -1400,10 +1400,10 @@ genAccuracyANOVA <- function() {
 }
 
 #follow up on significant interaction
-genAccuracyComparisonMeans <- function(){
+genTopUpAccuracyComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
-  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs)
   LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
@@ -1416,10 +1416,10 @@ genAccuracyComparisonMeans <- function(){
   
 }
 
-genAccuracyComparisons <- function(method='bonferroni'){
+genTopUpAccuracyComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
-  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs)
   LC4aov <- LC_part2[which(LC_part2$set == 'S2_1' | LC_part2$set == 'S2_2' | LC_part2$set == 'S2_3' | LC_part2$set == 'S2_4'),]
   
   LC4aov$participant <- as.factor(LC4aov$participant)
@@ -1432,8 +1432,8 @@ genAccuracyComparisons <- function(method='bonferroni'){
   S2_2vsS2_3 <- c(0,-1,1,0)
   S2_2vsS2_4 <- c(0,-1,0,1)
   
-  contrastList <- list('Session 2 Set 1 vs Session 2 Set 3' = S2_1vsS2_3, 
-                       'Session 2 Set 2 vs Session 2 Set 3' = S2_2vsS2_3, 
+  contrastList <- list('Session 2 Set 1 vs Session 2 Set 3' = S2_1vsS2_3,
+                       'Session 2 Set 2 vs Session 2 Set 3' = S2_2vsS2_3,
                        'Session 2 Set 2 vs Session 2 Set 4' = S2_2vsS2_4)
   
   comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
@@ -1443,10 +1443,10 @@ genAccuracyComparisons <- function(method='bonferroni'){
 }
 
 #effect size
-genAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
+genTopUpAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
   comparisons <- genAccuracyComparisons(method=method)
   #we can use eta-squared as effect size
-  #% of variance in DV(percentcomp) accounted for 
+  #% of variance in DV(percentcomp) accounted for
   #by the difference between target1 and target2
   comparisonsdf <- as.data.frame(comparisons)
   etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
@@ -1458,8 +1458,8 @@ genAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
-#Statistics (Generalization; Bayesian) ----
-genAccuracyBayesANOVA <- function() {
+# Top Up Statistics (Generalization; Bayesian) ----
+genTopUpAccuracyBayesANOVA <- function() {
   
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
@@ -1482,7 +1482,7 @@ genAccuracyBayesANOVA <- function() {
   
 }
 
-genAccuracyComparisonsBayesfollowup <- function() {
+genTopUpAccuracyComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
@@ -1509,9 +1509,164 @@ genAccuracyComparisonsBayesfollowup <- function() {
   
 }
 
-#Statistics (Reverse direction; Frequentist) ----
+#Statistics (Generalization; Frequentist) ----
 
-revAccuracyANOVA <- function() {
+genAccuracyANOVA <- function() {
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_3'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_3'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Accuracy during first and last set in session 1 and first set of rotated track in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+genAccuracyComparisonMeans <- function(){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_3'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_3'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
+  print(cellmeans)
+  
+}
+
+genAccuracyComparisons <- function(method='bonferroni'){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_3'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_3'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
+  
+  #specify contrasts
+  S1_1vsS2_3 <- c(-1,0,1)
+  S1_2vsS2_3 <- c(0,-1,1)
+  
+  contrastList <- list('Session 1 Set 1 vs Session 2 Set 3' = S1_1vsS2_3, 
+                       'Session 1 Set 2 vs Session 2 Set 3' = S1_2vsS2_3)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+genAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- genAccuracyComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+
+#Statistics (Generalization; Bayesian) ----
+genAccuracyBayesANOVA <- function() {
+  
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_3'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_3'))
+  
+  cat('Accuracy during first and last set in session 1 and first set of rotated track in session 2:\n')
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+genAccuracyComparisonsBayesfollowup <- function() {
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_3'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_3'))
+  
+  
+  S1_1 <- LC4aov[which(LC4aov$set == 'S1_first'),]
+  S1_2 <- LC4aov[which(LC4aov$set == 'S1_last'),]
+  S2_3 <- LC4aov[which(LC4aov$set == 'S2_3'),]
+  
+  
+  cat('Bayesian t-test - Session 1 Set 1 vs Session 2 Set 3:\n')
+  print(ttestBF(S1_1$dv, S2_3$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 1 Set 2 vs Session 2 Set 3:\n')
+  print(ttestBF(S1_2$dv, S2_3$dv, paired = TRUE))
+  
+}
+
+# Top Up Statistics (Reverse direction; Frequentist) ----
+
+revTopUpAccuracyANOVA <- function() {
   
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
@@ -1531,7 +1686,7 @@ revAccuracyANOVA <- function() {
 }
 
 #follow up on significant interaction
-revAccuracyComparisonMeans <- function(){
+revTopUpAccuracyComparisonMeans <- function(){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
@@ -1547,7 +1702,7 @@ revAccuracyComparisonMeans <- function(){
   
 }
 
-revAccuracyComparisons <- function(method='bonferroni'){
+revTopUpAccuracyComparisons <- function(method='bonferroni'){
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
@@ -1574,7 +1729,7 @@ revAccuracyComparisons <- function(method='bonferroni'){
 }
 
 #effect size
-revAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
+revTopUpAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
   comparisons <- revAccuracyComparisons(method=method)
   #we can use eta-squared as effect size
   #% of variance in DV(percentcomp) accounted for 
@@ -1589,8 +1744,8 @@ revAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
-#Statistics (Reverse direction; Bayesian) ----
-revAccuracyBayesANOVA <- function() {
+#Top Up Statistics (Reverse direction; Bayesian) ----
+revTopUpAccuracyBayesANOVA <- function() {
   
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
@@ -1613,7 +1768,7 @@ revAccuracyBayesANOVA <- function() {
   
 }
 
-revAccuracyComparisonsBayesfollowup <- function() {
+revTopUpAccuracyComparisonsBayesfollowup <- function() {
   #session2
   blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
   LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
@@ -1637,6 +1792,161 @@ revAccuracyComparisonsBayesfollowup <- function() {
   
   cat('Bayesian t-test - Session 2 Set 2 vs Set 6:\n')
   print(ttestBF(S2_2$dv, S2_6$dv, paired = TRUE))
+  
+}
+
+#Statistics (Reverse direction; Frequentist) ----
+
+revAccuracyANOVA <- function() {
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_5'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_5'))
+  
+  #ANOVA's
+  # for ez, case ID should be a factor:
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=dv, within= c(set), type=3, return_aov = TRUE) #df is k-1 or 3 levels minus 1; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Accuracy during first and last set in session 1 and first set of reverse track in session 2:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#follow up on significant interaction
+revAccuracyComparisonMeans <- function(){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_5'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_5'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('set'))
+  print(cellmeans)
+  
+}
+
+revAccuracyComparisons <- function(method='bonferroni'){
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_5'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_5'))
+  
+  secondAOV <- aov_ez("participant","dv",LC4aov,within=c("set"))
+  
+  #specify contrasts
+  S1_1vsS2_5 <- c(-1,0,1)
+  S1_2vsS2_5 <- c(0,-1,1)
+  
+  contrastList <- list('Session 1 Set 1 vs Session 2 Set 5' = S1_1vsS2_5, 
+                       'Session 1 Set 2 vs Session 2 Set 5' = S1_2vsS2_5)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('set')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+revAccuracyComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- revAccuracyComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+
+#Statistics (Reverse direction; Bayesian) ----
+revAccuracyBayesANOVA <- function() {
+  
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_5'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_5'))
+  
+  cat('Accuracy during first and last set in session 1 and first set of reverse track in session 2:\n')
+  bfLC<- anovaBF(dv ~ set + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+revAccuracyComparisonsBayesfollowup <- function() {
+  #session1
+  blockdefs <- list('S1_first'=c(2,5), 'S1_last'=c(295,6))
+  LC_part1 <- getBlockedAccuracy(session = 1, blockdefs=blockdefs) 
+  #session2
+  blockdefs <- list('S2_1'=c(2,5), 'S2_2'=c(25,6), 'S2_3'=c(32,5), 'S2_4'=c(55,6), 'S2_5'=c(62,5), 'S2_6'=c(85,6), 'S2_7'=c(92,5), 'S2_8'=c(115,6))
+  LC_part2 <- getBlockedAccuracy(session = 2, blockdefs=blockdefs) 
+  LC_part2 <- LC_part2[which(LC_part2$set == 'S2_5'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  LC4aov$set <- factor(LC4aov$set, levels = c('S1_first','S1_last','S2_5'))
+  
+  
+  S1_1 <- LC4aov[which(LC4aov$set == 'S1_first'),]
+  S1_2 <- LC4aov[which(LC4aov$set == 'S1_last'),]
+  S2_5 <- LC4aov[which(LC4aov$set == 'S2_5'),]
+  
+  
+  cat('Bayesian t-test - Session 1 Set 1 vs Session 2 Set 5:\n')
+  print(ttestBF(S1_1$dv, S2_5$dv, paired = TRUE))
+  
+  cat('Bayesian t-test - Session 1 Set 2 vs Session 2 Set 5:\n')
+  print(ttestBF(S1_2$dv, S2_5$dv, paired = TRUE))
   
 }
 

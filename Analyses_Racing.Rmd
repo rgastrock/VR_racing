@@ -134,10 +134,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Lap times)
 
-Next, we compare performance across blocks in session 2. We use the first block of trials with the trained track during session 2 as a baseline for comparing the other blocks. First, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -147,7 +147,7 @@ genLapTimeComparisonMeans()
 genLapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the rotated track.
 
 #### Bayesian test
 
@@ -158,12 +158,40 @@ genLapTimeComparisonsBayesfollowup()
 
 Bayesian tests show the same findings as in the frequentist test.
 
-### Reverse track (Lap times)
+### Generalization (Lap times): with Top up training as reference
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+We may also compare perfromance within Session 2. For these analyses, we use the first trained track block from Session 2 as the reference with which we compare the novel track conditions.
+
+Next, we compare performance across blocks in session 2. We use the first block of trials with the trained track during session 2 as a baseline for comparing the other blocks. First, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
 
 trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genTopUpLapTimeANOVA()
+genTopUpLapTimeComparisonMeans()
+genTopUpLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+
+#### Bayesian test
+
+```{r}
+genTopUpLapTimeBayesANOVA()
+genTopUpLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times)
+
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
+
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -173,13 +201,39 @@ revLapTimeComparisonMeans()
 revLapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revLapTimeBayesANOVA()
 revLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revTopUpLapTimeANOVA()
+revTopUpLapTimeComparisonMeans()
+revTopUpLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+
+#### Bayesian test
+
+```{r}
+revTopUpLapTimeBayesANOVA()
+revTopUpLapTimeComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -269,20 +323,19 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Accuracy)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
 ```{r}
 genAccuracyANOVA()
 genAccuracyComparisonMeans()
-genAccuracyComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track. Furthermore, the last set in the rotated track also differs from the last set in the trained track.
+We do not observe a main effect of set.
 
 #### Bayesian test
 
@@ -293,12 +346,38 @@ genAccuracyComparisonsBayesfollowup()
 
 Bayesian tests show the same findings as in the frequentist test.
 
-### Reverse track (Accuracy)
+### Generalization (Accuracy): with Top Up training as reference
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
 
 trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genTopUpAccuracyANOVA()
+genTopUpAccuracyComparisonMeans()
+genTopUpAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track. Furthermore, the last set in the rotated track also differs from the last set in the trained track.
+
+#### Bayesian test
+
+```{r}
+genTopUpAccuracyBayesANOVA()
+genTopUpAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy)
+
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
+
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -308,13 +387,39 @@ revAccuracyComparisonMeans()
 revAccuracyComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that accuracy in the reverse track is lower than in the trained track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revAccuracyBayesANOVA()
 revAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revTopUpAccuracyANOVA()
+revTopUpAccuracyComparisonMeans()
+revTopUpAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that accuracy in the reverse track is lower than in the trained track.
+
+#### Bayesian test
+
+```{r}
+revTopUpAccuracyBayesANOVA()
+revTopUpAccuracyComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -410,19 +515,20 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Path Length)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
 ```{r}
 genPLANOVA()
 genPLComparisonMeans()
+genPLComparisonsEffSize()
 ```
 
-We do not observe a main effect of set.
+We observe a main effect of set. Follow-up comparisons show that this is driven by the difference between the first set in session 1 and the first rotated track set.
 
 #### Bayesian test
 
@@ -431,14 +537,39 @@ genPLBayesANOVA()
 genPLComparisonsBayesfollowup()
 ```
 
+Bayesian tests show that the effect between the first sets is small.
+
+### Generalization (Path Length): with Top Up training as reference
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genTopUpPLANOVA()
+genTopUpPLComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+genTopUpPLBayesANOVA()
+genTopUpPLComparisonsBayesfollowup()
+```
+
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Reverse track (Path Length)
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -448,13 +579,39 @@ revPLComparisonMeans()
 revPLComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to those in the trained track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revPLBayesANOVA()
 revPLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revTopUpPLANOVA()
+revTopUpPLComparisonMeans()
+revTopUpPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to those in the trained track.
+
+#### Bayesian test
+
+```{r}
+revTopUpPLBayesANOVA()
+revTopUpPLComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -526,10 +683,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Path Length inside)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -539,7 +696,7 @@ genPLINComparisonMeans()
 genPLINComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during rotated-track trials than during trained-track trials, suggesting more frequent departures beyond the track limits in the rotated condition.
+We observe a main effect of set. Follow-up comparisons show that this is driven by the difference between the first set in session 1 and the first rotated track set.
 
 #### Bayesian test
 
@@ -548,14 +705,40 @@ genPLINBayesANOVA()
 genPLINComparisonsBayesfollowup()
 ```
 
+Bayesian tests show that the effect between the first sets is small.
+
+### Generalization (Path Length inside): with Top Up training as reference
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genTopUpPLINANOVA()
+genTopUpPLINComparisonMeans()
+genTopUpPLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during rotated-track trials than during trained-track trials, suggesting more frequent departures beyond the track limits in the rotated condition.
+
+#### Bayesian test
+
+```{r}
+genTopUpPLINBayesANOVA()
+genTopUpPLINComparisonsBayesfollowup()
+```
+
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Reverse track (Path Length inside)
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -565,13 +748,39 @@ revPLINComparisonMeans()
 revPLINComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons show that path length within the track is longer during reverse-track trials than during trained-track trials, suggesting less efficient movement within the track for reverse movements.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revPLINBayesANOVA()
 revPLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length inside): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revTopUpPLINANOVA()
+revTopUpPLINComparisonMeans()
+revTopUpPLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is longer during reverse-track trials than during trained-track trials, suggesting less efficient movement within the track for reverse movements.
+
+#### Bayesian test
+
+```{r}
+revTopUpPLINBayesANOVA()
+revTopUpPLINComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -689,10 +898,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Lap times)
 
-Next, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -702,7 +911,7 @@ genR2LapTimeComparisonMeans()
 genR2LapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the rotated track.
 
 #### Bayesian test
 
@@ -713,12 +922,38 @@ genR2LapTimeComparisonsBayesfollowup()
 
 Bayesian tests show the same findings as in the frequentist test.
 
-### Reverse track (Lap times)
+### Generalization (Lap times): with Top Up training as reference
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+Next, we compare how performance is affected when participants encounter the 180 degree rotated track orientation:
 
 trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2TopUpLapTimeANOVA()
+genR2TopUpLapTimeComparisonMeans()
+genR2TopUpLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the rotated track. However, this difference is not significant by the last set in the rotated track.
+
+#### Bayesian test
+
+```{r}
+genR2TopUpLapTimeBayesANOVA()
+genR2TopUpLapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times)
+
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
+
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -728,13 +963,39 @@ revR2LapTimeComparisonMeans()
 revR2LapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revR2LapTimeBayesANOVA()
 revR2LapTimeComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Lap times): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2TopUpLapTimeANOVA()
+revR2TopUpLapTimeComparisonMeans()
+revR2TopUpLapTimeComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set in the trained track and first set in the reverse track. This difference remains up to the last set in the reverse track.
+
+#### Bayesian test
+
+```{r}
+revR2TopUpLapTimeBayesANOVA()
+revR2TopUpLapTimeComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -822,10 +1083,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Accuracy)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -835,7 +1096,8 @@ genR2AccuracyComparisonMeans()
 genR2AccuracyComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track.
+We observe a main effect of set. Follow-up comparisons show this is driven by a difference between the last set of Session 1 and the first set of the rotated track.
+
 #### Bayesian test
 
 ```{r}
@@ -845,12 +1107,37 @@ genR2AccuracyComparisonsBayesfollowup()
 
 Bayesian tests show the same findings as in the frequentist test.
 
-### Reverse track (Accuracy)
+### Generalization (Accuracy): with Top Up training as reference
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
 
 trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2TopUpAccuracyANOVA()
+genR2TopUpAccuracyComparisonMeans()
+genR2TopUpAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in the trained track and first set in the rotated track.
+#### Bayesian test
+
+```{r}
+genR2TopUpAccuracyBayesANOVA()
+genR2TopUpAccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy)
+
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
+
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -860,13 +1147,39 @@ revR2AccuracyComparisonMeans()
 revR2AccuracyComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that accuracy for the first set in the reverse track is lower than both first and last sets in the trained track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the last set of Session 1 and the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revR2AccuracyBayesANOVA()
 revR2AccuracyComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Accuracy): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2TopUpAccuracyANOVA()
+revR2TopUpAccuracyComparisonMeans()
+revR2TopUpAccuracyComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that accuracy for the first set in the reverse track is lower than both first and last sets in the trained track.
+
+#### Bayesian test
+
+```{r}
+revR2TopUpAccuracyBayesANOVA()
+revR2TopUpAccuracyComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -962,10 +1275,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Path Length)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -975,7 +1288,7 @@ genR2PLComparisonMeans()
 genR2PLComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons show that path lengths are longer in the rotated track trials compared to trained track trials.
+We observe a main effect of set. Follow-up comparisons show that this is driven by the difference between both the first and last sets of session 1 when each is compared with the first rotated track set.
 
 #### Bayesian test
 
@@ -984,14 +1297,40 @@ genR2PLBayesANOVA()
 genR2PLComparisonsBayesfollowup()
 ```
 
+Bayesian tests show the same findings as the frequentist tests.
+
+### Generalization (Path Length): with Top Up training as reference
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2TopUpPLANOVA()
+genR2TopUpPLComparisonMeans()
+genR2TopUpPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path lengths are longer in the rotated track trials compared to trained track trials.
+
+#### Bayesian test
+
+```{r}
+genR2TopUpPLBayesANOVA()
+genR2TopUpPLComparisonsBayesfollowup()
+```
+
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Reverse track (Path Length)
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -1001,13 +1340,39 @@ revR2PLComparisonMeans()
 revR2PLComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to the last set in the trained track.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between both the first and last sets of Session 1, when each is compared with the first set of the reverse track.
 
 #### Bayesian test
 
 ```{r}
 revR2PLBayesANOVA()
 revR2PLComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2TopUpPLANOVA()
+revR2TopUpPLComparisonMeans()
+revR2TopUpPLComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons indicate that path length in the reverse track is increased compared to the last set in the trained track.
+
+#### Bayesian test
+
+```{r}
+revR2TopUpPLBayesANOVA()
+revR2TopUpPLComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
@@ -1079,10 +1444,10 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Generalization (Path Length inside)
 
-Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+Next, we compare performance between the novel track conditions and the original trained track. We analyze the first and final sets from session 1, and the first set of the rotated track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-rotated track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+rotated track, Session 2: block 2, first set
 
 #### Frequentist test
 
@@ -1100,14 +1465,39 @@ genR2PLINBayesANOVA()
 genR2PLINComparisonsBayesfollowup()
 ```
 
+Bayesian tests show the same findings as the frequentist tests.
+
+### Generalization (Path Length inside): with Top Up training as reference
+
+Next, we compare how performance is affected when participants encounter the track rotated by 180 degrees:
+
+trained track, Session 2: block 1, first set and block 1, last set
+rotated track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+genR2TopUpPLINANOVA()
+genR2TopUpPLINComparisonMeans()
+```
+
+We do not observe a main effect of set.
+
+#### Bayesian test
+
+```{r}
+genR2TopUpPLINBayesANOVA()
+genR2TopUpPLINComparisonsBayesfollowup()
+```
+
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Reverse track (Path Length inside)
 
-Next, we compare how performance is affected when participants move through the track in reverse:
+We analyze the first and final sets from session 1, and the first set of the reverse track from session 2.
 
-trained track, Session 2: block 1, first set and block 1, last set
-reverse track, Session 2: block 2, first set and block 2, last set
+trained track, Session 1: block 1, first set and block last, last set
+reverse track, Session 2: block 3, first set
 
 #### Frequentist test
 
@@ -1117,13 +1507,39 @@ revR2PLINComparisonMeans()
 revR2PLINComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during the first set of reverse-track trials than during trained-track trials, suggesting more errors at the beginning of the reverse track.
+We observe a main effect of set. Follow-up comparisons however indicate no significant effects.
 
 #### Bayesian test
 
 ```{r}
 revR2PLINBayesANOVA()
 revR2PLINComparisonsBayesfollowup()
+```
+
+Bayesian tests show the same findings as in the frequentist test.
+
+### Reverse track (Path Length inside): with Top Up training as reference
+
+Next, we compare how performance is affected when participants move through the track in reverse:
+
+trained track, Session 2: block 1, first set and block 1, last set
+reverse track, Session 2: block 2, first set and block 2, last set
+
+#### Frequentist test
+
+```{r}
+revR2TopUpPLINANOVA()
+revR2TopUpPLINComparisonMeans()
+revR2TopUpPLINComparisonsEffSize()
+```
+
+We observe a main effect of set. Follow-up comparisons show that path length within the track is shorter during the first set of reverse-track trials than during trained-track trials, suggesting more errors at the beginning of the reverse track.
+
+#### Bayesian test
+
+```{r}
+revR2TopUpPLINBayesANOVA()
+revR2TopUpPLINComparisonsBayesfollowup()
 ```
 
 Bayesian tests show the same findings as in the frequentist test.
