@@ -34,6 +34,8 @@ source('ana/pathLength.R')
 source('ana/Run2_pathLength.R')
 source('ana/SpeedAccuracy.R')
 source('ana/Run2_SpeedAccuracy.R')
+source('ana/demeritPoints.R')
+source('ana/Run2_demeritPoints.R')
 
 #manuscript plots
 source('ana/manuscriptPlots.R')
@@ -51,7 +53,7 @@ Then, we ensure that the data is available locally.
 
 Participants used a stylus on a digitizing tablet to control a race car through a track as quickly and accurately as possible. They received lap time and accuracy feedback. Lap times are measured by the time it takes to move from the start line to the finish line. Leaving the track limits affects accuracy, where the car turns red and participants hear a buzzing sound. In between trials, participants can rest at a pit stop (area between finish and start lines where the car is yellow). 
 
-It is unclear whether continued improvements in motor execution have the same underlying mechanisms as other types of motor learning. Therefore, we investigated retention and generalization patterns after lengthened practice with the racing task. Participants returned for a second session the next day, and we assessed for any further improvements in speed and accuracy. We expect to observe offline gains (performance improvement upon re-experiencing the task), which suggests robust retention patterns for motor execution. For generalization, we also tested how changes in the task may interfere with previous learning, by altering track orientation or reversing the movement direction.
+It is unclear whether continued improvements in motor execution have the same underlying mechanisms as other types of motor learning. Therefore, we investigated retention and generalization patterns after lengthened practice with the racing task. Participants returned for a second session the next day, and we assessed for any further improvements in speed and accuracy. We expect to observe offline gains (performance improvement upon re-experiencing the task), which suggests robust retention patterns for motor execution. For generalization, we also tested performance on altered track orientation and reversed movement direction.
 
 ## Track orientations
 
@@ -98,16 +100,16 @@ plotIndFirstLastAllTrackAcrossSessionLapTime()
 
 For all analyses we present, we compare performance across different blocks of trials across the two sessions. Each block consists of 30 trials. For session 1, participants encounter the same track orientation for 10 blocks of 30 trials (300 trials in total). In session 2, participants encounter different track orientations every block (4 blocks for 120 trials in total). 
 
-Given that improvements seem to occur quickly within each block (see figures above), we further subdivided each block into five sets of six trials, and compare these sets. Visual inspection of the data revealed substantial variability in the very first trial of session 1, as well as in the first trial of each block in session 2. These trials likely reflect participants’ initial engagement with the specific task condition. To minimize potential confounds arising from this variability, we exclude these first trials and instead include only the remaining five trials from the first set of each block.
+Given that improvements seem to occur quickly within each block (see figures above), we further subdivided each block into five sets of six trials, and compare these sets. Visual inspection of the data revealed substantial variability in the very first trial of session 1, as well as in the first trial of each block in session 2. These trials likely reflect participants’ initial engagement with the task in session 1 or how the start line changes across blocks in session 2. To minimize potential confounds arising from this variability, we exclude these first trials and instead include only the remaining five trials from the first set of each block.
 
 For all statistical tests presented below, we include a frequentist and Bayesian version of the test.
 
 ### Retention (Lap times)
 
-As speed improvements plateau toward the end of session 1, we examine performance retention when participants re-encounter the trained track in session 2. Specifically, we test for offline gains, defined as performance at the start of session 2 that is comparable to or better than performance at the end of session 1. Accordingly, for session 1 we analyze the first set from the first block and the final set from the last block. For session 2, we analyze the first and final sets from the first block.
+As speed improvements plateau toward the end of session 1, we examine performance retention when participants re-encounter the trained track in session 2. Specifically, we test for offline gains, defined as performance at the start of session 2 that is comparable to or better than performance at the end of session 1. Accordingly, we analyze the first and final sets from session 1, and the first set from session 2.
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -119,7 +121,7 @@ retentionLapTimeComparisonMeans()
 retentionLapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance. Finally, we find no differences between the final sets across the two sessions, indicating that performance quickly rebounds to the level achieved on the previous day.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance.
 
 #### Bayesian test
 
@@ -184,6 +186,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Lap times)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainLapTimeTtest()
+```
+
+We find no evidence of a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -210,12 +222,29 @@ Bayesian tests show the same findings as in the frequentist test, except when co
 
 ## Accuracy (Percent on Track)
 
+### Demerit Points
+
+One measure of accuracy will be to check for changes in the amount of demerit points that participants received throughout the task. Demerit points inform us of the number of times that participants leave the track boundaries, but not for how long within a given lap. Thus, we share means and standard deviations of demerit points across blocks and sessions here, but use percentage on track for the other analyses below as it is a more informative measure of accuracy.
+
+```{r}
+plotAllTrackPts()
+plotS2AllTrackPts()
+```
+
+Demerit points do not change that much after the first couple of trials (note that trial 1 is shown here but not included in the mean and SD values below).
+
+```{r}
+getDemPtsSession1()
+getDemPtsSession2()
+```
+
+
 Next, we repeat the same analyses steps as in the previous section, but now use Percentage on Track (Accuracy) as the dependent variable.
 
 ### Retention (Accuracy)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -292,6 +321,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Accuracy)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainAccuracyTtest()
+```
+
+We find no evidence of a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -346,7 +385,7 @@ Next, we repeat the same analyses steps as with the speed and accuracy measures,
 ### Retention (Path Length)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -422,6 +461,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Path Length)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainPLTtest()
+```
+
+We find a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -453,7 +502,7 @@ Next, we repeat the same analyses steps as in the previous section, but now use 
 ### Retention (Path Length inside)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -528,6 +577,16 @@ revPLINComparisonsBayesfollowup()
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Path Length inside)
+
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainPLINTtest()
+```
+
+We do not find a difference between the two trial sets.
 
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
@@ -605,7 +664,7 @@ Results presented below follow the same analyses steps conducted in Study 1.
 ### Retention (Lap times)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -617,7 +676,7 @@ retentionR2LapTimeComparisonMeans()
 retentionR2LapTimeComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance. Finally, we find no differences between the final sets across the two sessions, indicating that performance quickly rebounds to the level achieved on the previous day.
+We observe a main effect of set. Follow-up comparisons indicate that this effect is driven by a difference between the first and last sets in session 1, consistent with within-session improvements. The first set in session 2 is lower than the first set in session 1, but not as low as the final set in session 1, suggesting partial retention of performance.
 
 #### Bayesian test
 
@@ -682,6 +741,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Lap times)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainR2LapTimeTtest()
+```
+
+We do not find a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -709,10 +778,26 @@ Bayesian tests show the same findings as in the frequentist test.
 
 Next, we repeat the same analyses steps as in the previous section, but now use Percentage on Track (Accuracy) as the dependent variable.
 
+### Demerit Points
+
+We share means and standard deviations of demerit points across blocks and sessions here, but use percentage on track for the other analyses below as it is a more informative measure of accuracy.
+
+```{r}
+plotR2AllTrackPts()
+plotR2S2AllTrackPts()
+```
+
+Demerit points do not change that much after the first couple of trials (note that trial 1 is shown here but not included in the mean and SD values below).
+
+```{r}
+getR2DemPtsSession1()
+getR2DemPtsSession2()
+```
+
 ### Retention (Accuracy)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -724,7 +809,7 @@ retentionR2AccuracyComparisonMeans()
 retentionR2AccuracyComparisonsEffSize()
 ```
 
-We observe a main effect of set. Follow-up comparisons reveal that this effect is driven by a difference between the first and last sets of session 1, suggesting within session improvements. Moreover, there is also a difference between the first set in session 1 and the first set in session 2. Notably, there is no difference between the last set in session 1 and the first set in session 2, indicating that accuracy at the start of session 2 is comparable to that achieved at the end of the previous training day. 
+We observe a main effect of set. Follow-up comparisons reveal that this effect is driven by a difference between the first and last sets of session 1, suggesting within session improvements. Moreover, there is also a difference between the first set in session 1 and the first set in session 2.
 
 #### Bayesian test
 
@@ -788,6 +873,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Accuracy)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainR2AccuracyTtest()
+```
+
+We do not find a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -842,7 +937,7 @@ Next, we repeat the same analyses steps as with the speed and accuracy measures,
 ### Retention (Path Length)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -919,6 +1014,16 @@ Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Path Length)
 
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainR2PLTtest()
+```
+
+We find a difference between the two trial sets.
+
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
 trained track, Session 2: block 1, first set and block 1, last set
@@ -950,7 +1055,7 @@ Next, we repeat the same analyses steps as in the previous section, but now use 
 ### Retention (Path Length inside)
 
 Session 1: first block, first set and last block, last set
-Session 2: first block, first set and first block, last set
+Session 2: first block, first set
 
 #### Frequentist test
 
@@ -1024,6 +1129,16 @@ revR2PLINComparisonsBayesfollowup()
 Bayesian tests show the same findings as in the frequentist test.
 
 ### Trained track (Path Length inside)
+
+#### T-test
+
+We may simply compare the first set in the last trained track block with the last set of the first trained track block in session 2.
+
+```{r}
+trainR2PLINTtest()
+```
+
+We do not find a difference between the two trial sets.
 
 Next, we compare performance between the first and last blocks in session 2, to assess whether the other track conditions has interfered with learning in the trained track.
 
@@ -1258,9 +1373,9 @@ studiesS2PLINComparisonsBayesfollowup()
 
 Bayesian tests show the same findings as in the frequentist test.
 
-# Manuscript plots
+# Manuscript plots (samples)
 
-Below are plots that can be used for summarizing results in the manuscript.
+Below are plots that may be used for summarizing results in the manuscript.
 
 ```{r, fig.width = 18, fig.height = 5}
 plotSessionsLapTimes()
