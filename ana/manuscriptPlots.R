@@ -56,14 +56,14 @@ plotLongSessionsLapTimes <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/manuscript/Fig1C_LapTimes.svg', width=12, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/manuscript/Fig1C_LapTimes.svg', width=10, height=12, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
   par(mar=c(4,4,2,0.1))
   
   #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
-  layout(matrix(c(1,2,3,4,5,6), 2, 3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE), widths=c(2,2), heights=c(1,1,1))
   
   # # # # # # # # # #
   # panel A: Session 1
@@ -76,24 +76,24 @@ plotLongSessionsLapTimes <- function(target='inline'){
   # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel C: Study 1 - SAF
-  plotSAF()
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastLapTime()
   # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel D: Run 2 - Session 1
-  plotR2S1FirstLastLapTime()
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastLapTime()
   # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel E: Run 2 - Session 2
-  plotR2S2FirstLastLapTime()
-  # mtext('e', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  # panel F: Study 1 - SAF
+  plotSAF()
+  # mtext('f', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel F: Study 2 - SAF
+  # panel G: Study 2 - SAF
   plotR2SAF()
-  # mtext('f', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  # mtext('g', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
   
@@ -195,14 +195,14 @@ plotLongSessionsAccuracy <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/manuscript/Fig2C_Accuracy.svg', width=12, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/manuscript/Fig2C_Accuracy.svg', width=10, height=12, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
   par(mar=c(4,4,2,0.1))
   
   #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
-  layout(matrix(c(1,2,3,4,5,6), 2, 3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE), widths=c(2,2), heights=c(1,1,1))
   
   # # # # # # # # # #
   # panel A: Session 1
@@ -215,24 +215,24 @@ plotLongSessionsAccuracy <- function(target='inline'){
   # mtext('b', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel C: Study 1 - SAF
-  plotSAF()
+  # panel C: Run 2 - Session 1
+  plotR2S1FirstLastAccuracy()
   # mtext('c', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel D: Run 2 - Session 1
-  plotR2S1FirstLastAccuracy()
+  # panel D: Run 2 - Session 2
+  plotR2S2FirstLastAccuracy()
   # mtext('d', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel E: Run 2 - Session 2
-  plotR2S2FirstLastAccuracy()
-  # mtext('e', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  # panel F: Study 1 - SAF
+  plotSAF()
+  # mtext('f', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   # # # # # # # # # #
-  # panel F: Study 2 - SAF
+  # panel G: Study 2 - SAF
   plotR2SAF()
-  # mtext('f', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
+  # mtext('g', side=3, outer=FALSE, line=-1, adj=0, padj=1, font=2)
   
   
   
